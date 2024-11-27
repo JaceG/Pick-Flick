@@ -31,17 +31,17 @@ const App: React.FC = () => {
   return (
     <div className="app">
       <h1>Random Movie Generator</h1>
-      <button onClick={fetchRandomMovie} className="random-button">
+      <button className="random-button" onClick={fetchRandomMovie}>
         {loading ? 'Loading...' : 'Find Me a Movie'}
       </button>
-      {error && <p className="error-message">{error}</p>}
+      {error && <div className="error-message">{error}</div>}
       {movie && (
         <div className="movie-container">
-          <img src={movie.poster} alt={movie.title} className="movie-poster" />
-          <h2 className="movie-title">{movie.title}</h2>
-          <p className="movie-genres">Genres: {movie.genres.join(', ')}</p>
-          <p className="movie-release">Release Year: {movie.releaseYear}</p>
-          <p className="movie-synopsis">{movie.synopsis}</p>
+          <img className="movie-poster" src={movie.poster} alt={movie.title} />
+          <div className="movie-title">{movie.title}</div>
+          <div className="movie-genres">Genres: {movie.genres.join(', ')}</div>
+          <div className="movie-release">Release Year: {movie.releaseYear}</div>
+          <div className="movie-synopsis">{movie.synopsis}</div>
         </div>
       )}
     </div>

@@ -1,64 +1,87 @@
+/* Root element styles */
+body, #root {
+  display: flex; /* Use flexbox layout */
+  justify-content: center; /* Center content horizontally */
+  align-items: center; /* Center content vertically */
+  height: 100vh; /* Full viewport height */
+  margin: 0; /* Remove default margin */
+}
+
 /* General styles */
 .app {
-  font-family: Arial, sans-serif;
-  text-align: center;
-  padding: 20px;
-  background-color: #f9f9f9;
+  font-family: Arial, sans-serif; /* Set font family */
+  text-align: center; /* Center text */
+  padding: 20px; /* Add padding */
+  height: 100%; /* Full height */
+  width: 600px; /* Set width */
+  max-width: 100%; /* Limit the maximum width of the app */
+  display: flex; /* Use flexbox layout */
+  flex-direction: column; /* Arrange children in a column */
+  justify-content: flex-start; /* Align items to the top */
+  align-items: center; /* Center content horizontally */
+  box-sizing: border-box; /* Ensure padding is included in the width/height */
+  overflow: auto; /* Allow scrolling if content overflows */
 }
 
 /* Button styles */
 .random-button {
-  padding: 10px 20px;
-  font-size: 16px;
-  color: white;
-  background-color: #256150;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-top: 20px;
+  padding: 10px 20px; /* Add padding */
+  font-size: 16px; /* Set font size */
+  color: white; /* Set text color */
+  background-color: #256150; /* Set background color */
+  border: none; /* Remove border */
+  border-radius: 5px; /* Round corners */
+  cursor: pointer; /* Change cursor on hover */
+  margin-top: 20px; /* Add top margin */
 }
 .random-button:hover {
-  background-color: #1e4e3e;
+  background-color: #1e4e3e; /* Change background color on hover */
 }
 
 /* Error message styles */
 .error-message {
-  color: red;
-  font-size: 14px;
-  margin-top: 10px;
+  color: red; /* Set text color */
+  font-size: 14px; /* Set font size */
+  margin-top: 10px; /* Add top margin */
 }
 
 /* Movie details container */
 .movie-container {
-  margin-top: 30px;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  background-color: #ffffff;
-  display: inline-block;
-  text-align: left;
-  max-width: 400px;
+  margin-top: 30px; /* Add top margin */
+  padding: 20px; /* Add padding */
+  border: 1px solid #ccc; /* Add border */
+  border-radius: 10px; /* Round corners */
+  background-color: #ffffff; /* Set background color */
+  display: flex; /* Use flexbox layout */
+  flex-direction: column; /* Arrange children in a column */
+  align-items: center; /* Center content horizontally */
+  text-align: left; /* Align text to the left */
+  width: 100%; /* Full width */
+  box-sizing: border-box; /* Ensure padding is included in the width/height */
 }
 
 /* Movie poster */
 .movie-poster {
-  width: 100%;
-  border-radius: 5px;
-  margin-bottom: 15px;
+  width: 100%; /* Full width */
+  max-width: 300px; /* Limit the maximum width of the poster */
+  border-radius: 5px; /* Round corners */
+  margin-bottom: 15px; /* Add bottom margin */
 }
 
 /* Movie title */
 .movie-title {
-  font-size: 20px;
-  font-weight: bold;
-  color: #333;
+  font-size: 20px; /* Set font size */
+  font-weight: bold; /* Make text bold */
+  color: #333; /* Set text color */
+  text-align: center; /* Center the title text */
 }
 
 /* Genres, release year, and synopsis */
 .movie-genres,
 .movie-release,
 .movie-synopsis {
-  margin: 5px 0;
-  font-size: 14px;
-  color: #555;
+  margin: 5px 0; /* Add vertical margin */
+  font-size: 14px; /* Set font size */
+  color: #555; /* Set text color */
+  text-align: center; /* Center the text */
 }
