@@ -5,14 +5,14 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "npm run client:build && npm run server",
-    "start:dev": "concurrently \"npm run server:dev\" \"wait-on tcp:3001 && npm run client:dev\"",
+    "start": "concurrently \"npm run server\" \"npm run client:build\"",
+    "start:dev": "concurrently \"npm run server:dev\" \"npm run client:dev\"",
     "server": "cd server && npm start",
-    "server:dev": "cd server && npm run dev",
+    "server:dev": "cd server && nodemon src/server.ts",
     "install": "cd server && npm i && cd ../client && npm i",
     "client:build": "cd client && npm run build",
     "client:dev": "cd client && npm run dev",
-    "build": "cd server && npm run build",
+    "build": "cd server && npm run build && cd ../client && npm run build",
     "seed": "cd server && npm run seed",
     "render-build": "npm install && npm run build"
   },

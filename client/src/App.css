@@ -1,42 +1,64 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+/* General styles */
+.app {
+  font-family: Arial, sans-serif;
   text-align: center;
+  padding: 20px;
+  background-color: #f9f9f9;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
+/* Button styles */
+.random-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  color: white;
+  background-color: #256150;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 20px;
 }
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.random-button:hover {
+  background-color: #1e4e3e;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+/* Error message styles */
+.error-message {
+  color: red;
+  font-size: 14px;
+  margin-top: 10px;
 }
 
-.card {
-  padding: 2em;
+/* Movie details container */
+.movie-container {
+  margin-top: 30px;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  background-color: #ffffff;
+  display: inline-block;
+  text-align: left;
+  max-width: 400px;
 }
 
-.read-the-docs {
-  color: #888;
+/* Movie poster */
+.movie-poster {
+  width: 100%;
+  border-radius: 5px;
+  margin-bottom: 15px;
+}
+
+/* Movie title */
+.movie-title {
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+}
+
+/* Genres, release year, and synopsis */
+.movie-genres,
+.movie-release,
+.movie-synopsis {
+  margin: 5px 0;
+  font-size: 14px;
+  color: #555;
 }
