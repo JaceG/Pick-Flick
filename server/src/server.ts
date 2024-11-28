@@ -157,6 +157,7 @@ app.get('/api/movies/random', async (req, res) => {
         cast,
         directors,
         producers,
+        language: randomMovie.original_language,
       });
     } else {
       console.log('No movies found for the given filters.');

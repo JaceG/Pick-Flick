@@ -5,6 +5,7 @@
     "lib": ["ES2022", "dom"],
     "module": "ESNext",
     "skipLibCheck": true,
+    "esModuleInterop": true,
     "jsx": "react-jsx",
 
     /* Bundler mode */

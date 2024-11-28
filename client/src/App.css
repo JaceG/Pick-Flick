@@ -322,3 +322,11 @@ input[type="number"] {
   color: #333; /* Stronger emphasis for labels */
   font-weight: bold;
 }
+
+.movie-runtime {
+  margin: 5px 0;
+  font-size: 14px;
+  color: #555;
+  text-align: center;
+}
+

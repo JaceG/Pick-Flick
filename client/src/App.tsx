@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import * as React from "react";
+import { useState } from "react";
 import axios from "axios";
 import "./App.css";
 
@@ -13,6 +14,7 @@ const App: React.FC = () => {
     cast: string[]; // Top 5 actors
     directors: string[]; // List of directors
     producers: string[]; // List of producers
+    language: string; // Language of the movie
   } | null>(null);
 
   const [loading, setLoading] = useState(false);
@@ -21,7 +23,7 @@ const App: React.FC = () => {
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
   const [yearRange, setYearRange] = useState<[number, number]>([2000, 2020]);
   const [runtimeRange, setRuntimeRange] = useState<[number, number]>([0, 360]); // Default runtime in minutes
-  const [selectedLanguage, setSelectedLanguage] = useState<string>("en"); // Default to English
+  const [selectedLanguage, setSelectedLanguage] = useState<string>("any"); // Default to "Any"
 
   const genreOptions = [
     { id: "28", name: "Action" },
@@ -46,6 +48,7 @@ const App: React.FC = () => {
   ];
 
   const languageOptions = [
+    { code: "any", name: "Any" },
     { code: "en", name: "English" },
     { code: "es", name: "Spanish" },
     { code: "zh", name: "Chinese" },
@@ -70,7 +73,7 @@ const App: React.FC = () => {
           endYear: yearRange[1],
           minRuntime: runtimeRange[0],
           maxRuntime: runtimeRange[1],
-          language: selectedLanguage,
+          language: selectedLanguage === "any" ? undefined : selectedLanguage,
         },
       });
       setMovie(response.data);
@@ -249,6 +252,9 @@ const App: React.FC = () => {
           ) : (
             <div className="movie-runtime">Runtime: Not Available</div>
           )}
+          <div className="movie-language">
+            <strong>Language:</strong> {movie.language}
+          </div>
           <div className="movie-cast">
             <strong>Cast:</strong> {movie.cast.join(", ")}
           </div>
