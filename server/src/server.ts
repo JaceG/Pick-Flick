@@ -16,8 +16,8 @@ app.use(express.json());
 // Enable CORS for frontend access
 app.use(
   cors({
-    origin: 'http://localhost:3000', // Replace with your frontend URL
-    methods: ['GET', 'POST'],
+    origin: ["http://localhost:3000", "https://pick-flick-app.netlify.app"], // Add Netlify URL
+    methods: ["GET", "POST"],
   })
 );
 
