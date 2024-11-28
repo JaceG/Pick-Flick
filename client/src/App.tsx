@@ -2,29 +2,53 @@ import * as React from "react";
 import { useState } from "react";
 import axios from "axios";
 import "./App.css";
+import "./components/GenreButton/GenreButton.css";
+import "./components/SelectedGenres/SelectedGenres.css";
+import "./components/YearRangeSlider/YearRangeSlider.css";
+import "./components/RuntimeRangeSlider/RuntimeRangeSlider.css";
+import "./components/LanguageSelector/LanguageSelector.css";
+import "./components/MovieDisplay/MovieDisplay.css";
+import "./components/Spinner/Spinner.css";
+import "./components/ErrorMessage/ErrorMessage.css";
+import GenreButton from "./components/GenreButton/GenreButton.tsx";
+import SelectedGenres from "./components/SelectedGenres/SelectedGenres.tsx";
+import YearRangeSlider from "./components/YearRangeSlider/YearRangeSlider.tsx";
+import RuntimeRangeSlider from "./components/RuntimeRangeSlider/RuntimeRangeSlider.tsx";
+import LanguageSelector from "./components/LanguageSelector/LanguageSelector.tsx";
+import MovieDisplay from "./components/MovieDisplay/MovieDisplay.tsx";
+import Spinner from "./components/Spinner/Spinner.tsx";
+import ErrorMessage from "./components/ErrorMessage/ErrorMessage.tsx";
 
 const App: React.FC = () => {
+  // State to store the fetched movie details
   const [movie, setMovie] = useState<{
     title: string;
     genres: string[];
     releaseYear: string;
     synopsis: string;
     poster: string;
-    runtime: number; // Runtime in minutes
-    cast: string[]; // Top 5 actors
-    directors: string[]; // List of directors
-    producers: string[]; // List of producers
-    language: string; // Language of the movie
+    runtime: number;
+    cast: string[];
+    directors: string[];
+    producers: string[];
+    language: string;
   } | null>(null);
 
+  // State to manage loading status
   const [loading, setLoading] = useState(false);
+  // State to manage error messages
   const [error, setError] = useState<string | null>(null);
 
+  // State to store selected genres
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
+  // State to store the selected year range
   const [yearRange, setYearRange] = useState<[number, number]>([2000, 2020]);
+  // State to store the selected runtime range
   const [runtimeRange, setRuntimeRange] = useState<[number, number]>([0, 360]); // Default runtime in minutes
+  // State to store the selected language
   const [selectedLanguage, setSelectedLanguage] = useState<string>("any"); // Default to "Any"
 
+  // Options for genres
   const genreOptions = [
     { id: "28", name: "Action" },
     { id: "12", name: "Adventure" },
@@ -47,6 +71,7 @@ const App: React.FC = () => {
     { id: "37", name: "Western" },
   ];
 
+  // Options for languages
   const languageOptions = [
     { code: "any", name: "Any" },
     { code: "en", name: "English" },
@@ -61,6 +86,7 @@ const App: React.FC = () => {
     { code: "ja", name: "Japanese" },
   ];
 
+  // Function to fetch a random movie based on selected filters
   const fetchRandomMovie = async () => {
     setLoading(true);
     setError(null);
@@ -84,6 +110,7 @@ const App: React.FC = () => {
     }
   };
 
+  // Function to handle changes in range inputs (year and runtime)
   const handleRangeChange = (
     e: React.ChangeEvent<HTMLInputElement>,
     range: [number, number],
@@ -97,6 +124,13 @@ const App: React.FC = () => {
     }
   };
 
+  // Function to handle genre button clicks
+  const handleGenreClick = (genreId: string) => {
+    if (!selectedGenres.includes(genreId) && selectedGenres.length < 3) {
+      setSelectedGenres((prev) => [...prev, genreId]);
+    }
+  };
+
   return (
     <div className="app">
       <h1>Random Movie Generator</h1>
@@ -104,123 +138,41 @@ const App: React.FC = () => {
       {/* Available Genres */}
       <div className="genres-container">
         {genreOptions.map((option) => (
-          <button
+          <GenreButton
             key={option.id}
-            className="genre-button"
-            draggable
-            onDragStart={(e) => e.dataTransfer.setData("text/plain", option.id)}
-          >
-            {option.name}
-          </button>
+            option={option}
+            handleGenreClick={handleGenreClick}
+          />
         ))}
       </div>
 
       {/* Selected Genres */}
-      <div>
-        <h2 className="selected-genres-header">Drag And Drop To Select Genres</h2>
-        <div
-          className="selected-genres-container"
-          onDragOver={(e) => e.preventDefault()}
-          onDrop={(e) => {
-            const genreId = e.dataTransfer.getData("text/plain");
-            if (!selectedGenres.includes(genreId) && selectedGenres.length < 3) {
-              setSelectedGenres((prev) => [...prev, genreId]);
-            }
-          }}
-        >
-          {selectedGenres.map((genreId) => {
-            const genreName = genreOptions.find((g) => g.id === genreId)?.name || "Unknown";
-            return (
-              <div key={genreId} className="selected-genre">
-                {genreName}
-                <button
-                  type="button"
-                  onClick={() =>
-                    setSelectedGenres((prev) => prev.filter((id) => id !== genreId))
-                  }
-                  className="remove-genre-button"
-                >
-                  &times;
-                </button>
-              </div>
-            );
-          })}
-        </div>
-      </div>
+      <SelectedGenres
+        selectedGenres={selectedGenres}
+        genreOptions={genreOptions}
+        setSelectedGenres={setSelectedGenres}
+      />
 
       {/* Year Range Slider */}
-      <div className="year-range-container">
-        <label>
-          Start Year:
-          <input
-            type="range"
-            min="1900"
-            max="2024"
-            value={yearRange[0]}
-            onChange={(e) => handleRangeChange(e, yearRange, setYearRange, 0)}
-          />
-        </label>
-        <label>
-          End Year:
-          <input
-            type="range"
-            min="1900"
-            max="2024"
-            value={yearRange[1]}
-            onChange={(e) => handleRangeChange(e, yearRange, setYearRange, 1)}
-          />
-        </label>
-        <div>
-          {yearRange[0]} - {yearRange[1]}
-        </div>
-      </div>
+      <YearRangeSlider
+        yearRange={yearRange}
+        handleRangeChange={handleRangeChange}
+        setYearRange={setYearRange}
+      />
 
       {/* Runtime Range Slider */}
-      <div className="runtime-range-container">
-        <label>
-          Min Runtime (minutes):
-          <input
-            type="range"
-            min="0"
-            max="360"
-            step="10"
-            value={runtimeRange[0]}
-            onChange={(e) => handleRangeChange(e, runtimeRange, setRuntimeRange, 0)}
-          />
-        </label>
-        <label>
-          Max Runtime (minutes):
-          <input
-            type="range"
-            min="0"
-            max="360"
-            step="10"
-            value={runtimeRange[1]}
-            onChange={(e) => handleRangeChange(e, runtimeRange, setRuntimeRange, 1)}
-          />
-        </label>
-        <div>
-          {Math.floor(runtimeRange[0] / 60)}h {runtimeRange[0] % 60}m -{" "}
-          {Math.floor(runtimeRange[1] / 60)}h {runtimeRange[1] % 60}m
-        </div>
-      </div>
+      <RuntimeRangeSlider
+        runtimeRange={runtimeRange}
+        handleRangeChange={handleRangeChange}
+        setRuntimeRange={setRuntimeRange}
+      />
 
       {/* Language Selector */}
-      <div className="language-selector-container">
-        <label>
-          Preferred Language:
-          <select
-            value={selectedLanguage}
-            onChange={(e) => setSelectedLanguage(e.target.value)}
-          >
-            {languageOptions.map((lang) => (
-              <option key={lang.code} value={lang.code}>
-                {lang.name}
-              </option>
-            ))}
-          </select>
-        </label>
-      </div>
+      <LanguageSelector
+        selectedLanguage={selectedLanguage}
+        setSelectedLanguage={setSelectedLanguage}
+        languageOptions={languageOptions}
+      />
 
       {/* Find Movie Button */}
       <button
@@ -233,40 +185,13 @@ const App: React.FC = () => {
       </button>
 
       {/* Spinner */}
-      {loading && <div className="spinner"></div>}
+      {loading && <Spinner />}
 
       {/* Error Message */}
-      {error && <div className="error-message">{error}</div>}
+      {error && <ErrorMessage error={error} />}
 
       {/* Movie Display */}
-      {movie && (
-        <div className="movie-container">
-          <img className="movie-poster" src={movie.poster} alt={movie.title} />
-          <div className="movie-title">{movie.title}</div>
-          <div className="movie-genres">{movie.genres.join(", ")}</div>
-          <div className="movie-release">Release Year: {movie.releaseYear}</div>
-          {movie.runtime ? (
-            <div className="movie-runtime">
-              Runtime: {Math.floor(movie.runtime / 60)}h {movie.runtime % 60}m
-            </div>
-          ) : (
-            <div className="movie-runtime">Runtime: Not Available</div>
-          )}
-          <div className="movie-language">
-            <strong>Language:</strong> {movie.language}
-          </div>
-          <div className="movie-cast">
-            <strong>Cast:</strong> {movie.cast.join(", ")}
-          </div>
-          <div className="movie-directors">
-            <strong>Director(s):</strong> {movie.directors.join(", ")}
-          </div>
-          <div className="movie-producers">
-            <strong>Producer(s):</strong> {movie.producers.join(", ")}
-          </div>
-          <div className="movie-synopsis">{movie.synopsis}</div>
-        </div>
-      )}
+      {movie && <MovieDisplay movie={movie} />}
     </div>
   );
 };

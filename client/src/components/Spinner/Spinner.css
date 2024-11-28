@@ -1,0 +1,20 @@
+/* Spinner styles for loading animation */
+.spinner {
+  width: 50px; /* Set width */
+  height: 50px; /* Set height */
+  border: 5px solid #ccc; /* Light gray outer border */
+  border-top: 5px solid #2563eb; /* Primary color for animation */
+  border-radius: 50%; /* Circle shape */
+  animation: spin 1s linear infinite; /* Continuous spinning */
+  margin: 20px auto; /* Center the spinner */
+}
+
+/* Keyframes for spinner animation */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg); /* Starting position */
+  }
+  100% {
+    transform: rotate(360deg); /* Full rotation */
+  }
+}

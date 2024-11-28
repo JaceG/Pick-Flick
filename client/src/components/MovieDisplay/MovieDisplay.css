@@ -1,0 +1,65 @@
+/* Movie details container */
+.movie-container {
+  margin-top: 30px; /* Add top margin */
+  color: black; /* Set text color */
+  padding: 20px; /* Add padding */
+  border: 1px solid #ccc; /* Add border */
+  border-radius: 10px; /* Round corners */
+  background-color: #ffffff; /* Set background color */
+  display: flex; /* Use flexbox layout */
+  flex-direction: column; /* Arrange children in a column */
+  align-items: center; /* Center content horizontally */
+  text-align: left; /* Align text to the left */
+  width: 100%; /* Full width */
+  box-sizing: border-box; /* Ensure padding is included in the width/height */
+}
+
+/* Movie poster styles */
+.movie-poster {
+  width: 100%; /* Full width */
+  max-width: 300px; /* Limit the maximum width of the poster */
+  border-radius: 5px; /* Round corners */
+  margin-bottom: 15px; /* Add bottom margin */
+}
+
+/* Movie title styles */
+.movie-title {
+  font-size: 20px; /* Set font size */
+  font-weight: bold; /* Make text bold */
+  color: #333; /* Set text color */
+  text-align: center; /* Center the title text */
+}
+
+/* Styles for movie details like genres, release year, and synopsis */
+.movie-genres,
+.movie-release,
+.movie-synopsis {
+  margin: 5px 0; /* Add vertical margin */
+  font-size: 14px; /* Set font size */
+  color: #555; /* Set text color */
+  text-align: center; /* Center the text */
+}
+
+/* Movie cast, directors, and producers styles */
+.movie-cast,
+.movie-directors,
+.movie-producers {
+  margin: 5px 0; /* Add vertical margin */
+  font-size: 14px; /* Set font size */
+  color: #555; /* Set text color */
+  text-align: center; /* Center align text */
+}
+
+.movie-cast strong,
+.movie-directors strong,
+.movie-producers strong {
+  color: #333; /* Stronger emphasis for labels */
+  font-weight: bold; /* Bold text for labels */
+}
+
+.movie-runtime {
+  margin: 5px 0; /* Add vertical margin */
+  font-size: 14px; /* Set font size */
+  color: #555; /* Set text color */
+  text-align: center; /* Center align text */
+}

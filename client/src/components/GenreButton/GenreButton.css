@@ -1,0 +1,32 @@
+/* Container for genre buttons */
+.genres-container {
+  display: flex; /* Use flexbox layout */
+  flex-wrap: wrap; /* Allow wrapping to new rows */
+  gap: 10px; /* Space between buttons */
+  justify-content: center; /* Center the buttons */
+  margin: 20px 0; /* Add vertical margin */
+}
+
+/* Individual genre button styles */
+.genre-button {
+  padding: 10px 15px; /* Add padding */
+  font-size: 14px; /* Set font size */
+  background-color: #256150; /* Default green background */
+  color: white; /* White text color */
+  border: 1px solid #ccc; /* Neutral border */
+  border-radius: 5px; /* Rounded corners */
+  cursor: pointer; /* Pointer cursor on hover */
+  transition: background-color 0.3s, color 0.3s; /* Smooth transitions */
+  flex: 0 0 calc(25% - 10px); /* 4 buttons per row */
+  text-align: center; /* Center button text */
+}
+
+/* Styles for selected genre buttons */
+.genre-button.selected {
+  border-color: #1e4e3e; /* Slightly darker border for selected */
+}
+
+/* Hover effect for genre buttons */
+.genre-button:hover {
+  background-color: #1e4e3e; /* Darker green on hover */
+}

@@ -1,0 +1,28 @@
+/* Language Selector Container */
+.language-selector-container {
+  margin: 20px 0; /* Add vertical margin */
+  text-align: center; /* Center align */
+}
+
+.language-selector-container label {
+  font-size: 16px; /* Set font size */
+  font-weight: bold; /* Bold label text */
+  margin-right: 10px; /* Add space between label and dropdown */
+}
+
+/* Dropdown styles */
+.language-selector-container select {
+  padding: 5px; /* Add padding inside dropdown */
+  font-size: 14px; /* Set font size */
+  color: black; /* Set text color */
+  border: 1px solid #ccc; /* Border styling */
+  border-radius: 5px; /* Rounded corners */
+  background-color: #fff; /* White background */
+  cursor: pointer; /* Pointer cursor */
+}
+
+/* Focus styles for dropdown */
+.language-selector-container select:focus {
+  outline: none; /* Remove default outline */
+  border-color: #2563eb; /* Highlight border on focus */
+}

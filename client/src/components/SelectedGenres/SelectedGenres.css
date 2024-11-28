@@ -1,0 +1,61 @@
+/* Header for the selected genres section */
+.selected-genres-header {
+  font-size: 18px; /* Larger font size */
+  font-weight: bold; /* Bold text */
+  margin-bottom: 10px; /* Add bottom margin */
+  text-align: center; /* Center the header */
+}
+
+/* Light mode styles */
+body.light-mode .selected-genres-header {
+  color: black; /* Light mode text color */
+}
+
+/* Dark mode styles */
+body.dark-mode .selected-genres-header {
+  color: white; /* Dark mode text color */
+}
+
+/* Container for displaying selected genres */
+.selected-genres-container {
+  width: 100%; /* Full width of the app container */
+  margin: 10px 0; /* Add vertical margin */
+  padding: 10px; /* Add padding inside the container */
+  border: 2px dashed #ccc; /* Dashed border for visual distinction */
+  border-radius: 5px; /* Rounded corners */
+  min-height: 100px; /* Minimum height for the container */
+  display: flex; /* Use flexbox layout */
+  flex-wrap: wrap; /* Allow wrapping for selected genres */
+  gap: 10px; /* Space between selected genres */
+  justify-content: center; /* Center content inside the container */
+  align-items: center; /* Center items vertically */
+  background-color: #f9f9f9; /* Light background color */
+  box-sizing: border-box; /* Include padding in the width/height calculation */
+}
+
+/* Individual selected genre styles */
+.selected-genre {
+  display: flex; /* Use flexbox for alignment */
+  align-items: center; /* Center items vertically */
+  background-color: #256150; /* Green background for selected genres */
+  color: white; /* White text color */
+  padding: 5px 10px; /* Add padding */
+  border-radius: 5px; /* Rounded corners */
+  font-size: 14px; /* Set font size */
+  font-weight: bold; /* Bold text */
+}
+
+/* Remove button for selected genres */
+.remove-genre-button {
+  margin-left: 10px; /* Space between genre name and button */
+  background: none; /* No background for the button */
+  border: none; /* Remove border */
+  color: white; /* White text color */
+  font-size: 16px; /* Set font size */
+  cursor: pointer; /* Pointer cursor on hover */
+}
+
+/* Hover effect for the remove button */
+.remove-genre-button:hover {
+  color: red; /* Change text color to red on hover */
+}

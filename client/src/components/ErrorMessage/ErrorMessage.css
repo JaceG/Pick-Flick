@@ -1,0 +1,6 @@
+/* Error message styles for feedback */
+.error-message {
+  color: red; /* Set text color */
+  font-size: 14px; /* Set font size */
+  margin-top: 10px; /* Add top margin */
+}
