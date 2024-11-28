@@ -66,7 +66,7 @@ const App: React.FC = () => {
     setError(null);
 
     try {
-      const response = await axios.get("http://localhost:3001/api/movies/random", {
+      const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/movies/random`, {
         params: {
           genre: selectedGenres.join(","),
           startYear: yearRange[0],
