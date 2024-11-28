@@ -182,34 +182,143 @@ body,
 
 /* Year Range Container */
 .year-range-container {
-  margin: 20px 0;
-  text-align: center;
+  margin: 20px 0; /* Add vertical margin */
+  text-align: center; /* Center align */
 }
 
 .year-range-container label {
-  font-size: 16px;
-  font-weight: bold;
-  margin: 0 10px;
+  font-size: 16px; /* Set font size */
+  font-weight: bold; /* Bold label text */
+  margin: 0 10px; /* Add horizontal margin */
 }
 
+/* Slider container */
 .slider-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  margin-top: 10px;
+  display: flex; /* Use flexbox layout */
+  justify-content: center; /* Center content horizontally */
+  align-items: center; /* Center content vertically */
+  gap: 10px; /* Space between elements */
+  margin-top: 10px; /* Add top margin */
 }
 
+/* Slider styles */
 .slider {
-  width: 200px;
+  width: 200px; /* Set width */
 }
 
+/* Number input styles */
 input[type="number"] {
-  width: 70px;
-  text-align: center;
-  margin-left: 5px;
-  padding: 5px;
-  font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+  width: 70px; /* Set width */
+  text-align: center; /* Center text inside input */
+  margin-left: 5px; /* Add left margin */
+  padding: 5px; /* Add padding */
+  font-size: 16px; /* Set font size */
+  border: 1px solid #ccc; /* Border styling */
+  border-radius: 5px; /* Rounded corners */
+}
+
+/* Runtime Range Container */
+.runtime-range-container {
+  margin: 20px 0; /* Add vertical margin */
+  text-align: center; /* Center align */
+}
+
+.runtime-range-container label {
+  font-size: 16px; /* Set font size */
+  font-weight: bold; /* Bold label text */
+  margin: 0 10px; /* Add horizontal margin */
+  display: inline-block; /* Inline-block for proper alignment */
+}
+
+/* Number input styles for runtime range */
+.runtime-range-container input[type="number"] {
+  width: 100px; /* Set input width */
+  text-align: center; /* Center text inside input */
+  margin-left: 5px; /* Add left margin */
+  padding: 5px; /* Add padding */
+  font-size: 14px; /* Set font size */
+  border: 1px solid #ccc; /* Border styling */
+  border-radius: 5px; /* Rounded corners */
+}
+
+/* Focus styles for number input */
+.runtime-range-container input[type="number"]:focus {
+  outline: none; /* Remove default outline */
+  border-color: #2563eb; /* Highlight border on focus */
+}
+
+/* Remove number input arrows */
+.runtime-range-container input[type="number"]::-webkit-inner-spin-button,
+.runtime-range-container input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none; /* Remove number input arrows */
+  margin: 0; /* Remove margin */
+}
+
+/* Language Selector Container */
+.language-selector-container {
+  margin: 20px 0; /* Add vertical margin */
+  text-align: center; /* Center align */
+}
+
+.language-selector-container label {
+  font-size: 16px; /* Set font size */
+  font-weight: bold; /* Bold label text */
+  margin-right: 10px; /* Add space between label and dropdown */
+}
+
+/* Dropdown styles */
+.language-selector-container select {
+  padding: 5px; /* Add padding inside dropdown */
+  font-size: 14px; /* Set font size */
+  color: black; /* Set text color */
+  border: 1px solid #ccc; /* Border styling */
+  border-radius: 5px; /* Rounded corners */
+  background-color: #fff; /* White background */
+  cursor: pointer; /* Pointer cursor */
+}
+
+/* Focus styles for dropdown */
+.language-selector-container select:focus {
+  outline: none; /* Remove default outline */
+  border-color: #2563eb; /* Highlight border on focus */
+}
+
+/* Find Movie Button */
+.find-movie-button {
+  background-color: #256150; /* Green background */
+  color: white; /* White text color */
+  border: 1px solid #ccc; /* Neutral border */
+  padding: 10px 20px; /* Adjust padding */
+  font-size: 16px; /* Set font size */
+  cursor: pointer; /* Pointer cursor on hover */
+  border-radius: 5px; /* Rounded corners */
+  transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transitions */
+}
+
+/* Hover effect for Find Movie Button */
+.find-movie-button:hover {
+  background-color: #1e4e3e; /* Darker green on hover */
+}
+
+/* Disabled state for Find Movie Button */
+.find-movie-button:disabled {
+  background-color: #ddd; /* Disabled button color */
+  cursor: not-allowed; /* Change cursor for disabled state */
+}
+
+/* Movie cast, directors, and producers styles */
+.movie-cast,
+.movie-directors,
+.movie-producers {
+  margin: 5px 0; /* Add vertical margin */
+  font-size: 14px; /* Set font size */
+  color: #555; /* Set text color */
+  text-align: center; /* Center align text */
+}
+
+.movie-cast strong,
+.movie-directors strong,
+.movie-producers strong {
+  color: #333; /* Stronger emphasis for labels */
+  font-weight: bold;
 }
