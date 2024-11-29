@@ -15,7 +15,7 @@ const SelectedGenres: React.FC<SelectedGenresProps> = ({
 }) => {
   return (
     <div>
-      <h2 className="selected-genres-header">Drag And Drop To Select Genres</h2>
+      <h2 className="selected-genres-header">Tap, Click, or Drag And Drop To Select Genres</h2>
       <div
         className="selected-genres-container"
         onDragOver={(e) => e.preventDefault()} // Allow drag-over events

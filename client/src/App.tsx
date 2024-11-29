@@ -91,7 +91,7 @@ const App: React.FC = () => {
   const fetchRandomMovie = async () => {
     setLoading(true);
     setError(null);
-  
+
     try {
       const baseUrl = await getBaseUrl(); // Use the utility function
       const response = await axios.get(`${baseUrl}/api/movies/random`, {
@@ -144,6 +144,7 @@ const App: React.FC = () => {
             key={option.id}
             option={option}
             handleGenreClick={handleGenreClick}
+            isSelected={selectedGenres.includes(option.id)}
           />
         ))}
       </div>
@@ -176,18 +177,18 @@ const App: React.FC = () => {
         languageOptions={languageOptions}
       />
 
-      {/* Find Movie Button */}
-      <button
-        type="button"
-        className="find-movie-button"
-        onClick={fetchRandomMovie}
-        disabled={loading}
-      >
-        {loading ? "Loading..." : "Find Me a Movie"}
-      </button>
-
-      {/* Spinner */}
-      {loading && <Spinner />}
+      {/* Find Movie Button or Spinner */}
+      {loading ? (
+        <Spinner />
+      ) : (
+        <button
+          type="button"
+          className="find-movie-button"
+          onClick={fetchRandomMovie}
+        >
+          Find Me a Movie
+        </button>
+      )}
 
       {/* Error Message */}
       {error && <ErrorMessage error={error} />}

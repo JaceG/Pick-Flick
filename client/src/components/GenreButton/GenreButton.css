@@ -23,10 +23,23 @@
 
 /* Styles for selected genre buttons */
 .genre-button.selected {
-  border-color: #1e4e3e; /* Slightly darker border for selected */
+  background-color: #4caf50; /* Green for selected genres */
+  color: white; /* Contrasting text */
+  border: 2px solid #388e3c; /* Darker border */
 }
 
 /* Hover effect for genre buttons */
 .genre-button:hover {
   background-color: #1e4e3e; /* Darker green on hover */
+}
+
+/* Active state for genre buttons */
+.genre-button:active {
+  opacity: 0.8; /* Feedback on click */
+}
+
+/* Disabled state for genre buttons */
+.genre-button.dragging {
+  opacity: 0.5; /* Visual feedback during drag */
+  cursor: grabbing; /* Drag cursor */
 }

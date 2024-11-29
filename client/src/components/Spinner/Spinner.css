@@ -1,20 +1,43 @@
-/* Spinner styles for loading animation */
-.spinner {
-  width: 50px; /* Set width */
-  height: 50px; /* Set height */
-  border: 5px solid #ccc; /* Light gray outer border */
-  border-top: 5px solid #2563eb; /* Primary color for animation */
-  border-radius: 50%; /* Circle shape */
-  animation: spin 1s linear infinite; /* Continuous spinning */
-  margin: 20px auto; /* Center the spinner */
+/* Container for the spinner */
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px; /* Space between circles */
 }
 
-/* Keyframes for spinner animation */
-@keyframes spin {
+/* Individual spinning circles */
+.loading-circle {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%; /* Make circles */
+  background-color: #2563eb; /* Primary color */
+  animation: spin-circle 1.2s linear infinite;
+}
+
+/* Delayed animations for the three circles */
+.loading-circle:nth-child(1) {
+  animation-delay: 0s;
+}
+.loading-circle:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.loading-circle:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+/* Circle spinning animation */
+@keyframes spin-circle {
   0% {
-    transform: rotate(0deg); /* Starting position */
+    transform: scale(1); /* Normal size */
+    opacity: 1; /* Fully visible */
+  }
+  50% {
+    transform: scale(0.5); /* Smaller size */
+    opacity: 0.5; /* Semi-transparent */
   }
   100% {
-    transform: rotate(360deg); /* Full rotation */
+    transform: scale(1); /* Normal size */
+    opacity: 1; /* Fully visible */
   }
 }

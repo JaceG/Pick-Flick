@@ -7,6 +7,7 @@
     "skipLibCheck": true,
     "esModuleInterop": true,
     "jsx": "react-jsx",
+    "baseUrl": "./",
 
     /* Bundler mode */
     "moduleResolution": "Node",
@@ -23,6 +24,9 @@
     "noUncheckedSideEffectImports": true,
     "allowSyntheticDefaultImports": true
   },
-  "include": ["vite.config.ts", "src/**/*"],
-  "exclude": ["node_modules", "dist"]
+  "include": ["vite.config.ts", "src/**/*", "client/constants/**/*", "assets/**/*"],
+  "exclude": ["node_modules", "dist"],
+  "paths": {
+    "*": ["node_modules/*", "src/*"]
+  },
 }

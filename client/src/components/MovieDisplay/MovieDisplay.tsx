@@ -1,4 +1,5 @@
 import * as React from "react";
+import PlaceholderPoster from "../../../../assets/img/placeholder.jpg";
 
 // Props interface defining the structure of the movie object
 interface MovieDisplayProps {
@@ -20,32 +21,32 @@ interface MovieDisplayProps {
 const MovieDisplay: React.FC<MovieDisplayProps> = ({ movie }) => {
   return (
     <div className="movie-container">
-      <img className="movie-poster" src={movie.poster} alt={movie.title} /> {/* Poster image */}
-      <div className="movie-title">{movie.title}</div> {/* Title */}
-      <div className="movie-genres">{movie.genres.join(", ")}</div> {/* Genres */}
-      <div className="movie-release">Release Year: {movie.releaseYear}</div> {/* Release year */}
-      {movie.runtime ? (
-        <div className="movie-runtime">
-          Runtime: {Math.floor(movie.runtime / 60)}h {movie.runtime % 60}m {/* Runtime in hours and minutes */}
+      <img
+        className="movie-poster"
+        src={movie.poster || PlaceholderPoster }
+        alt={movie.poster ? `Movie poster for ${movie.title}` : `Placeholder for ${movie.title}`}
+      />
+      <div className="movie-details">
+        <h2 className="movie-title">{movie.title}</h2>
+        <div className="movie-meta">
+          <p className="movie-genres">{movie.genres.join(", ")}</p>
+          <p className="movie-release">Release Year: {movie.releaseYear}</p>
         </div>
-      ) : (
-        <div className="movie-runtime">Runtime: Not Available</div>
-      )}
-      <div className="movie-language">
-        <strong>Language:</strong> {movie.language}
+        <div className="movie-runtime">
+          Runtime: {movie.runtime ? `${Math.floor(movie.runtime / 60)}h ${movie.runtime % 60}m` : "Not Available"}
+        </div>
+        <div className="movie-synopsis">
+          <p><strong>Synopsis:</strong> {movie.synopsis}</p>
+        </div>
+        <div className="movie-credits">
+          <p><strong>Cast:</strong> {movie.cast.join(", ")}</p>
+          <p><strong>Director(s):</strong> {movie.directors.join(", ")}</p>
+          <p><strong>Producer(s):</strong> {movie.producers.join(", ")}</p>
+        </div>
       </div>
-      <div className="movie-cast">
-        <strong>Cast:</strong> {movie.cast.join(", ")}
-      </div>
-      <div className="movie-directors">
-        <strong>Director(s):</strong> {movie.directors.join(", ")}
-      </div>
-      <div className="movie-producers">
-        <strong>Producer(s):</strong> {movie.producers.join(", ")}
-      </div>
-      <div className="movie-synopsis">{movie.synopsis}</div> {/* Synopsis */}
     </div>
   );
 };
+
 
 export default MovieDisplay; // Export the component for use in other files
