@@ -32,7 +32,10 @@
     "paths": {
       "@components/*": ["src/components/*"],
       "@utils/*": ["src/utils/*"]
-    }
+    },
+
+    /* Synthetic imports compatibility */
+    "allowSyntheticDefaultImports": true
   },
   "include": ["src"], // Ensures only source files are included
   "exclude": ["node_modules", "dist"] // Excludes unnecessary files
