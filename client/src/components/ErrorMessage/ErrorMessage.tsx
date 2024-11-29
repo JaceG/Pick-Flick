@@ -1,13 +1,13 @@
-import * as React from "react";
+import React from "react";
 
 // Props interface to define the expected error message structure
 interface ErrorMessageProps {
-  error: string; // The error message to display
+  message: string; // The error message to display
 }
 
 // Functional component to display an error message
-const ErrorMessage: React.FC<ErrorMessageProps> = ({ error }) => {
-  return <div className="error-message">{error}</div>; // Render the error message inside a div
+const ErrorMessage: React.FC<ErrorMessageProps> = ({ message }) => {
+  return <div className="error-message">{message}</div>; // Render the error message inside a div
 };
 
-export default ErrorMessage; // Export the component for use in other files
+export default ErrorMessage;
