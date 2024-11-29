@@ -17,13 +17,30 @@ interface MovieDisplayProps {
   };
 }
 
+// Mapping of language codes to full names
+const languageMap: { [key: string]: string } = {
+  en: "English",
+  es: "Spanish",
+  zh: "Chinese",
+  fr: "French",
+  de: "German",
+  hi: "Hindi",
+  ar: "Arabic",
+  ru: "Russian",
+  pt: "Portuguese",
+  ja: "Japanese",
+  // Add more language mappings as needed
+};
+
 // Functional component to display movie details
 const MovieDisplay: React.FC<MovieDisplayProps> = ({ movie }) => {
+  const languageFullName = languageMap[movie.language] || movie.language;
+
   return (
     <div className="movie-container">
       <img
         className="movie-poster"
-        src={movie.poster || PlaceholderPoster }
+        src={movie.poster || PlaceholderPoster}
         alt={movie.poster ? `Movie poster for ${movie.title}` : `Placeholder for ${movie.title}`}
       />
       <div className="movie-details">
@@ -43,10 +60,12 @@ const MovieDisplay: React.FC<MovieDisplayProps> = ({ movie }) => {
           <p><strong>Director(s):</strong> {movie.directors.join(", ")}</p>
           <p><strong>Producer(s):</strong> {movie.producers.join(", ")}</p>
         </div>
+        <div className="movie-language">
+          <p><strong>Language:</strong> {languageFullName}</p>
+        </div>
       </div>
     </div>
   );
 };
-
 
 export default MovieDisplay; // Export the component for use in other files
