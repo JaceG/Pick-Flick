@@ -1,5 +1,6 @@
 import * as React from "react";
 import { useState } from "react";
+import { getBaseUrl } from "./utils/getBaseUrl";
 import axios from "axios";
 import "./App.css";
 import "./components/GenreButton/GenreButton.css";
@@ -90,9 +91,10 @@ const App: React.FC = () => {
   const fetchRandomMovie = async () => {
     setLoading(true);
     setError(null);
-
+  
     try {
-      const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/movies/random`, {
+      const baseUrl = await getBaseUrl(); // Use the utility function
+      const response = await axios.get(`${baseUrl}/api/movies/random`, {
         params: {
           genre: selectedGenres.join(","),
           startYear: yearRange[0],

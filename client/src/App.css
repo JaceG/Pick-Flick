@@ -14,8 +14,8 @@ body,
   text-align: center; /* Center text */
   padding: 20px; /* Add padding */
   height: 100%; /* Full height */
-  width: 600px; /* Set width */
-  max-width: 100%; /* Limit the maximum width of the app */
+  width: 100%; /* Default width */
+  max-width: 600px; /* Limit maximum width */
   display: flex; /* Use flexbox layout */
   flex-direction: column; /* Arrange children in a column */
   justify-content: flex-start; /* Align items to the top */
@@ -36,8 +36,23 @@ body,
   transition: background-color 0.3s, transform 0.2s; /* Smooth transitions */
 }
 
-/* Hover effect for find-movie-button */
-.find-movie-button:hover {
-  background-color: #1e4e3e; /* Darker green on hover */
-  transform: scale(1.05); /* Slight zoom effect */
+/* Responsive styles for smaller screens */
+@media (max-width: 600px) {
+  .app {
+    padding: 10px; /* Reduce padding */
+    width: 100%; /* Use full screen width */
+  }
+
+  .find-movie-button {
+    font-size: 14px; /* Adjust font size for smaller screens */
+    padding: 8px 12px; /* Adjust padding for smaller screens */
+  }
+}
+
+/* Remove hover effects on mobile */
+@media (hover: none) {
+  .find-movie-button:hover {
+    background-color: #256150; /* Keep original background color */
+    transform: none; /* Remove transform effect */
+  }
 }
