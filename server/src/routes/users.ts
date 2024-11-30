@@ -4,49 +4,7 @@ import { User } from '../models/User.js';
 
 const router = express.Router();
 
-// User registration route
-router.post('/register', async (req: Request, res: Response) => {
-  const { username, email, password } = req.body;
-
-  if (!username || !email || !password) {
-    return res.status(400).json({ message: 'All fields are required' });
-  }
-
-  try {
-    // Check if the username or email already exists
-    const existingUser = await User.findOne({
-      where: { email },
-    });
-
-    if (existingUser) {
-      return res.status(409).json({ message: 'User with this email already exists' });
-    }
-
-    // Hash the password
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Create a new user
-    const newUser = await User.create({
-      username,
-      email,
-      password: hashedPassword,
-    });
-
-    res.status(201).json({
-      message: 'User registered successfully',
-      user: {
-        id: newUser.id,
-        username: newUser.username,
-        email: newUser.email,
-      },
-    });
-  } catch (error) {
-    console.error('Registration Error:', error);
-    res.status(500).json({ message: 'Internal server error' });
-  }
-});
-
-// Existing login route
+// User login route
 router.post('/login', async (req: Request, res: Response) => {
   const { username, password } = req.body;
 
@@ -67,7 +25,7 @@ router.post('/login', async (req: Request, res: Response) => {
       return res.status(401).json({ message: 'Invalid password' });
     }
 
-    // Login successful
+    // Return success response
     res.status(200).json({
       message: 'Login successful',
       user: {

@@ -4,7 +4,7 @@ import "./LoginForm.css";
 import InputField from "../../../InputField/InputField";
 
 interface LoginFormProps {
-  onLogin: () => void; // Callback function to handle successful login
+  onLogin: () => void;
 }
 
 const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
@@ -12,21 +12,29 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
 
+  // Set the API base URL dynamically based on the environment
+  const API_BASE_URL =
+    process.env.NODE_ENV === "production"
+      ? "https://pick-flick.onrender.com"
+      : "http://localhost:3001";
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
     try {
-      const response = await axios.post("/api/users/login", {
+      // Send login request to the backend
+      const response = await axios.post(`${API_BASE_URL}/api/users/login`, {
         username,
         password,
       });
 
       if (response.status === 200) {
         console.log("Login successful!");
-        onLogin(); // Trigger the onLogin callback
+        onLogin();
       }
     } catch (err: any) {
+      // Handle errors from the server or network issues
       setError(err.response?.data?.message || "An error occurred during login");
     }
   };
