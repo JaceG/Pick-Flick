@@ -9,7 +9,6 @@
 
 export const getBaseUrl = async (): Promise<string> => {
   try {
-    // Check the health endpoint of the local server
     const response = await fetch("http://localhost:3001/health");
 
     if (response.ok) {
@@ -18,8 +17,10 @@ export const getBaseUrl = async (): Promise<string> => {
     }
   } catch (err) {
     console.warn("Local server not available, falling back to production.");
+    console.error(err); // Log the error for debugging
   }
 
-  // Fallback to the production server URL
+  console.log("Falling back to production server.");
   return "https://pick-flick.onrender.com";
 };
+

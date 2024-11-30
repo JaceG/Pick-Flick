@@ -3,6 +3,15 @@ import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from "react
 import { getBaseUrl } from "./utils/getBaseUrl";
 import axios from "axios";
 import "./App.css"; // Global app styles
+import "./components/GenreButton/GenreButton.css";
+import "./components/SelectedGenres/SelectedGenres.css";
+import "./components/YearRangeSlider/YearRangeSlider.css";
+import "./components/RuntimeRangeSlider/RuntimeRangeSlider.css";
+import "./components/LanguageSelector/LanguageSelector.css";
+import "./components/MovieDisplay/MovieDisplay.css";
+import "./components/Spinner/Spinner.css";
+import "./components/ErrorMessage/ErrorMessage.css";
+import "./components/Auth/AuthPage/AuthPage.css";
 import GenreButton from "./components/GenreButton/GenreButton";
 import SelectedGenres from "./components/SelectedGenres/SelectedGenres";
 import YearRangeSlider from "./components/YearRangeSlider/YearRangeSlider";
@@ -11,7 +20,7 @@ import LanguageSelector from "./components/LanguageSelector/LanguageSelector";
 import MovieDisplay from "./components/MovieDisplay/MovieDisplay";
 import Spinner from "./components/Spinner/Spinner";
 import ErrorMessage from "./components/ErrorMessage/ErrorMessage";
-import AuthPage from "./components/Auth/AuthPage/AuthPage"; // Ensure AuthPage is set up correctly
+import AuthPage from "./components/Auth/AuthPage/AuthPage";
 
 const App: React.FC = () => {
   const [movie, setMovie] = useState<{
@@ -67,30 +76,6 @@ const App: React.FC = () => {
     };
 
     const handleLogout = () => setLoggedIn(false);
-
-    const fetchRandomMovie = async () => {
-      setLoading(true);
-      setError(null);
-
-      try {
-        const baseUrl = await getBaseUrl(); // Dynamically get the base URL
-        const response = await axios.get(`${baseUrl}/api/movies/random`, {
-          params: {
-            genre: selectedGenres.join(","),
-            startYear: yearRange[0],
-            endYear: yearRange[1],
-            minRuntime: runtimeRange[0],
-            maxRuntime: runtimeRange[1],
-            language: selectedLanguage === "any" ? undefined : selectedLanguage,
-          },
-        });
-        setMovie(response.data);
-      } catch (err) {
-        setError("Failed to fetch a random movie. Please try again.");
-      } finally {
-        setLoading(false);
-      }
-    };
 
     return (
       <div className="app">
@@ -178,7 +163,34 @@ const App: React.FC = () => {
                 {loading ? (
                   <Spinner />
                 ) : (
-                  <button className="find-movie-button" onClick={fetchRandomMovie}>
+                  <button
+                    className="find-movie-button"
+                    onClick={async () => {
+                      setLoading(true);
+                      setError(null);
+                      try {
+                        const baseUrl = await getBaseUrl();
+                        const response = await axios.get(
+                          `${baseUrl}/api/movies/random`,
+                          {
+                            params: {
+                              genre: selectedGenres.join(","),
+                              startYear: yearRange[0],
+                              endYear: yearRange[1],
+                              minRuntime: runtimeRange[0],
+                              maxRuntime: runtimeRange[1],
+                              language: selectedLanguage,
+                            },
+                          }
+                        );
+                        setMovie(response.data);
+                      } catch (err) {
+                        setError("Failed to fetch a random movie. Please try again.");
+                      } finally {
+                        setLoading(false);
+                      }
+                    }}
+                  >
                     Find Me a Movie
                   </button>
                 )}
