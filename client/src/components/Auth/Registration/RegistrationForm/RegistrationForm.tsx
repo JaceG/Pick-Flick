@@ -5,7 +5,7 @@ import ErrorMessage from '../../../ErrorMessage/ErrorMessage';
 import InputField from '../../../InputField/InputField';
 
 interface RegistrationFormProps {
-  onRegisterSuccess: () => void; // Prop for handling successful registration
+  onRegisterSuccess: () => void;
 }
 
 const RegistrationForm: React.FC<RegistrationFormProps> = ({ onRegisterSuccess }) => {
@@ -15,6 +15,11 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onRegisterSuccess }
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  const API_BASE_URL =
+    process.env.NODE_ENV === 'production'
+      ? 'https://pick-flick.onrender.com'
+      : 'http://localhost:3001';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,85 +31,74 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onRegisterSuccess }
       return;
     }
 
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setError('Please enter a valid email address');
-      return;
-    }
-
     if (password !== confirmPassword) {
       setError('Passwords do not match');
       return;
     }
 
     try {
-      const response = await axios.post('/api/users/register', {
+      console.log('Sending registration request:', { username, email });
+
+      const response = await axios.post(`${API_BASE_URL}/api/users/register`, {
         username,
         email,
         password,
       });
 
+      console.log('Registration response:', response);
+
       if (response.status === 201) {
-        setSuccessMessage('Registration successful! Redirecting to login...');
-        setTimeout(() => {
-          onRegisterSuccess(); // Call the callback function
-        }, 2000);
+        setSuccessMessage('Registration successful!');
+        onRegisterSuccess();
+      } else {
+        setError('Registration failed. Please try again.');
       }
     } catch (err: any) {
-      setError(err.response?.data?.message || 'An error occurred during registration');
+      console.error('Error during registration:', err);
+      setError(err.response?.data?.message || 'An error occurred during registration.');
     }
   };
 
   return (
-    <div className="registration-form">
+    <form className="registration-form" onSubmit={handleSubmit}>
       <h2>Register</h2>
+
       {error && <ErrorMessage message={error} />}
       {successMessage && <p className="success-message">{successMessage}</p>}
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <InputField
-            id="username"
-            type="text"
-            value={username}
-            label="Username"
-            placeholder="Enter your username"
-            onChange={(e) => setUsername(e.target.value)}
-          />
-        </div>
-        <div className="form-group">
-          <InputField
-            id="email"
-            type="email"
-            value={email}
-            label="Email"
-            placeholder="Enter your email"
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </div>
-        <div className="form-group">
-          <InputField
-            id="password"
-            type="password"
-            value={password}
-            label="Password"
-            placeholder="Enter your password"
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </div>
-        <div className="form-group">
-          <InputField
-            id="confirmPassword"
-            type="password"
-            value={confirmPassword}
-            label="Confirm Password"
-            placeholder="Re-enter your password"
-            onChange={(e) => setConfirmPassword(e.target.value)}
-          />
-        </div>
-        <button type="submit" className="submit-button">
-          Register
-        </button>
-      </form>
-    </div>
+
+      <InputField
+        id="username"
+        label="Username"
+        value={username}
+        type="text"
+        onChange={(e) => setUsername(e.target.value)}
+      />
+      <InputField
+        id="email"
+        label="Email"
+        value={email}
+        type="email"
+        onChange={(e) => setEmail(e.target.value)}
+      />
+      <InputField
+        id="password"
+        label="Password"
+        value={password}
+        type="password"
+        onChange={(e) => setPassword(e.target.value)}
+      />
+      <InputField
+        id="confirmPassword"
+        label="Confirm Password"
+        value={confirmPassword}
+        type="password"
+        onChange={(e) => setConfirmPassword(e.target.value)}
+      />
+
+      <button type="submit" className="register-button">
+        Register
+      </button>
+    </form>
   );
 };
 
