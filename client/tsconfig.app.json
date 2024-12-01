@@ -37,6 +37,6 @@
     /* Synthetic imports compatibility */
     "allowSyntheticDefaultImports": true
   },
-  "include": ["src"], // Ensures only source files are included
+  "include": ["src", "constants/genreOptions.ts"], // Ensures only source files are included
   "exclude": ["node_modules", "dist"] // Excludes unnecessary files
 }

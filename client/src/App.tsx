@@ -1,12 +1,10 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   BrowserRouter as Router,
   Routes,
   Route,
   Link,
 } from "react-router-dom";
-import { getBaseUrl } from "./utils/getBaseUrl";
-import axios from "axios";
 import "./App.css";
 import GenreButton from "./components/GenreButton/GenreButton";
 import SelectedGenres from "./components/SelectedGenres/SelectedGenres";
@@ -17,91 +15,32 @@ import MovieDisplay from "./components/MovieDisplay/MovieDisplay";
 import Spinner from "./components/Spinner/Spinner";
 import ErrorMessage from "./components/ErrorMessage/ErrorMessage";
 import AuthPage from "./components/Auth/AuthPage/AuthPage";
+import { useMovieState } from "./hooks/useMovieState";
+import { genreOptions } from "../constants/genreOptions";
 
 const App: React.FC = () => {
-  const [movie, setMovie] = useState<{
-    title: string;
-    genres: string[];
-    releaseYear: string;
-    synopsis: string;
-    poster: string;
-    runtime: number;
-    cast: string[];
-    directors: string[];
-    producers: string[];
-    language: string;
-  } | null>(null);
-
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [loggedIn, setLoggedIn] = useState(false);
-
-  const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
-  const [yearRange, setYearRange] = useState<[number, number]>([2000, 2020]);
-  const [runtimeRange, setRuntimeRange] = useState<[number, number]>([0, 360]);
-  const [selectedLanguage, setSelectedLanguage] = useState<string>("any");
-
-  const genreOptions = [
-    { id: "28", name: "Action" },
-    { id: "12", name: "Adventure" },
-    { id: "16", name: "Animation" },
-    { id: "35", name: "Comedy" },
-    { id: "80", name: "Crime" },
-    { id: "99", name: "Documentary" },
-    { id: "18", name: "Drama" },
-    { id: "10751", name: "Family" },
-    { id: "14", name: "Fantasy" },
-    { id: "36", name: "History" },
-    { id: "27", name: "Horror" },
-    { id: "10402", name: "Music" },
-    { id: "9648", name: "Mystery" },
-    { id: "10749", name: "Romance" },
-    { id: "878", name: "Sci-Fi" },
-    { id: "10770", name: "TV Movie" },
-    { id: "53", name: "Thriller" },
-    { id: "10752", name: "War" },
-    { id: "37", name: "Western" },
-  ];
-
-  const handleRangeChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    range: [number, number],
-    setRange: React.Dispatch<React.SetStateAction<[number, number]>>,
-    index: number
-  ) => {
-    const newRange = [...range];
-    newRange[index] = parseInt(e.target.value, 10);
-    if (newRange[0] <= newRange[1]) {
-      setRange([newRange[0], newRange[1]]);
-    }
-  };
-
-  const handleFetchMovie = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const baseUrl = await getBaseUrl();
-      const response = await axios.get(`${baseUrl}/api/movies/random`, {
-        params: {
-          genre: selectedGenres.join(","),
-          startYear: yearRange[0],
-          endYear: yearRange[1],
-          minRuntime: runtimeRange[0],
-          maxRuntime: runtimeRange[1],
-          language: selectedLanguage === "any" ? undefined : selectedLanguage,
-        },
-      });
-      setMovie(response.data);
-    } catch {
-      setError("Failed to fetch a random movie. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const {
+    movie,
+    loading,
+    error,
+    loggedIn,
+    selectedGenres,
+    yearRange,
+    runtimeRange,
+    selectedLanguage,
+    setLoggedIn,
+    setSelectedGenres,
+    setYearRange,
+    setRuntimeRange,
+    setSelectedLanguage,
+    handleRangeChange,
+    handleFetchMovie,
+  } = useMovieState();
 
   return (
     <Router>
       <div className="app">
+        {/* Header */}
         <header className="app-header">
           <h1>Random Movie Generator</h1>
           <nav>
@@ -125,11 +64,13 @@ const App: React.FC = () => {
           </nav>
         </header>
 
+        {/* Routes */}
         <Routes>
           <Route
             path="/"
             element={
               <>
+                {/* Genre Selection */}
                 <div className="genres-container">
                   {genreOptions.map((option) => (
                     <GenreButton
@@ -151,16 +92,19 @@ const App: React.FC = () => {
                   genreOptions={genreOptions}
                   setSelectedGenres={setSelectedGenres}
                 />
+                {/* Year Range Slider */}
                 <YearRangeSlider
                   yearRange={yearRange}
                   setYearRange={setYearRange}
                   handleRangeChange={handleRangeChange}
                 />
+                {/* Runtime Range Slider */}
                 <RuntimeRangeSlider
                   runtimeRange={runtimeRange}
                   setRuntimeRange={setRuntimeRange}
                   handleRangeChange={handleRangeChange}
                 />
+                {/* Language Selector */}
                 <LanguageSelector
                   selectedLanguage={selectedLanguage}
                   setSelectedLanguage={setSelectedLanguage}
@@ -178,6 +122,7 @@ const App: React.FC = () => {
                     { code: "ja", name: "Japanese" },
                   ]}
                 />
+                {/* Fetch Movie Button */}
                 {loading ? (
                   <Spinner />
                 ) : (
@@ -192,7 +137,9 @@ const App: React.FC = () => {
                     Find Me a Movie
                   </button>
                 )}
+                {/* Error Message */}
                 {error && <ErrorMessage message={error} />}
+                {/* Movie Display */}
                 {movie && <MovieDisplay movie={movie} />}
               </>
             }

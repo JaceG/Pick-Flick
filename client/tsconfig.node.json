@@ -24,7 +24,7 @@
     "noUncheckedSideEffectImports": true,
     "allowSyntheticDefaultImports": true
   },
-  "include": ["vite.config.ts", "src/**/*", "client/constants/**/*", "assets/**/*"],
+  "include": ["vite.config.ts", "src/**/*", "client/constants/**/*", "assets/**/*", "constants/genreOptions.ts"],
   "exclude": ["node_modules", "dist"],
   "paths": {
     "*": ["node_modules/*", "src/*"]
