@@ -1,4 +1,5 @@
-import * as React from "react";
+import React from "react";
+import "./GenreButton.css"; 
 
 // Props interface defining the structure of the genre button component
 interface GenreButtonProps {
@@ -8,19 +9,26 @@ interface GenreButtonProps {
 }
 
 // Functional component for rendering a genre button
-const GenreButton: React.FC<GenreButtonProps> = ({ option, handleGenreClick, isSelected }) => {
+const GenreButton: React.FC<GenreButtonProps> = ({
+  option,
+  handleGenreClick,
+  isSelected,
+}) => {
   return (
     <button
-    className={`genre-button ${isSelected ? "selected" : ""}`} // Styling class
+      type="button" // Prevents the default form submission behavior
+      className={`genre-button ${isSelected ? "selected" : ""}`} // Styling class
       draggable // Makes the button draggable
-      onDragStart={(e) => e.dataTransfer.setData("text/plain", option.id)} // Handles drag event
+      onDragStart={(e) => {
+        e.dataTransfer.setData("text/plain", option.id); // Handles drag event
+      }}
       onClick={() => handleGenreClick(option.id)} // Handles click event
       aria-label={`Select ${option.name} genre`} // Accessibility label for screen readers
-      aria-pressed={isSelected} // Reflect selected state for screen readers
+      aria-pressed={isSelected} // Reflects selected state for screen readers
     >
       {option.name} {/* Display the genre name */}
     </button>
   );
 };
 
-export default GenreButton; // Export the component for use in other files
+export default GenreButton;

@@ -34,6 +34,7 @@ body,
   cursor: pointer; /* Pointer cursor on hover */
   text-align: center; /* Center the button text */
   transition: background-color 0.3s, transform 0.2s; /* Smooth transitions */
+  margin-bottom: 20px; /* Add margin below the button */
 }
 
 /* Responsive styles for smaller screens */

@@ -1,33 +1,33 @@
-import * as React from "react";
+import React from "react";
+import "./YearRangeSlider.css";
 
-// Props interface defining the structure for year range slider
 interface YearRangeSliderProps {
-  yearRange: [number, number]; // Current min and max year range
+  yearRange: [number, number]; // Current year range values
+  setYearRange: React.Dispatch<React.SetStateAction<[number, number]>>; // Function to update year range
   handleRangeChange: (
     e: React.ChangeEvent<HTMLInputElement>,
     range: [number, number],
     setRange: React.Dispatch<React.SetStateAction<[number, number]>>,
     index: number
-  ) => void; // Callback to handle range change
-  setYearRange: React.Dispatch<React.SetStateAction<[number, number]>>; // State updater for year range
+  ) => void; // Function to handle changes in the range sliders
 }
 
-// Functional component for selecting a year range
 const YearRangeSlider: React.FC<YearRangeSliderProps> = ({
   yearRange,
-  handleRangeChange,
   setYearRange,
+  handleRangeChange,
 }) => {
   return (
     <div className="year-range-container">
       <label>
         Start Year:
         <input
-          type="range" // Input type is a range slider
+          type="range"
           min="1900"
           max="2024"
-          value={yearRange[0]} // Bind to start year
-          onChange={(e) => handleRangeChange(e, yearRange, setYearRange, 0)} // Update start year
+          value={yearRange[0]}
+          onChange={(e) => handleRangeChange(e, yearRange, setYearRange, 0)}
+          aria-label="Start year"
         />
       </label>
       <label>
@@ -36,15 +36,16 @@ const YearRangeSlider: React.FC<YearRangeSliderProps> = ({
           type="range"
           min="1900"
           max="2024"
-          value={yearRange[1]} // Bind to end year
-          onChange={(e) => handleRangeChange(e, yearRange, setYearRange, 1)} // Update end year
+          value={yearRange[1]}
+          onChange={(e) => handleRangeChange(e, yearRange, setYearRange, 1)}
+          aria-label="End year"
         />
       </label>
       <div>
-        {yearRange[0]} - {yearRange[1]} {/* Display year range */}
+        {yearRange[0]} - {yearRange[1]}
       </div>
     </div>
   );
 };
 
-export default YearRangeSlider; // Export the component for use in other files
+export default YearRangeSlider;

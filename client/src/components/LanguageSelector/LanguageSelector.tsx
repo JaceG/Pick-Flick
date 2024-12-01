@@ -1,13 +1,12 @@
-import * as React from "react";
+import React from "react";
+import "./LanguageSelector.css";
 
-// Props interface defining the structure of the language selector component
 interface LanguageSelectorProps {
-  selectedLanguage: string; // Currently selected language
-  setSelectedLanguage: React.Dispatch<React.SetStateAction<string>>; // State updater for the selected language
-  languageOptions: { code: string; name: string }[]; // Array of available language options
+  selectedLanguage: string;
+  setSelectedLanguage: React.Dispatch<React.SetStateAction<string>>;
+  languageOptions: { code: string; name: string }[];
 }
 
-// Functional component for selecting a preferred language
 const LanguageSelector: React.FC<LanguageSelectorProps> = ({
   selectedLanguage,
   setSelectedLanguage,
@@ -15,15 +14,16 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
 }) => {
   return (
     <div className="language-selector-container">
-      <label>
+      <label htmlFor="language-selector">
         Preferred Language:
         <select
-          value={selectedLanguage} // Bind the selected value to state
-          onChange={(e) => setSelectedLanguage(e.target.value)} // Update state on change
+          id="language-selector"
+          value={selectedLanguage}
+          onChange={(e) => setSelectedLanguage(e.target.value)}
         >
-          {languageOptions.map((lang) => (
-            <option key={lang.code} value={lang.code}>
-              {lang.name} {/* Display language name */}
+          {languageOptions.map((language) => (
+            <option key={language.code} value={language.code}>
+              {language.name}
             </option>
           ))}
         </select>
@@ -32,4 +32,4 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
   );
 };
 
-export default LanguageSelector; // Export the component for use in other files
+export default LanguageSelector;

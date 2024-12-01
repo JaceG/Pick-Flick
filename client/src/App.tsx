@@ -1,17 +1,13 @@
 import React, { useState } from "react";
-import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Link,
+} from "react-router-dom";
 import { getBaseUrl } from "./utils/getBaseUrl";
 import axios from "axios";
-import "./App.css"; // Global app styles
-import "./components/GenreButton/GenreButton.css";
-import "./components/SelectedGenres/SelectedGenres.css";
-import "./components/YearRangeSlider/YearRangeSlider.css";
-import "./components/RuntimeRangeSlider/RuntimeRangeSlider.css";
-import "./components/LanguageSelector/LanguageSelector.css";
-import "./components/MovieDisplay/MovieDisplay.css";
-import "./components/Spinner/Spinner.css";
-import "./components/ErrorMessage/ErrorMessage.css";
-import "./components/Auth/AuthPage/AuthPage.css";
+import "./App.css";
 import GenreButton from "./components/GenreButton/GenreButton";
 import SelectedGenres from "./components/SelectedGenres/SelectedGenres";
 import YearRangeSlider from "./components/YearRangeSlider/YearRangeSlider";
@@ -67,17 +63,44 @@ const App: React.FC = () => {
     { id: "37", name: "Western" },
   ];
 
-  const Wrapper = () => {
-    const navigate = useNavigate();
+  const handleRangeChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    range: [number, number],
+    setRange: React.Dispatch<React.SetStateAction<[number, number]>>,
+    index: number
+  ) => {
+    const newRange = [...range];
+    newRange[index] = parseInt(e.target.value, 10);
+    if (newRange[0] <= newRange[1]) {
+      setRange([newRange[0], newRange[1]]);
+    }
+  };
 
-    const handleLogin = () => {
-      setLoggedIn(true);
-      navigate("/"); // Redirect to the homepage after successful login
-    };
+  const handleFetchMovie = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const baseUrl = await getBaseUrl();
+      const response = await axios.get(`${baseUrl}/api/movies/random`, {
+        params: {
+          genre: selectedGenres.join(","),
+          startYear: yearRange[0],
+          endYear: yearRange[1],
+          minRuntime: runtimeRange[0],
+          maxRuntime: runtimeRange[1],
+          language: selectedLanguage === "any" ? undefined : selectedLanguage,
+        },
+      });
+      setMovie(response.data);
+    } catch {
+      setError("Failed to fetch a random movie. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    const handleLogout = () => setLoggedIn(false);
-
-    return (
+  return (
+    <Router>
       <div className="app">
         <header className="app-header">
           <h1>Random Movie Generator</h1>
@@ -94,7 +117,7 @@ const App: React.FC = () => {
             ) : (
               <div className="logged-in-icon">
                 <span>👤 Logged In</span>
-                <button onClick={handleLogout} className="logout-button">
+                <button onClick={() => setLoggedIn(false)} className="logout-button">
                   Logout
                 </button>
               </div>
@@ -103,7 +126,6 @@ const App: React.FC = () => {
         </header>
 
         <Routes>
-          {/* Home page */}
           <Route
             path="/"
             element={
@@ -131,25 +153,13 @@ const App: React.FC = () => {
                 />
                 <YearRangeSlider
                   yearRange={yearRange}
-                  handleRangeChange={(e, range, setRange, index) => {
-                    const newRange = [...range];
-                    newRange[index] = parseInt(e.target.value, 10);
-                    if (newRange[0] <= newRange[1]) {
-                      setRange([newRange[0], newRange[1]]);
-                    }
-                  }}
                   setYearRange={setYearRange}
+                  handleRangeChange={handleRangeChange}
                 />
                 <RuntimeRangeSlider
                   runtimeRange={runtimeRange}
-                  handleRangeChange={(e, range, setRange, index) => {
-                    const newRange = [...range];
-                    newRange[index] = parseInt(e.target.value, 10);
-                    if (newRange[0] <= newRange[1]) {
-                      setRange([newRange[0], newRange[1]]);
-                    }
-                  }}
                   setRuntimeRange={setRuntimeRange}
+                  handleRangeChange={handleRangeChange}
                 />
                 <LanguageSelector
                   selectedLanguage={selectedLanguage}
@@ -158,6 +168,14 @@ const App: React.FC = () => {
                     { code: "any", name: "Any" },
                     { code: "en", name: "English" },
                     { code: "es", name: "Spanish" },
+                    { code: "zh", name: "Chinese" },
+                    { code: "fr", name: "French" },
+                    { code: "de", name: "German" },
+                    { code: "hi", name: "Hindi" },
+                    { code: "ar", name: "Arabic" },
+                    { code: "ru", name: "Russian" },
+                    { code: "pt", name: "Portuguese" },
+                    { code: "ja", name: "Japanese" },
                   ]}
                 />
                 {loading ? (
@@ -165,30 +183,10 @@ const App: React.FC = () => {
                 ) : (
                   <button
                     className="find-movie-button"
-                    onClick={async () => {
-                      setLoading(true);
-                      setError(null);
-                      try {
-                        const baseUrl = await getBaseUrl();
-                        const response = await axios.get(
-                          `${baseUrl}/api/movies/random`,
-                          {
-                            params: {
-                              genre: selectedGenres.join(","),
-                              startYear: yearRange[0],
-                              endYear: yearRange[1],
-                              minRuntime: runtimeRange[0],
-                              maxRuntime: runtimeRange[1],
-                              language: selectedLanguage,
-                            },
-                          }
-                        );
-                        setMovie(response.data);
-                      } catch (err) {
-                        setError("Failed to fetch a random movie. Please try again.");
-                      } finally {
-                        setLoading(false);
-                      }
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleFetchMovie();
                     }}
                   >
                     Find Me a Movie
@@ -199,20 +197,12 @@ const App: React.FC = () => {
               </>
             }
           />
-
-          {/* Auth Page for Login and Registration */}
           <Route
             path="/auth/:type"
-            element={<AuthPage onLogin={handleLogin} />}
+            element={<AuthPage onLogin={() => setLoggedIn(true)} />}
           />
         </Routes>
       </div>
-    );
-  };
-
-  return (
-    <Router>
-      <Wrapper />
     </Router>
   );
 };
