@@ -1,0 +1,25 @@
+/* Year Range Container */
+.year-range-container {
+  margin: 20px 0; /* Add vertical margin */
+  text-align: center; /* Center align */
+}
+
+.year-range-container label {
+  font-size: 16px; /* Set font size */
+  font-weight: bold; /* Bold label text */
+  margin: 0 10px; /* Add horizontal margin */
+}
+
+/* Slider container */
+.slider-container {
+  display: flex; /* Use flexbox layout */
+  justify-content: center; /* Center content horizontally */
+  align-items: center; /* Center content vertically */
+  gap: 10px; /* Space between elements */
+  margin-top: 10px; /* Add top margin */
+}
+
+/* Slider styles */
+.slider {
+  width: 200px; /* Set width */
+}

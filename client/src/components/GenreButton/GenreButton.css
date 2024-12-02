@@ -1,0 +1,45 @@
+/* Container for genre buttons */
+.genres-container {
+  display: flex; /* Use flexbox layout */
+  flex-wrap: wrap; /* Allow wrapping to new rows */
+  gap: 10px; /* Space between buttons */
+  justify-content: center; /* Center the buttons */
+  margin: 20px 0; /* Add vertical margin */
+}
+
+/* Individual genre button styles */
+.genre-button {
+  padding: 10px 15px; /* Add padding */
+  font-size: 14px; /* Set font size */
+  background-color: #256150; /* Default green background */
+  color: white; /* White text color */
+  border: 1px solid #ccc; /* Neutral border */
+  border-radius: 5px; /* Rounded corners */
+  cursor: pointer; /* Pointer cursor on hover */
+  transition: background-color 0.3s, color 0.3s; /* Smooth transitions */
+  flex: 0 0 calc(25% - 10px); /* 4 buttons per row */
+  text-align: center; /* Center button text */
+}
+
+/* Styles for selected genre buttons */
+.genre-button.selected {
+  background-color: #4caf50; /* Green for selected genres */
+  color: white; /* Contrasting text */
+  border: 2px solid #388e3c; /* Darker border */
+}
+
+/* Hover effect for genre buttons */
+.genre-button:hover {
+  background-color: #1e4e3e; /* Darker green on hover */
+}
+
+/* Active state for genre buttons */
+.genre-button:active {
+  opacity: 0.8; /* Feedback on click */
+}
+
+/* Disabled state for genre buttons */
+.genre-button.dragging {
+  opacity: 0.5; /* Visual feedback during drag */
+  cursor: grabbing; /* Drag cursor */
+}

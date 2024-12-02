@@ -1,0 +1,10 @@
+/* Error message styles for feedback */
+.error-message {
+  color: red; /* Display the error message in red to indicate an error */
+  margin-bottom: 15px;
+  font-size: 14px; /* Adjust the font size for better visibility */
+  background-color: #ffe6e6; /* Optional: Add a light red background for emphasis */
+  padding: 10px; /* Add some padding for better spacing */
+  border: 1px solid red; /* Optional: Add a border to highlight the error message */
+  border-radius: 5px; /* Slightly round the corners for a polished look */
+}

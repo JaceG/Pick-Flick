@@ -1,0 +1,36 @@
+/* Runtime Range Container */
+.runtime-range-container {
+  margin: 20px 0; /* Add vertical margin */
+  text-align: center; /* Center align */
+}
+
+.runtime-range-container label {
+  font-size: 16px; /* Set font size */
+  font-weight: bold; /* Bold label text */
+  margin: 0 10px; /* Add horizontal margin */
+  display: inline-block; /* Inline-block for proper alignment */
+}
+
+/* Number input styles for runtime range */
+.runtime-range-container input[type="number"] {
+  width: 100px; /* Set input width */
+  text-align: center; /* Center text inside input */
+  margin-left: 5px; /* Add left margin */
+  padding: 5px; /* Add padding */
+  font-size: 14px; /* Set font size */
+  border: 1px solid #ccc; /* Border styling */
+  border-radius: 5px; /* Rounded corners */
+}
+
+/* Focus styles for number input */
+.runtime-range-container input[type="number"]:focus {
+  outline: none; /* Remove default outline */
+  border-color: #2563eb; /* Highlight border on focus */
+}
+
+/* Remove number input arrows */
+.runtime-range-container input[type="number"]::-webkit-inner-spin-button,
+.runtime-range-container input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none; /* Remove number input arrows */
+  margin: 0; /* Remove margin */
+}

@@ -1,0 +1,43 @@
+/* Container for the spinner */
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px; /* Space between circles */
+}
+
+/* Individual spinning circles */
+.loading-circle {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%; /* Make circles */
+  background-color: #2563eb; /* Primary color */
+  animation: spin-circle 1.2s linear infinite;
+}
+
+/* Delayed animations for the three circles */
+.loading-circle:nth-child(1) {
+  animation-delay: 0s;
+}
+.loading-circle:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.loading-circle:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+/* Circle spinning animation */
+@keyframes spin-circle {
+  0% {
+    transform: scale(1); /* Normal size */
+    opacity: 1; /* Fully visible */
+  }
+  50% {
+    transform: scale(0.5); /* Smaller size */
+    opacity: 0.5; /* Semi-transparent */
+  }
+  100% {
+    transform: scale(1); /* Normal size */
+    opacity: 1; /* Fully visible */
+  }
+}
