@@ -5,6 +5,7 @@ dotenv.config();
 
 // Export environment variables
 export const TMDB_API_KEY = process.env.TMDB_API_KEY;
+export const MOTN_API_KEY = process.env.MOTN_API_KEY;
 export const DATABASE_URL = process.env.DATABASE_URL;
 
 // Ensure required variables are defined

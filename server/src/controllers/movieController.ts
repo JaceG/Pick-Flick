@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import axios from 'axios';
 import { fetchMovies } from '../models/fetchMovies.js';
 import { genreMap, nameToIdMap } from '../utils/genreMaps.js';
-import { TMDB_API_KEY } from '../config/config.js';
+import { TMDB_API_KEY, MOTN_API_KEY } from '../config/config.js';
 
 if (!TMDB_API_KEY) {
   throw new Error('TMDB_API_KEY is not defined in the environment variables');
@@ -67,6 +67,27 @@ export const getRandomMovie = async (req: Request, res: Response) => {
       const movieDetails = await axios.get(
         `https://api.themoviedb.org/3/movie/${randomMovie.id}?api_key=${TMDB_API_KEY}&language=${language || 'en-US'}&append_to_response=credits`
       );
+      const streamingDetails = await axios.get(
+        `https://streaming-availability.p.rapidapi.com/shows/${movieDetails.data.imdb_id}`,
+        {
+          headers: {
+            'x-rapidapi-key': MOTN_API_KEY,
+          }
+        }
+      );
+      let options:unknown[] = [];
+      if(streamingDetails.data.streamingOptions) {
+        options  = streamingDetails.data.streamingOptions.us
+        options = options.reduce((prev:unknown[],curr:any) => {
+          if(prev.find((opt:any) =>opt.service.id === curr.service.id)) {
+            return prev;
+          }
+          return [...prev,curr];
+        },[])
+      }
+
+
+      
       const genreNames = randomMovie.genre_ids.map((id: number) => genreMap[id] || 'Unknown');
       const cast = movieDetails.data.credits.cast.slice(0, 5).map((actor: any) => actor.name); // Top 5 actors
       const directors = movieDetails.data.credits.crew
@@ -88,6 +109,8 @@ export const getRandomMovie = async (req: Request, res: Response) => {
         directors,
         producers,
         language: randomMovie.original_language,
+        imdbId: movieDetails.data.imdb_id, // Include IMDb ID
+        streaming: options
       });
     } else {
       console.log('No movies found for the given filters.');

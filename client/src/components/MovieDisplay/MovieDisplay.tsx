@@ -14,6 +14,8 @@ interface MovieDisplayProps {
     directors: string[];
     producers: string[];
     language: string;
+    imdbId: string; // Add the imdbId property
+    streaming: { [key: string]: any }[]; // Add the streaming property
   };
 }
 
@@ -205,7 +207,6 @@ const languageMap: { [key: string]: string } = {
   zu: "Zulu"
 };
 
-
 // Functional component to display movie details
 const MovieDisplay: React.FC<MovieDisplayProps> = ({ movie }) => {
   const languageFullName = languageMap[movie.language] || movie.language;
@@ -220,11 +221,14 @@ const MovieDisplay: React.FC<MovieDisplayProps> = ({ movie }) => {
       <div className="movie-details">
         <h2 className="movie-title">{movie.title}</h2>
         <div className="movie-meta">
-          <p className="movie-genres">{movie.genres.join(", ")}</p>
-          <p className="movie-release">Release Year: {movie.releaseYear}</p>
+          <p className="movie-genres"><strong>{movie.genres.join(", ")}</strong></p>
+          <p className="movie-release"><strong>Release Year:</strong> {movie.releaseYear}</p>
         </div>
-        <div className="movie-runtime">
-          Runtime: {movie.runtime ? `${Math.floor(movie.runtime / 60)}h ${movie.runtime % 60}m` : "Not Available"}
+        <div className="movie-language">
+          <p><strong>Language:</strong> {languageFullName}</p>
+        </div>
+        <div className="movie-runtime"><strong>
+          Runtime:</strong> {movie.runtime ? `${Math.floor(movie.runtime / 60)}h ${movie.runtime % 60}m` : "Not Available"}
         </div>
         <div className="movie-synopsis">
           <p><strong>Synopsis:</strong> {movie.synopsis}</p>
@@ -234,8 +238,24 @@ const MovieDisplay: React.FC<MovieDisplayProps> = ({ movie }) => {
           <p><strong>Director(s):</strong> {movie.directors.join(", ")}</p>
           <p><strong>Producer(s):</strong> {movie.producers.join(", ")}</p>
         </div>
-        <div className="movie-language">
-          <p><strong>Language:</strong> {languageFullName}</p>
+        <div className="movie-imdb">
+          <p><strong>IMDb ID:</strong> {movie.imdbId}</p>
+        </div>
+        <div className="movie-streaming">
+          <p><strong>Streaming Options:</strong></p>
+          {movie.streaming && movie.streaming.length > 0 ? (
+            <ul>
+              {movie.streaming.map((option, index) => (
+                <li key={index}>
+                  <a href={option.link} target="_blank" rel="noopener noreferrer">
+                  <img src={option.service.imageSet.lightThemeImage} width={200}/>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>No streaming options available.</p>
+          )}
         </div>
       </div>
     </div>
