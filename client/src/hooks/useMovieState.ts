@@ -14,6 +14,8 @@ export const useMovieState = () => {
     directors: string[];
     producers: string[];
     language: string;
+    imdbId: string;
+    streaming: { [key: string]: any }[];
   } | null>(null);
 
   const [loading, setLoading] = useState(false);
@@ -53,7 +55,12 @@ export const useMovieState = () => {
           language: selectedLanguage === "any" ? undefined : selectedLanguage,
         },
       });
-      setMovie(response.data);
+      const fetchedMovie = response.data;
+      setMovie({
+        ...fetchedMovie,
+        imdbId: fetchedMovie.imdbId || "N/A",
+        streaming: fetchedMovie.streaming || [],
+      });
     } catch {
       setError("Failed to fetch a random movie. Please try again.");
     } finally {
