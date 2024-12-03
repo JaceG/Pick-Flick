@@ -1,50 +1,36 @@
-# React + TypeScript + Vite
+# React Portfolio
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+![License](https://img.shields.io/badge/License-MIT-blue.svg)
 
-Currently, two official plugins are available:
+## Description
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+This app is a Random Movie Generator that allows users to discover movies tailored to their preferences. Users can select genres, specify a year range, runtime preferences, and choose a language to find a movie that matches their criteria. The app also includes user authentication features, allowing users to register and log in securely. Once logged in, users can generate movie suggestions based on their inputs and view details about the recommended movie, such as its title, synopsis, streaming services and cast.
 
-## Expanding the ESLint configuration
+## Table of Contents
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+-   [Usage](#usage)
+-   [Contributing](#contributing)
+-   [Questions](#questions)
+-   [Credits](#credits)
+-   [Preview](#preview)
 
-- Configure the top-level `parserOptions` property like this:
+## Usage
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+To use this application, simply goto [https://pick-flick-app.netlify.app/](https://pick-flick-app.netlify.app/)
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+## Contributing
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+Contributions are somewhat welcome. Please submit a pull request or open an issue for any feature requests or bugs.
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+## Questions
+
+For any questions, please contact us on GitHub at [JaceG](https://github.com/JaceG), [JS-1701](https://github.com/JS-1701), [arstanciel](https://github.com/arstanciel), or [DevGS23](https://github.com/DevGS23).
+
+## Credits
+
+Credits: This project was created as part of a coding bootcamp group project. - Sources and References: Portions of the code and guidance were provided with assistance from ChatGPT, Tutors, and Instructors.
+
+## Preview
+
+![Portfolio Screenshot](./assets/images/Portfolio-Screenshot.png)
+![Resume Screenshot](./assets/images/Resume-Screenshot.png)
