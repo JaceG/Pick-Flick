@@ -11,6 +11,9 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  --bg-color: #ffffff;
+  --text-color: #000000;
 }
 
 a {
@@ -28,6 +31,9 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  margin: 0;
 }
 
 h1 {
@@ -57,6 +63,27 @@ button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
+
+/* Dark Theme */
+.dark {
+  --bg-color: #242424;
+  --text-color: #ffffff;
+}
+
+header {
+  display: flex;
+  justify-content: flex-end;
+  padding: 1rem;
+  background-color: var(--bg-color);
+  border-bottom: 1px solid var(--text-color);
+}
+
+/* Light Theme */
+.light {
+  --bg-color: #ffffff;
+  --text-color: #000000;
+}
+
 
 @media (prefers-color-scheme: light) {
   :root {

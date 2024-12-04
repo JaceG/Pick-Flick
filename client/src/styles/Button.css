@@ -1,0 +1,29 @@
+.find-movie-button {
+    padding: 10px 15px; /* Add padding for the button */
+    font-size: 16px; /* Set font size */
+    background-color: #256150; /* Green background */
+    color: white; /* White text color */
+    border: 2px solid white; /* White outline */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    text-align: center; /* Center the button text */
+    transition: background-color 0.3s, transform 0.2s; /* Smooth transitions */
+    margin-bottom: 20px; /* Add margin below the button */
+  }
+  
+  /* Remove hover effects on mobile */
+  @media (hover: none) {
+    .find-movie-button:hover {
+      background-color: #256150; /* Keep original background color */
+      transform: none; /* Remove transform effect */
+    }
+  }
+  
+  /* Responsive styles for smaller screens */
+  @media (max-width: 600px) {
+    .find-movie-button {
+      font-size: 14px; /* Adjust font size for smaller screens */
+      padding: 8px 12px; /* Adjust padding for smaller screens */
+    }
+  }
+  

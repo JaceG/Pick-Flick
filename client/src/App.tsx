@@ -1,25 +1,14 @@
 import React from 'react';
-import {
-	Routes,
-	Route,
-	Link,
-	useNavigate,
-	useLocation,
-} from 'react-router-dom'; // Import necessary components
-import './App.css';
-import GenreButton from './components/GenreButton/GenreButton';
-import SelectedGenres from './components/SelectedGenres/SelectedGenres';
-import YearRangeSlider from './components/YearRangeSlider/YearRangeSlider';
-import RuntimeRangeSlider from './components/RuntimeRangeSlider/RuntimeRangeSlider';
-import LanguageSelector from './components/LanguageSelector/LanguageSelector';
-import MovieDisplay from './components/MovieDisplay/MovieDisplay';
-import Spinner from './components/Spinner/Spinner';
-import ErrorMessage from './components/ErrorMessage/ErrorMessage';
+import { Routes, Route } from 'react-router-dom';
+import './styles/global.css';
+import './styles/App.css';
+import Header from './components/Header/Header';
+import MainPage from './components/MainPage/MainPage';
+import AuthHandler from './components/Auth/AuthHandler/AuthHandler';
 import AuthPage from './components/Auth/AuthPage/AuthPage';
+import SavedMovies from './components/Movie/SavedMovies/SavedMovies';
 import { useMovieState } from './hooks/useMovieState';
-import { genreOptions } from '../constants/genreOptions';
-import AutoLogoutHandler from './utils/AutoLogoutHandler'; // Import AutoLogoutHandler
-import SavedMovies from './components/SavedMovies/SavedMovies'; // Import SavedMovies component
+import { transformMovieStreaming } from './components/Movie/MovieLogic/MovieLogic';
 
 const App: React.FC = () => {
 	const {
@@ -40,159 +29,31 @@ const App: React.FC = () => {
 		handleFetchMovie,
 	} = useMovieState();
 
-	const navigate = useNavigate(); // Initialize useNavigate
-	const location = useLocation(); // Initialize useLocation
-
-	// Function to transform the movie data's streaming property to the expected structure
-	const transformMovieStreaming = (streaming: any[] = []) =>
-		streaming.map((option) => ({
-			link: option.link || '',
-			service: {
-				imageSet: {
-					lightThemeImage:
-						option.service?.imageSet?.lightThemeImage || '',
-					darkThemeImage:
-						option.service?.imageSet?.darkThemeImage || '',
-				},
-			},
-		}));
-
 	return (
 		<div className='app'>
-			{/* AutoLogoutHandler */}
-			<AutoLogoutHandler loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
+			<AuthHandler loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
+			<Header loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
 
-			{/* Header */}
-			<header className='app-header'>
-				<h1>Random Movie Generator</h1>
-				<nav>
-					{location.pathname !== '/' && (
-						<button
-							onClick={() => navigate('/')}
-							className='back-button'>
-							Back to Home
-						</button>
-					)}
-					{!loggedIn ? (
-						<>
-							<Link to='/auth/login' className='nav-button'>
-								Login
-							</Link>
-							<Link to='/auth/register' className='nav-button'>
-								Register
-							</Link>
-						</>
-					) : (
-						<div className='logged-in-icon'>
-							<span>👤 Logged In</span>
-							<button
-								onClick={() => {
-									setLoggedIn(false);
-									localStorage.removeItem('token'); // Clear the token
-									navigate('/auth/login'); // Redirect to login
-								}}
-								className='logout-button'>
-								Logout
-							</button>
-							<Link to='/saved-movies' className='nav-button'>
-								Saved Movies
-							</Link>
-						</div>
-					)}
-				</nav>
-			</header>
-
-			{/* Routes */}
 			<Routes>
 				<Route
 					path='/'
 					element={
-						<>
-							{/* Genre Selection */}
-							<div className='genres-container'>
-								{genreOptions.map((option) => (
-									<GenreButton
-										key={option.id}
-										option={option}
-										handleGenreClick={(genreId) =>
-											setSelectedGenres((prev) =>
-												prev.includes(genreId)
-													? prev.filter(
-															(id) =>
-																id !== genreId
-													  )
-													: [...prev, genreId]
-											)
-										}
-										isSelected={selectedGenres.includes(
-											option.id
-										)}
-									/>
-								))}
-							</div>
-							<SelectedGenres
-								selectedGenres={selectedGenres}
-								genreOptions={genreOptions}
-								setSelectedGenres={setSelectedGenres}
-							/>
-							{/* Year Range Slider */}
-							<YearRangeSlider
-								yearRange={yearRange}
-								setYearRange={setYearRange}
-								handleRangeChange={handleRangeChange}
-							/>
-							{/* Runtime Range Slider */}
-							<RuntimeRangeSlider
-								runtimeRange={runtimeRange}
-								setRuntimeRange={setRuntimeRange}
-								handleRangeChange={handleRangeChange}
-							/>
-							{/* Language Selector */}
-							<LanguageSelector
-								selectedLanguage={selectedLanguage}
-								setSelectedLanguage={setSelectedLanguage}
-								languageOptions={[
-									{ code: 'any', name: 'Any' },
-									{ code: 'en', name: 'English' },
-									{ code: 'es', name: 'Spanish' },
-									{ code: 'zh', name: 'Chinese' },
-									{ code: 'fr', name: 'French' },
-									{ code: 'de', name: 'German' },
-									{ code: 'hi', name: 'Hindi' },
-									{ code: 'ar', name: 'Arabic' },
-									{ code: 'ru', name: 'Russian' },
-									{ code: 'pt', name: 'Portuguese' },
-									{ code: 'ja', name: 'Japanese' },
-								]}
-							/>
-							{/* Fetch Movie Button */}
-							{loading ? (
-								<Spinner />
-							) : (
-								<button
-									className='find-movie-button'
-									type='button'
-									onClick={(e) => {
-										e.preventDefault();
-										handleFetchMovie();
-									}}>
-									Find Me a Movie
-								</button>
-							)}
-							{/* Error Message */}
-							{error && <ErrorMessage message={error} />}
-							{/* Movie Display */}
-							{movie && (
-								<MovieDisplay
-									movie={{
-										...movie,
-										streaming: transformMovieStreaming(
-											movie.streaming
-										),
-									}}
-								/>
-							)}
-						</>
+						<MainPage
+							selectedGenres={selectedGenres}
+							yearRange={yearRange}
+							runtimeRange={runtimeRange}
+							selectedLanguage={selectedLanguage}
+							setSelectedGenres={setSelectedGenres}
+							setYearRange={setYearRange}
+							setRuntimeRange={setRuntimeRange}
+							setSelectedLanguage={setSelectedLanguage}
+							loading={loading}
+							error={error}
+							movie={movie}
+							handleRangeChange={handleRangeChange}
+							handleFetchMovie={handleFetchMovie}
+							transformMovieStreaming={transformMovieStreaming} // Pass the function here
+						/>
 					}
 				/>
 				<Route

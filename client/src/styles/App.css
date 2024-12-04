@@ -1,0 +1,23 @@
+/* General styles for the app container */
+.app {
+    text-align: center; /* Center text */
+    padding: 20px; /* Add padding */
+    height: 100%; /* Full height */
+    width: 100%; /* Default width */
+    max-width: 600px; /* Limit maximum width */
+    display: flex; /* Use flexbox layout */
+    flex-direction: column; /* Arrange children in a column */
+    justify-content: flex-start; /* Align items to the top */
+    align-items: center; /* Center content horizontally */
+    box-sizing: border-box; /* Ensure padding is included in the width/height */
+    overflow: auto; /* Allow scrolling if content overflows */
+  }
+  
+  /* Responsive styles for smaller screens */
+  @media (max-width: 600px) {
+    .app {
+      padding: 10px; /* Reduce padding */
+      width: 100%; /* Use full screen width */
+    }
+  }
+  
