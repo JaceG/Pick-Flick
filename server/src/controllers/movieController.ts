@@ -9,9 +9,19 @@ if (!TMDB_API_KEY) {
 }
 
 export const getRandomMovie = async (req: Request, res: Response) => {
-	const { genre, startYear, endYear, minRuntime, maxRuntime, language } =
-		req.query;
-	try {
+	const {
+		genre,
+		startYear,
+		endYear,
+		minRuntime,
+		maxRuntime,
+		language,
+		region,
+	} = req.query;
+	const maxRetries = 5; // Set the maximum number of retries
+	let attempts = 0;
+
+	const fetchRandomMovie = async () => {
 		const params: { [key: string]: any } = {
 			api_key: TMDB_API_KEY,
 			sort_by: 'popularity.desc',
@@ -74,92 +84,110 @@ export const getRandomMovie = async (req: Request, res: Response) => {
 			params.with_original_language = language;
 		}
 
-		const movies = await fetchMovies(params);
-		if (movies.length > 0) {
-			const randomMovie =
-				movies[Math.floor(Math.random() * movies.length)];
-			// Fetch additional movie details
-			const movieDetails = await axios.get(
-				`https://api.themoviedb.org/3/movie/${
-					randomMovie.id
-				}?api_key=${TMDB_API_KEY}&language=${
-					language || 'en-US'
-				}&append_to_response=credits`
-			);
-			const streamingDetails = await axios.get(
-				`https://streaming-availability.p.rapidapi.com/shows/${movieDetails.data.imdb_id}`,
-				{
-					headers: {
-						'x-rapidapi-key': MOTN_API_KEY,
-					},
-				}
-			);
+		try {
+			const movies = await fetchMovies(params);
+			if (movies.length > 0) {
+				const randomMovie =
+					movies[Math.floor(Math.random() * movies.length)];
+				// Fetch additional movie details
+				const movieDetails = await axios.get(
+					`https://api.themoviedb.org/3/movie/${
+						randomMovie.id
+					}?api_key=${TMDB_API_KEY}&language=${
+						language || 'en-US'
+					}&append_to_response=credits`
+				);
 
-			let options: { [key: string]: unknown[] } = {};
-			if (streamingDetails.data.streamingOptions) {
-				for (const region in streamingDetails.data.streamingOptions) {
-					options[region] = streamingDetails.data.streamingOptions[
-						region
-					].reduce((prev: unknown[], curr: any) => {
+				// Use the region parameter or default to 'us'
+				const selectedRegion = (region as string) || 'us';
+				const streamingDetails = await axios.get(
+					`https://streaming-availability.p.rapidapi.com/shows/${movieDetails.data.imdb_id}`,
+					{
+						headers: {
+							'x-rapidapi-key': MOTN_API_KEY,
+						},
+						params: {
+							region: selectedRegion,
+						},
+					}
+				);
+
+				let options: unknown[] = [];
+				if (streamingDetails.data.streamingOptions) {
+					options =
+						streamingDetails.data.streamingOptions[selectedRegion];
+					options = options.reduce((prev: unknown[], curr: any) => {
 						if (
-							!prev.find(
+							prev.find(
 								(opt: any) => opt.service.id === curr.service.id
 							)
 						) {
-							prev.push(curr);
+							return prev;
 						}
-						return prev;
+						return [...prev, curr];
 					}, []);
 				}
-			}
 
-			const genreNames = randomMovie.genre_ids.map(
-				(id: number) => genreMap[id] || 'Unknown'
-			);
-			const cast = movieDetails.data.credits.cast
-				.slice(0, 5)
-				.map((actor: any) => actor.name); // Top 5 actors
-			const directors = movieDetails.data.credits.crew
-				.filter((crewMember: any) => crewMember.job === 'Director')
-				.map((director: any) => director.name);
-			const producers = movieDetails.data.credits.crew
-				.filter((crewMember: any) => crewMember.job === 'Producer')
-				.map((producer: any) => producer.name);
-			res.json({
-				title: randomMovie.title,
-				genres: genreNames,
-				releaseYear: randomMovie.release_date.split('-')[0],
-				synopsis: randomMovie.overview,
-				poster: randomMovie.poster_path
-					? `https://image.tmdb.org/t/p/w500${randomMovie.poster_path}`
-					: null,
-				runtime: movieDetails.data.runtime || 0, // Include runtime
-				cast,
-				directors,
-				producers,
-				language: randomMovie.original_language,
-				imdbId: movieDetails.data.imdb_id, // Include IMDb ID
-				streaming: options,
-			});
-		} else {
-			console.log('No movies found for the given filters.');
-			res.status(404).json({
-				message: 'No movies found for the given filters.',
-			});
+				const genreNames = randomMovie.genre_ids.map(
+					(id: number) => genreMap[id] || 'Unknown'
+				);
+				const cast = movieDetails.data.credits.cast
+					.slice(0, 5)
+					.map((actor: any) => actor.name); // Top 5 actors
+				const directors = movieDetails.data.credits.crew
+					.filter((crewMember: any) => crewMember.job === 'Director')
+					.map((director: any) => director.name);
+				const producers = movieDetails.data.credits.crew
+					.filter((crewMember: any) => crewMember.job === 'Producer')
+					.map((producer: any) => producer.name);
+				res.json({
+					title: randomMovie.title,
+					genres: genreNames,
+					releaseYear: randomMovie.release_date.split('-')[0],
+					synopsis: randomMovie.overview,
+					poster: randomMovie.poster_path
+						? `https://image.tmdb.org/t/p/w500${randomMovie.poster_path}`
+						: null,
+					runtime: movieDetails.data.runtime || 0, // Include runtime
+					cast,
+					directors,
+					producers,
+					language: randomMovie.original_language,
+					imdbId: movieDetails.data.imdb_id, // Include IMDb ID
+					streaming: options,
+				});
+			} else {
+				throw new Error('No movies found for the given filters.');
+			}
+		} catch (error) {
+			if (axios.isAxiosError(error)) {
+				console.error(
+					'Error fetching movies:',
+					(error as Error).message
+				);
+				throw new Error('Failed to fetch movies.');
+			} else {
+				console.error('Unexpected error:', error);
+				throw new Error('Failed to fetch movies.');
+			}
 		}
-	} catch (error) {
-		if (axios.isAxiosError(error)) {
-			console.error('Error fetching movies:', error.message);
-			res.status(500).json({
-				error: 'Failed to fetch movies.',
-				details: error.message,
-			});
-		} else {
-			console.error('Unexpected error:', error);
-			res.status(500).json({
-				error: 'Failed to fetch movies.',
-				details: 'Unknown error occurred.',
-			});
+	};
+
+	while (attempts < maxRetries) {
+		try {
+			await fetchRandomMovie();
+			return; // Exit the function if a movie is found
+		} catch (error) {
+			attempts++;
+			console.warn(
+				`Attempt ${attempts} failed: ${(error as Error).message}`
+			);
+			if (attempts >= maxRetries) {
+				return res.status(500).json({
+					error: 'Failed to fetch a random movie after multiple attempts.',
+					details: (error as Error).message,
+				});
+			}
 		}
 	}
 };
