@@ -1,4 +1,5 @@
 import * as React from 'react';
+import languageMap from '../../../constants/languageMap';
 import PlaceholderPoster from '../../../../assets/img/placeholder.jpg';
 
 // Props interface defining the structure of the movie object
@@ -18,11 +19,6 @@ interface MovieDisplayProps {
 		streaming: { [key: string]: any }[]; // Add the streaming property
 	};
 }
-
-// Mapping of language codes to full names
-const languageMap: { [key: string]: string } = {
-	// ... (same as before)
-};
 
 // Functional component to display movie details
 const MovieDisplay: React.FC<MovieDisplayProps> = ({ movie }) => {

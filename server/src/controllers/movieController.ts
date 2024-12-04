@@ -94,19 +94,23 @@ export const getRandomMovie = async (req: Request, res: Response) => {
 					},
 				}
 			);
-			let options: unknown[] = [];
+
+			let options: { [key: string]: unknown[] } = {};
 			if (streamingDetails.data.streamingOptions) {
-				options = streamingDetails.data.streamingOptions.us;
-				options = options.reduce((prev: unknown[], curr: any) => {
-					if (
-						prev.find(
-							(opt: any) => opt.service.id === curr.service.id
-						)
-					) {
+				for (const region in streamingDetails.data.streamingOptions) {
+					options[region] = streamingDetails.data.streamingOptions[
+						region
+					].reduce((prev: unknown[], curr: any) => {
+						if (
+							!prev.find(
+								(opt: any) => opt.service.id === curr.service.id
+							)
+						) {
+							prev.push(curr);
+						}
 						return prev;
-					}
-					return [...prev, curr];
-				}, []);
+					}, []);
+				}
 			}
 
 			const genreNames = randomMovie.genre_ids.map(

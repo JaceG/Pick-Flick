@@ -42,7 +42,7 @@ export const useMovieState = () => {
 		}
 	};
 
-	const handleFetchMovie = async () => {
+	const handleFetchMovie = async (retries = 3) => {
 		setLoading(true);
 		setError(null);
 		try {
@@ -66,8 +66,13 @@ export const useMovieState = () => {
 				imdbId: fetchedMovie.imdbId || 'N/A',
 				streaming: fetchedMovie.streaming || [],
 			});
-		} catch {
-			setError('Failed to fetch a random movie. Please try again.');
+		} catch (error) {
+			if (retries > 0) {
+				console.warn(`Retrying... (${3 - retries + 1})`);
+				handleFetchMovie(retries - 1);
+			} else {
+				setError('Failed to fetch a random movie. Please try again.');
+			}
 		} finally {
 			setLoading(false);
 		}

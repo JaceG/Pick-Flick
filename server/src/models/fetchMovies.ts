@@ -14,10 +14,7 @@ export const fetchMovies = async (
 				'https://api.themoviedb.org/3/discover/movie',
 				{ params }
 			);
-			console.log(
-				'TMDB API responsedsssssssss:',
-				response?.data?.results
-			);
+			console.log('TMDB API response:', response?.data?.results);
 			if (response.data.results.length > 0) {
 				return response.data.results;
 			}
