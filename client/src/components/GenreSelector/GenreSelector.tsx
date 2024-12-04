@@ -1,27 +1,41 @@
 import React from 'react';
-import { useGenres } from '../../hooks/UseGenres';
+import GenreButton from '../GenreButton/GenreButton';
+import SelectedGenres from '../SelectedGenres/SelectedGenres';
+import { genreOptions } from '../../../constants/genreOptions';
 
-const GenreSelector: React.FC = () => {
-	const { selectedGenres, handleGenreChange, initialGenreOptions } =
-		useGenres();
+interface GenreSelectorProps {
+	selectedGenres: string[];
+	setSelectedGenres: React.Dispatch<React.SetStateAction<string[]>>;
+}
 
+const GenreSelector: React.FC<GenreSelectorProps> = ({
+	selectedGenres,
+	setSelectedGenres,
+}) => {
 	return (
-		<div>
-			{initialGenreOptions.map((genre) => (
-				<button
-					key={genre.value}
-					onClick={() => handleGenreChange(genre)}
-					style={{
-						backgroundColor: selectedGenres.some(
-							(g) => g.value === genre.value
-						)
-							? 'blue'
-							: 'gray',
-					}}>
-					{genre.label}
-				</button>
-			))}
-		</div>
+		<>
+			<div className='genres-container'>
+				{genreOptions.map((option) => (
+					<GenreButton
+						key={option.id}
+						option={option}
+						handleGenreClick={(genreId) => {
+							setSelectedGenres((prev) =>
+								prev.includes(genreId)
+									? prev.filter((id) => id !== genreId)
+									: [...prev, genreId]
+							);
+						}}
+						isSelected={selectedGenres.includes(option.id)}
+					/>
+				))}
+			</div>
+			<SelectedGenres
+				selectedGenres={selectedGenres}
+				genreOptions={genreOptions}
+				setSelectedGenres={setSelectedGenres}
+			/>
+		</>
 	);
 };
 
