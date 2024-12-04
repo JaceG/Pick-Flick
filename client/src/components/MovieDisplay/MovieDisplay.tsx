@@ -18,47 +18,50 @@ interface MovieDisplayProps {
 		directors: string[];
 		producers: string[];
 		language: string;
-		imdbId: string; // Add the imdbId property
-		streaming: { [key: string]: any }[]; // Add the streaming property
+		imdbId: string;
+		streaming: { [key: string]: any }[];
 	};
 }
 
-// Functional component to display movie details
 const MovieDisplay: React.FC<MovieDisplayProps> = ({ movie }) => {
 	const languageFullName = languageMap[movie.language] || movie.language;
-	const navigate = useNavigate(); // Added useNavigate for navigation
-	const [isLoggedIn] = React.useState<boolean>(
+	const navigate = useNavigate();
+	const [isLoggedIn, setIsLoggedIn] = React.useState<boolean>(
 		Boolean(localStorage.getItem('token'))
 	);
 
-	// Function to get the appropriate image based on the theme
-	const getStreamingImage = (imageSet: {
-		lightThemeImage: string;
-		darkThemeImage: string;
-	}) => {
-		const prefersDarkScheme = window.matchMedia(
-			'(prefers-color-scheme: dark)'
-		).matches;
-		return prefersDarkScheme
-			? imageSet.darkThemeImage
-			: imageSet.lightThemeImage;
-	};
+	// Dynamically check login status
+	React.useEffect(() => {
+		const checkLoginStatus = () => {
+			setIsLoggedIn(Boolean(localStorage.getItem('token')));
+		};
 
-	// Function to handle saving the movie
+		window.addEventListener('storage', checkLoginStatus);
+
+		return () => {
+			window.removeEventListener('storage', checkLoginStatus);
+		};
+	}, []);
+
+	// Function to save the movie
 	const handleSaveMovie = async () => {
-		const token = localStorage.getItem('token'); // Get the token from localStorage
+		const token = localStorage.getItem('token');
+
+		if (!token) {
+			// Redirect to register page if no token
+			navigate('/auth/register');
+			return;
+		}
 
 		try {
 			const movieData = {
-				movieId: movie.imdbId, // Ensure this is set correctly
+				movieId: movie.imdbId,
 				title: movie.title,
 				poster: movie.poster,
-				genres: movie.genres, // Send genres as an array
+				genres: movie.genres,
 			};
 
-			console.log('Movie data being sent:', movieData); // Log the movie data being sent
-
-			const response = await axios.post(
+			await axios.post(
 				'http://localhost:3001/api/movies/save',
 				movieData,
 				{
@@ -67,35 +70,27 @@ const MovieDisplay: React.FC<MovieDisplayProps> = ({ movie }) => {
 					},
 				}
 			);
-			console.log('Movie saved successfully:', response.data);
-			navigate('/saved-movies'); // Redirect to Saved Movies page
+
+			// Redirect to Saved Movies page on success
+			navigate('/saved-movies');
 		} catch (error) {
+			console.error('Failed to save movie:', error);
+
 			if (axios.isAxiosError(error)) {
-				// The error is an AxiosError
-				console.error('Failed to save movie:', error);
 				if (error.response) {
-					// The request was made and the server responded with a status code
-					// that falls out of the range of 2xx
-					console.error('Response data:', error.response.data);
-					console.error('Response status:', error.response.status);
-					console.error('Response headers:', error.response.headers);
-				} else if (error.request) {
-					// The request was made but no response was received
-					console.error('Request data:', error.request);
+					alert(`Error: ${error.response.data.message}`);
 				} else {
-					// Something happened in setting up the request that triggered an Error
-					console.error('Error message:', error.message);
+					alert('An unexpected error occurred. Please try again.');
 				}
 			} else {
-				// The error is not an AxiosError
-				console.error('An unexpected error occurred:', error);
+				alert('An unexpected error occurred.');
 			}
 		}
 	};
 
 	// Function to handle the login/signup action
 	const handleLoginSignup = () => {
-		navigate('/auth/login'); // Redirect to login/sign-up page
+		navigate('/auth/register');
 	};
 
 	return (
@@ -111,7 +106,7 @@ const MovieDisplay: React.FC<MovieDisplayProps> = ({ movie }) => {
 			/>
 			<div className='movie-details'>
 				<div className='button-container'>
-					{/* Conditionally render the Save Movie or Login/Signup Button */}
+					{/* Conditionally render buttons */}
 					{isLoggedIn ? (
 						<button
 							className='button save-movie-button'
@@ -120,9 +115,9 @@ const MovieDisplay: React.FC<MovieDisplayProps> = ({ movie }) => {
 						</button>
 					) : (
 						<button
-							className='button login-signup-button'
+							className='button login-register-button'
 							onClick={handleLoginSignup}>
-							Login/Signup To Save Movie
+							Login/Register to Save Movie
 						</button>
 					)}
 				</div>
@@ -184,9 +179,10 @@ const MovieDisplay: React.FC<MovieDisplayProps> = ({ movie }) => {
 										target='_blank'
 										rel='noopener noreferrer'>
 										<img
-											src={getStreamingImage(
+											src={
 												option.service.imageSet
-											)}
+													.lightThemeImage
+											}
 											className='streaming-image'
 											alt={`Streaming option ${
 												index + 1
