@@ -5,10 +5,6 @@ import languageMap from '../../../constants/languageMap';
 import { useNavigate } from 'react-router-dom';
 import './MovieDisplay.css';
 
-// Define the API base URL dynamically or fallback to localhost
-const API_BASE_URL =
-	import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001';
-
 // Props interface defining the structure of the movie object
 interface MovieDisplayProps {
 	movie: {
@@ -30,20 +26,22 @@ interface MovieDisplayProps {
 const MovieDisplay: React.FC<MovieDisplayProps> = ({ movie }) => {
 	const languageFullName = languageMap[movie.language] || movie.language;
 	const navigate = useNavigate();
-	const [isLoggedIn, setIsLoggedIn] = React.useState<boolean>(
-		Boolean(localStorage.getItem('token'))
-	);
+	const [isLoggedIn, setIsLoggedIn] = React.useState<boolean>(false);
 
-	// Dynamically check login status
+	// Check login status dynamically
 	React.useEffect(() => {
-		const checkLoginStatus = () => {
-			setIsLoggedIn(Boolean(localStorage.getItem('token')));
+		const token = localStorage.getItem('token');
+		setIsLoggedIn(!!token);
+
+		// Update state when localStorage changes (e.g., during logout/login actions)
+		const handleStorageChange = () => {
+			const token = localStorage.getItem('token');
+			setIsLoggedIn(!!token);
 		};
 
-		window.addEventListener('storage', checkLoginStatus);
-
+		window.addEventListener('storage', handleStorageChange);
 		return () => {
-			window.removeEventListener('storage', checkLoginStatus);
+			window.removeEventListener('storage', handleStorageChange);
 		};
 	}, []);
 
@@ -52,8 +50,7 @@ const MovieDisplay: React.FC<MovieDisplayProps> = ({ movie }) => {
 		const token = localStorage.getItem('token');
 
 		if (!token) {
-			// Redirect to register page if no token
-			navigate('/auth/register');
+			navigate('/auth/login'); // Redirect to login page if not logged in
 			return;
 		}
 
@@ -65,22 +62,38 @@ const MovieDisplay: React.FC<MovieDisplayProps> = ({ movie }) => {
 				genres: movie.genres,
 			};
 
-			await axios.post(`${API_BASE_URL}/api/movies/save`, movieData, {
-				headers: {
-					Authorization: `Bearer ${token}`,
-				},
-			});
+			console.log('Sending movie data:', movieData);
 
-			// Redirect to Saved Movies page on success
-			navigate('/saved-movies');
+			const backendUrl =
+				import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001';
+
+			console.log('Backend URL:', backendUrl);
+
+			const response = await axios.post(
+				`${backendUrl}/api/movies/save`,
+				movieData,
+				{
+					headers: {
+						Authorization: `Bearer ${token}`,
+					},
+				}
+			);
+
+			console.log('Movie saved successfully:', response.data);
+			navigate('/saved-movies'); // Redirect to Saved Movies
 		} catch (error) {
 			console.error('Failed to save movie:', error);
 
 			if (axios.isAxiosError(error)) {
 				if (error.response) {
-					alert(`Error: ${error.response.data.message}`);
+					alert(
+						`Error: ${
+							error.response.data.message ||
+							'Unknown error occurred.'
+						}`
+					);
 				} else {
-					alert('An unexpected error occurred. Please try again.');
+					alert('Unable to connect to the server. Please try again.');
 				}
 			} else {
 				alert('An unexpected error occurred.');
@@ -88,9 +101,9 @@ const MovieDisplay: React.FC<MovieDisplayProps> = ({ movie }) => {
 		}
 	};
 
-	// Function to handle the login/signup action
-	const handleLoginSignup = () => {
-		navigate('/auth/register');
+	// Function to handle login/register redirection
+	const handleLoginRegister = () => {
+		navigate('/auth/login'); // Redirect to login page instead of register
 	};
 
 	return (
@@ -106,7 +119,6 @@ const MovieDisplay: React.FC<MovieDisplayProps> = ({ movie }) => {
 			/>
 			<div className='movie-details'>
 				<div className='button-container'>
-					{/* Conditionally render buttons */}
 					{isLoggedIn ? (
 						<button
 							className='button save-movie-button'
@@ -116,7 +128,7 @@ const MovieDisplay: React.FC<MovieDisplayProps> = ({ movie }) => {
 					) : (
 						<button
 							className='button login-register-button'
-							onClick={handleLoginSignup}>
+							onClick={handleLoginRegister}>
 							Login/Register to Save Movie
 						</button>
 					)}

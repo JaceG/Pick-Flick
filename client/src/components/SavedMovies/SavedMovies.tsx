@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useLocation } from 'react-router-dom';
 
-// Define the API base URL dynamically or fallback to localhost
+// Dynamically define API base URL or fallback to window origin
 const API_BASE_URL =
-	import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001';
+	import.meta.env.VITE_API_BASE_URL || window.location.origin;
 
 interface Movie {
 	movieId: string;
@@ -17,7 +17,7 @@ interface Movie {
 	cast?: string[];
 	directors?: string[];
 	producers?: string[];
-	streaming?: { link: string; image: string }[]; // Updated for streaming options
+	streaming?: { link: string; image: string }[];
 }
 
 const SavedMovies: React.FC = () => {
@@ -26,7 +26,7 @@ const SavedMovies: React.FC = () => {
 	const [error, setError] = useState<string | null>(null);
 	const location = useLocation();
 
-	// Fetch saved movies when the component mounts or the location changes
+	// Fetch saved movies when the component mounts or location changes
 	useEffect(() => {
 		const fetchSavedMovies = async () => {
 			const token = localStorage.getItem('token');
@@ -50,10 +50,18 @@ const SavedMovies: React.FC = () => {
 				setMovies(response.data);
 			} catch (error: any) {
 				console.error('Error fetching saved movies:', error);
-				setError(
-					error.response?.data?.message ||
-						'Failed to fetch saved movies.'
-				);
+
+				// Log detailed error information
+				if (axios.isAxiosError(error) && error.response) {
+					console.error('Response data:', error.response.data);
+					console.error('Response status:', error.response.status);
+					setError(
+						error.response.data.message ||
+							'Failed to fetch saved movies.'
+					);
+				} else {
+					setError('An unexpected error occurred.');
+				}
 			} finally {
 				setLoading(false);
 			}
@@ -77,14 +85,22 @@ const SavedMovies: React.FC = () => {
 				},
 			});
 
+			// Update movie list after deletion
 			setMovies((prevMovies) =>
 				prevMovies.filter((movie) => movie.movieId !== movieId)
 			);
 		} catch (error: any) {
 			console.error('Error deleting movie:', error);
-			setError(
-				error.response?.data?.message || 'Failed to delete movie.'
-			);
+
+			if (axios.isAxiosError(error) && error.response) {
+				console.error('Response data:', error.response.data);
+				console.error('Response status:', error.response.status);
+				setError(
+					error.response.data.message || 'Failed to delete movie.'
+				);
+			} else {
+				setError('An unexpected error occurred.');
+			}
 		}
 	};
 

@@ -11,33 +11,35 @@ if (!TMDB_API_KEY) {
 
 // Function to save a movie to the database
 export const saveMovie = async (req: Request, res: Response) => {
-	const { movieId, title, poster, genres } = req.body; // Destructure request body
-	const userId = req.user?.id; // Extract user ID from request (authentication middleware should set this)
-
-	if (!userId) {
-		return res
-			.status(401)
-			.json({ success: false, message: 'Unauthorized' });
-	}
-
-	if (!movieId) {
-		return res
-			.status(400)
-			.json({ success: false, message: 'Movie ID is missing' });
-	}
-
 	try {
-		// Check if the movie already exists for the user
+		const { movieId, title, poster, genres } = req.body;
+		const userId = req.user?.id; // Ensure the user ID is extracted properly
+
+		// Check if the user ID is present
+		if (!userId) {
+			return res
+				.status(401)
+				.json({ message: 'Unauthorized: No user ID found.' });
+		}
+
+		// Validate required fields
+		if (!movieId || !title) {
+			return res
+				.status(400)
+				.json({
+					message: 'Missing required fields: movieId or title.',
+				});
+		}
+
+		// Check if the movie is already saved
 		const existingMovie = await SavedMovie.findOne({
 			where: { userId, movieId },
 		});
 		if (existingMovie) {
-			return res
-				.status(400)
-				.json({ success: false, message: 'Movie already saved.' });
+			return res.status(400).json({ message: 'Movie is already saved.' });
 		}
 
-		// Create a new SavedMovie document and save it
+		// Save the movie
 		const newMovie = await SavedMovie.create({
 			userId,
 			movieId,
@@ -47,16 +49,12 @@ export const saveMovie = async (req: Request, res: Response) => {
 		});
 
 		res.status(201).json({
-			success: true,
 			message: 'Movie saved successfully.',
 			movie: newMovie,
 		});
 	} catch (error) {
-		console.error('Error saving movie:', error);
-		res.status(500).json({
-			success: false,
-			message: 'Failed to save movie.',
-		});
+		console.error('Error in saveMovie route:', error); // Log the actual error
+		res.status(500).json({ message: 'An unexpected error occurred.' });
 	}
 };
 
