@@ -10,5 +10,5 @@ export const DATABASE_URL = process.env.DATABASE_URL;
 
 // Ensure required variables are defined
 if (!TMDB_API_KEY) {
-  throw new Error('TMDB_API_KEY is not defined in the environment variables');
+	throw new Error('TMDB_API_KEY is not defined in the environment variables');
 }
