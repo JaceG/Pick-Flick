@@ -22,7 +22,10 @@ interface MovieDisplayProps {
 		streaming?: {
 			link: string;
 			service: {
-				imageSet: { lightThemeImage: string; darkThemeImage: string };
+				imageSet?: {
+					lightThemeImage?: string;
+					darkThemeImage?: string;
+				};
 			};
 		}[];
 	};
@@ -51,16 +54,17 @@ const MovieDisplay: React.FC<MovieDisplayProps> = ({ movie }) => {
 	}, []);
 
 	// Function to get the appropriate image based on the theme
-	const getStreamingImage = (imageSet: {
-		lightThemeImage: string;
-		darkThemeImage: string;
+	const getStreamingImage = (imageSet?: {
+		lightThemeImage?: string;
+		darkThemeImage?: string;
 	}) => {
 		const prefersDarkScheme = window.matchMedia(
 			'(prefers-color-scheme: dark)'
 		).matches;
+		if (!imageSet) return '/path/to/placeholder.jpg'; // Fallback image
 		return prefersDarkScheme
-			? imageSet.darkThemeImage
-			: imageSet.lightThemeImage;
+			? imageSet.darkThemeImage || '/path/to/placeholder.jpg'
+			: imageSet.lightThemeImage || '/path/to/placeholder.jpg';
 	};
 
 	// Function to save the movie
@@ -216,7 +220,7 @@ const MovieDisplay: React.FC<MovieDisplayProps> = ({ movie }) => {
 										rel='noopener noreferrer'>
 										<img
 											src={getStreamingImage(
-												option.service.imageSet
+												option.service?.imageSet
 											)}
 											className='streaming-image'
 											alt={`Streaming option ${

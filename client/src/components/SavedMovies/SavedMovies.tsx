@@ -19,7 +19,10 @@ interface Movie {
 	streaming?: {
 		link: string;
 		service: {
-			imageSet: { lightThemeImage: string; darkThemeImage: string };
+			imageSet: {
+				lightThemeImage: string;
+				darkThemeImage: string;
+			};
 		};
 	}[];
 }

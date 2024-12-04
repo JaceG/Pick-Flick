@@ -43,6 +43,20 @@ const App: React.FC = () => {
 	const navigate = useNavigate(); // Initialize useNavigate
 	const location = useLocation(); // Initialize useLocation
 
+	// Function to transform the movie data's streaming property to the expected structure
+	const transformMovieStreaming = (streaming: any[] = []) =>
+		streaming.map((option) => ({
+			link: option.link || '',
+			service: {
+				imageSet: {
+					lightThemeImage:
+						option.service?.imageSet?.lightThemeImage || '',
+					darkThemeImage:
+						option.service?.imageSet?.darkThemeImage || '',
+				},
+			},
+		}));
+
 	return (
 		<div className='app'>
 			{/* AutoLogoutHandler */}
@@ -168,7 +182,16 @@ const App: React.FC = () => {
 							{/* Error Message */}
 							{error && <ErrorMessage message={error} />}
 							{/* Movie Display */}
-							{movie && <MovieDisplay movie={movie} />}
+							{movie && (
+								<MovieDisplay
+									movie={{
+										...movie,
+										streaming: transformMovieStreaming(
+											movie.streaming
+										),
+									}}
+								/>
+							)}
 						</>
 					}
 				/>
