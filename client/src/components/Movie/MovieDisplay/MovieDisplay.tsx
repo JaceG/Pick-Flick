@@ -50,21 +50,44 @@ const MovieDisplay: React.FC<MovieDisplayProps> = ({ movie }) => {
 
 	const languageFullName = languageMap[movie.language] || movie.language;
 
+	// Ensure `streaming` data matches the stricter expected structure
+	const adjustedStreaming = movie.streaming?.map((option) => ({
+		...option,
+		service: {
+			...option.service,
+			imageSet: option.service.imageSet || {
+				lightThemeImage: '', // Default value if missing
+				darkThemeImage: '',
+			},
+		},
+	}));
+
 	return (
 		<div className='movie-container'>
+			{/* Movie Poster */}
 			<img
 				className='movie-poster'
 				src={movie.poster || PlaceholderPoster}
 				alt={`Movie poster for ${movie.title}`}
 			/>
+
+			{/* Movie Details */}
 			<div className='movie-details'>
 				<div className='button-container'>
 					<SaveMovieButton
-						movieData={movie}
+						movieData={{
+							...movie,
+							movieId: movie.imdbId, // Map `imdbId` to `movieId`
+							streaming: adjustedStreaming, // Use adjusted streaming data
+						}}
 						isLoggedIn={isLoggedIn}
 					/>
 				</div>
+
+				{/* Movie Title */}
 				<h2 className='movie-title'>{movie.title}</h2>
+
+				{/* Meta Information */}
 				<div className='movie-meta'>
 					<p>
 						<strong>Genres:</strong> {movie.genres.join(', ')}
@@ -85,9 +108,39 @@ const MovieDisplay: React.FC<MovieDisplayProps> = ({ movie }) => {
 							: 'N/A'}
 					</p>
 				</div>
+
+				{/* Synopsis */}
+				{movie.synopsis && (
+					<p>
+						<strong>Synopsis:</strong> {movie.synopsis}
+					</p>
+				)}
+
+				{/* Cast */}
+				{movie.cast && (
+					<p>
+						<strong>Cast:</strong> {movie.cast.join(', ')}
+					</p>
+				)}
+
+				{/* Directors */}
+				{movie.directors && (
+					<p>
+						<strong>Directors:</strong> {movie.directors.join(', ')}
+					</p>
+				)}
+
+				{/* Producers */}
+				{movie.producers && (
+					<p>
+						<strong>Producers:</strong> {movie.producers.join(', ')}
+					</p>
+				)}
+
+				{/* Streaming Options */}
 				<div className='movie-streaming'>
 					<strong>Streaming Options:</strong>
-					<StreamingOptions streaming={movie.streaming} />
+					<StreamingOptions streaming={adjustedStreaming} />
 				</div>
 			</div>
 		</div>

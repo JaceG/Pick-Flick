@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './SavedMovies.css';
+import PlaceholderPoster from '../../../../../assets/img/placeholder.jpg';
 
 const API_BASE_URL =
 	import.meta.env.VITE_API_BASE_URL || window.location.origin;
@@ -83,6 +84,18 @@ const SavedMovies: React.FC = () => {
 		}
 	};
 
+	const getStreamingImage = (imageSet: {
+		lightThemeImage?: string;
+		darkThemeImage?: string;
+	}) => {
+		const prefersDarkScheme = window.matchMedia(
+			'(prefers-color-scheme: dark)'
+		).matches;
+		return prefersDarkScheme
+			? imageSet.darkThemeImage || ''
+			: imageSet.lightThemeImage || '';
+	};
+
 	return (
 		<div>
 			<h1>Saved Movies</h1>
@@ -93,22 +106,84 @@ const SavedMovies: React.FC = () => {
 			) : movies.length === 0 ? (
 				<p>No saved movies found.</p>
 			) : (
-				<ul>
+				<ul className='saved-movies-list'>
 					{movies.map((movie) => (
-						<li key={movie.movieId}>
+						<li key={movie.movieId} className='saved-movie-item'>
 							<h2>{movie.title}</h2>
 							<img
-								src={movie.poster}
+								src={movie.poster || PlaceholderPoster}
 								alt={`Poster of ${movie.title}`}
+								className='movie-poster'
 							/>
-							<p>Genres: {movie.genres.join(', ') || 'N/A'}</p>
-							<p>Release Year: {movie.releaseYear || 'N/A'}</p>
-							<p>Runtime: {movie.runtime || 'N/A'}</p>
+							<p>
+								<strong>Genres:</strong>{' '}
+								{movie.genres.join(', ')}
+							</p>
+							<p>
+								<strong>Release Year:</strong>{' '}
+								{movie.releaseYear || 'N/A'}
+							</p>
+							<p>
+								<strong>Runtime:</strong>{' '}
+								{movie.runtime
+									? `${Math.floor(movie.runtime / 60)}h ${
+											movie.runtime % 60
+									  }m`
+									: 'N/A'}
+							</p>
+							<p>
+								<strong>Synopsis:</strong>{' '}
+								{movie.synopsis || 'N/A'}
+							</p>
+							<p>
+								<strong>Cast:</strong>{' '}
+								{movie.cast?.join(', ') || 'N/A'}
+							</p>
+							<p>
+								<strong>Directors:</strong>{' '}
+								{movie.directors?.join(', ') || 'N/A'}
+							</p>
+							<p>
+								<strong>Producers:</strong>{' '}
+								{movie.producers?.join(', ') || 'N/A'}
+							</p>
+							<div className='movie-streaming'>
+								<strong>Streaming Options:</strong>
+								{movie.streaming &&
+								movie.streaming.length > 0 ? (
+									<ul className='streaming-options'>
+										{movie.streaming.map(
+											(option, index) => (
+												<li
+													key={index}
+													className='streaming-option'>
+													<a
+														href={option.link}
+														target='_blank'
+														rel='noopener noreferrer'>
+														<img
+															src={getStreamingImage(
+																option.service
+																	.imageSet
+															)}
+															alt={`Streaming option ${
+																index + 1
+															}`}
+															className='streaming-image'
+														/>
+													</a>
+												</li>
+											)
+										)}
+									</ul>
+								) : (
+									<p>No streaming options available.</p>
+								)}
+							</div>
 							<button
-								onClick={() =>
-									handleDeleteMovie(movie.movieId)
-								}>
-								Remove
+								onClick={() => handleDeleteMovie(movie.movieId)}
+								className='delete-button'>
+								Remove x
 							</button>
 						</li>
 					))}

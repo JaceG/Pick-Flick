@@ -1,0 +1,132 @@
+/* Container for movie details */
+.movie-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 20px;
+    text-align: center; /* Center text */
+  }
+  
+  /* Movie poster styles */
+  .movie-poster {
+    width: 100%;
+    max-width: 300px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+  }
+  
+  /* Movie details container */
+  .movie-details {
+    width: 100%;
+    max-width: 600px;
+    text-align: center; /* Center text */
+  }
+  
+  /* Button container */
+  .button-container {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+  }
+  
+  /* Individual button styles */
+  .button {
+    padding: 15px 20px; /* Increased padding */
+    font-size: 18px; /* Increased font size */
+    background-color: #256150;
+    color: white;
+    border: 3px solid #ccc;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    text-align: center;
+    margin: 0 5px;
+  }
+  
+  /* Hover effect for buttons */
+  .button:hover {
+    background-color: #1e4e3e;
+  }
+  
+  /* Active state for buttons */
+  .button:active {
+    opacity: 0.8;
+  }
+  
+  /* Disabled state for buttons */
+  .button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  /* Movie title styles */
+  .movie-title {
+    font-size: 32px; /* Increased font size */
+    margin-bottom: 10px;
+  }
+  
+  /* Movie meta information */
+  .movie-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center items */
+    margin-bottom: 10px;
+    font-size: 20px; /* Increased font size */
+  }
+  
+  /* Movie genres */
+  .movie-genres {
+    margin-bottom: 5px;
+  }
+  
+  /* Movie release year */
+  .movie-release {
+    margin-bottom: 5px;
+  }
+  
+  /* Movie language */
+  .movie-language {
+    margin-bottom: 5px;
+  }
+  
+  /* Movie runtime */
+  .movie-runtime {
+    margin-bottom: 10px;
+    font-size: 20px; /* Increased font size */
+  }
+  
+  /* Movie synopsis */
+  .movie-synopsis {
+    margin-bottom: 10px;
+    font-size: 20px; /* Increased font size */
+  }
+  
+  /* Movie credits */
+  .movie-credits {
+    margin-bottom: 10px;
+    font-size: 20px; /* Increased font size */
+  }
+  
+  /* Movie IMDb ID */
+  .movie-imdb {
+    margin-bottom: 10px;
+    font-size: 20px; /* Increased font size */
+  }
+  
+  /* Movie streaming options */
+  .movie-streaming {
+    margin-bottom: 10px;
+    font-size: 20px; /* Increased font size */
+  }
+  
+  /* Streaming image styles */
+  .streaming-image {
+    width: 200px;
+  }
+  
+/* I want this button to be red with white text */
+  .delete-button {
+    background-color: red;
+    color: white;
+  }
