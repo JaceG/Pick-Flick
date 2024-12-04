@@ -1,11 +1,10 @@
-import * as React from 'react';
-import axios from 'axios';
-import PlaceholderPoster from '../../../../../assets/img/placeholder.jpg';
-import languageMap from '../../../../constants/languageMap';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import SaveMovieButton from '../SaveMovieButton/SaveMovieButton';
+import StreamingOptions from '../StreamingOptions/StreamingOptions';
 import './MovieDisplay.css';
+import languageMap from '../../../../constants/languageMap';
+import PlaceholderPoster from '../../../../../assets/img/placeholder.jpg';
 
-// Props interface defining the structure of the movie object
 interface MovieDisplayProps {
 	movie: {
 		title: string;
@@ -32,12 +31,9 @@ interface MovieDisplayProps {
 }
 
 const MovieDisplay: React.FC<MovieDisplayProps> = ({ movie }) => {
-	const languageFullName = languageMap[movie.language] || movie.language;
-	const navigate = useNavigate();
-	const [isLoggedIn, setIsLoggedIn] = React.useState<boolean>(false);
+	const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 
-	// Check login status dynamically
-	React.useEffect(() => {
+	useEffect(() => {
 		const token = localStorage.getItem('token');
 		setIsLoggedIn(!!token);
 
@@ -52,59 +48,7 @@ const MovieDisplay: React.FC<MovieDisplayProps> = ({ movie }) => {
 		};
 	}, []);
 
-	const getStreamingImage = (imageSet?: {
-		lightThemeImage?: string;
-		darkThemeImage?: string;
-	}) => {
-		const prefersDarkScheme = window.matchMedia(
-			'(prefers-color-scheme: dark)'
-		).matches;
-		if (!imageSet) return PlaceholderPoster;
-		return prefersDarkScheme
-			? imageSet.darkThemeImage || PlaceholderPoster
-			: imageSet.lightThemeImage || PlaceholderPoster;
-	};
-
-	const handleSaveMovie = async () => {
-		const token = localStorage.getItem('token');
-
-		if (!token) {
-			navigate('/auth/login');
-			return;
-		}
-
-		try {
-			const backendUrl =
-				import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001';
-
-			const movieData = {
-				movieId: movie.imdbId,
-				title: movie.title,
-				poster: movie.poster || '',
-				genres: movie.genres,
-				releaseYear: movie.releaseYear || null,
-				synopsis: movie.synopsis || null,
-				runtime: movie.runtime || null,
-				cast: movie.cast || [],
-				directors: movie.directors || [],
-				producers: movie.producers || [],
-				streaming: movie.streaming || [],
-			};
-
-			await axios.post(`${backendUrl}/api/movies/save`, movieData, {
-				headers: { Authorization: `Bearer ${token}` },
-			});
-
-			navigate('/saved-movies');
-		} catch (error) {
-			console.error('Failed to save movie:', error);
-			alert(
-				axios.isAxiosError(error) && error.response?.data.message
-					? error.response.data.message
-					: 'An unexpected error occurred.'
-			);
-		}
-	};
+	const languageFullName = languageMap[movie.language] || movie.language;
 
 	return (
 		<div className='movie-container'>
@@ -115,19 +59,10 @@ const MovieDisplay: React.FC<MovieDisplayProps> = ({ movie }) => {
 			/>
 			<div className='movie-details'>
 				<div className='button-container'>
-					{isLoggedIn ? (
-						<button
-							className='button save-movie-button'
-							onClick={handleSaveMovie}>
-							Save Movie
-						</button>
-					) : (
-						<button
-							className='button login-register-button'
-							onClick={() => navigate('/auth/login')}>
-							Login to Save Movie
-						</button>
-					)}
+					<SaveMovieButton
+						movieData={movie}
+						isLoggedIn={isLoggedIn}
+					/>
 				</div>
 				<h2 className='movie-title'>{movie.title}</h2>
 				<div className='movie-meta'>
@@ -152,23 +87,7 @@ const MovieDisplay: React.FC<MovieDisplayProps> = ({ movie }) => {
 				</div>
 				<div className='movie-streaming'>
 					<strong>Streaming Options:</strong>
-					<ul>
-						{movie.streaming?.map((option, index) => (
-							<li key={index}>
-								<a
-									href={option.link}
-									target='_blank'
-									rel='noopener noreferrer'>
-									<img
-										src={getStreamingImage(
-											option.service.imageSet
-										)}
-										alt={`Streaming option ${index + 1}`}
-									/>
-								</a>
-							</li>
-						)) || <p>No streaming options available.</p>}
-					</ul>
+					<StreamingOptions streaming={movie.streaming} />
 				</div>
 			</div>
 		</div>
