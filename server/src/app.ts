@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
 import movieRoutes from './routes/movies.js';
 import usersRouter from './routes/users.js';
@@ -27,9 +28,15 @@ app.use((req, res, next) => {
 });
 
 // Serve static files from the React build folder
-const staticPath = path.resolve(__dirname, '../client/dist');
+const staticPath = path.resolve(__dirname, '../../client/dist'); // Updated to fix the incorrect path
 console.log('Static files path:', staticPath);
-app.use(express.static(staticPath));
+
+// Ensure the directory exists
+if (fs.existsSync(staticPath)) {
+	app.use(express.static(staticPath));
+} else {
+	console.error('Static files path does not exist:', staticPath);
+}
 
 // Configure CORS
 app.use(
@@ -60,8 +67,14 @@ sequelize
 // Fallback route for React
 const fallbackPath = path.resolve(staticPath, 'index.html');
 console.log('Fallback path:', fallbackPath);
+
 app.get('*', (req, res) => {
-	res.sendFile(fallbackPath);
+	if (fs.existsSync(fallbackPath)) {
+		res.sendFile(fallbackPath);
+	} else {
+		console.error('Fallback file does not exist:', fallbackPath);
+		res.status(404).send('Fallback file not found');
+	}
 });
 
 // Global error handler
