@@ -1,37 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import SortFilterControls from '../../SortFilterControls/SortFilterControls';
+import { Movie } from '../../../types/movieTypes'; // Use the shared Movie interface
+import { sortMovies, filterMovies } from '../../../utils/movieUtils';
 import './SavedMovies.css';
-import PlaceholderPoster from '../../../../../assets/img/placeholder.jpg';
 
 const API_BASE_URL =
 	import.meta.env.VITE_API_BASE_URL || window.location.origin;
-
-interface Movie {
-	movieId: string;
-	title: string;
-	poster?: string;
-	genres: string[];
-	releaseYear?: string;
-	synopsis?: string;
-	runtime?: number;
-	cast?: string[];
-	directors?: string[];
-	producers?: string[];
-	streaming?: {
-		link: string;
-		service: {
-			imageSet: {
-				lightThemeImage: string;
-				darkThemeImage: string;
-			};
-		};
-	}[];
-}
 
 const SavedMovies: React.FC = () => {
 	const [movies, setMovies] = useState<Movie[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
+
+	// State for sorting and filtering
+	const [sortOption, setSortOption] = useState<string>('title');
+	const [filterOption, setFilterOption] = useState<string>('all');
 
 	useEffect(() => {
 		const fetchSavedMovies = async () => {
@@ -44,16 +28,23 @@ const SavedMovies: React.FC = () => {
 				const response = await axios.get(
 					`${API_BASE_URL}/api/movies/saved`,
 					{
-						headers: { Authorization: `Bearer ${token}` },
+						headers: {
+							Authorization: `Bearer ${token}`,
+						},
 					}
 				);
 				setMovies(response.data);
-			} catch (err: any) {
-				setError(
-					axios.isAxiosError(err) && err.response
-						? err.response.data.message || 'Failed to fetch movies.'
-						: 'An unexpected error occurred.'
-				);
+			} catch (error: any) {
+				console.error('Error fetching saved movies:', error);
+
+				if (axios.isAxiosError(error) && error.response) {
+					setError(
+						error.response.data.message ||
+							'Failed to fetch saved movies.'
+					);
+				} else {
+					setError('An unexpected error occurred.');
+				}
 			} finally {
 				setLoading(false);
 			}
@@ -62,58 +53,59 @@ const SavedMovies: React.FC = () => {
 		fetchSavedMovies();
 	}, []);
 
+	// Apply sorting and filtering
+	const displayedMovies = filterMovies(
+		sortMovies(movies, sortOption),
+		filterOption
+	);
+
+	// If handleDeleteMovie is unused, you can remove this function. Otherwise, implement it.
 	const handleDeleteMovie = async (movieId: string) => {
 		try {
 			const token = localStorage.getItem('token');
-			if (!token) {
-				throw new Error('No token found. Please log in.');
-			}
+			if (!token) throw new Error('No token found. Please log in.');
 
 			await axios.delete(`${API_BASE_URL}/api/movies/saved/${movieId}`, {
 				headers: { Authorization: `Bearer ${token}` },
 			});
-			setMovies((prev) =>
-				prev.filter((movie) => movie.movieId !== movieId)
+			setMovies((prevMovies) =>
+				prevMovies.filter((movie) => movie.movieId !== movieId)
 			);
-		} catch (err: any) {
-			alert(
-				axios.isAxiosError(err) && err.response
-					? err.response.data.message || 'Failed to delete movie.'
-					: 'An unexpected error occurred.'
-			);
+		} catch (error) {
+			console.error('Error deleting movie:', error);
+			alert('Failed to delete movie. Please try again.');
 		}
 	};
 
-	const getStreamingImage = (imageSet: {
-		lightThemeImage?: string;
-		darkThemeImage?: string;
-	}) => {
-		const prefersDarkScheme = window.matchMedia(
-			'(prefers-color-scheme: dark)'
-		).matches;
-		return prefersDarkScheme
-			? imageSet.darkThemeImage || ''
-			: imageSet.lightThemeImage || '';
-	};
+	if (loading) {
+		return <div>Loading...</div>;
+	}
+
+	if (error) {
+		return <div>{error}</div>;
+	}
 
 	return (
 		<div>
 			<h1>Saved Movies</h1>
-			{loading ? (
-				<p>Loading...</p>
-			) : error ? (
-				<p>{error}</p>
-			) : movies.length === 0 ? (
-				<p>No saved movies found.</p>
+			<SortFilterControls
+				sortOption={sortOption}
+				setSortOption={setSortOption}
+				filterOption={filterOption}
+				setFilterOption={setFilterOption}
+				availableGenres={['Action', 'Drama', 'Comedy']} // Replace with dynamic genres if needed
+			/>
+			{displayedMovies.length === 0 ? (
+				<p>No movies found.</p>
 			) : (
-				<ul className='saved-movies-list'>
-					{movies.map((movie) => (
-						<li key={movie.movieId} className='saved-movie-item'>
+				<ul>
+					{displayedMovies.map((movie) => (
+						<li key={movie.movieId}>
 							<h2>{movie.title}</h2>
 							<img
-								src={movie.poster || PlaceholderPoster}
-								alt={`Poster of ${movie.title}`}
-								className='movie-poster'
+								src={movie.poster || '/path/to/placeholder.jpg'}
+								alt={`Poster for ${movie.title}`}
+								width='150'
 							/>
 							<p>
 								<strong>Genres:</strong>{' '}
@@ -131,59 +123,17 @@ const SavedMovies: React.FC = () => {
 									  }m`
 									: 'N/A'}
 							</p>
-							<p>
-								<strong>Synopsis:</strong>{' '}
-								{movie.synopsis || 'N/A'}
-							</p>
-							<p>
-								<strong>Cast:</strong>{' '}
-								{movie.cast?.join(', ') || 'N/A'}
-							</p>
-							<p>
-								<strong>Directors:</strong>{' '}
-								{movie.directors?.join(', ') || 'N/A'}
-							</p>
-							<p>
-								<strong>Producers:</strong>{' '}
-								{movie.producers?.join(', ') || 'N/A'}
-							</p>
-							<div className='movie-streaming'>
-								<strong>Streaming Options:</strong>
-								{movie.streaming &&
-								movie.streaming.length > 0 ? (
-									<ul className='streaming-options'>
-										{movie.streaming.map(
-											(option, index) => (
-												<li
-													key={index}
-													className='streaming-option'>
-													<a
-														href={option.link}
-														target='_blank'
-														rel='noopener noreferrer'>
-														<img
-															src={getStreamingImage(
-																option.service
-																	.imageSet
-															)}
-															alt={`Streaming option ${
-																index + 1
-															}`}
-															className='streaming-image'
-														/>
-													</a>
-												</li>
-											)
-										)}
-									</ul>
-								) : (
-									<p>No streaming options available.</p>
-								)}
-							</div>
+							{/* Add the delete button if handleDeleteMovie is needed */}
 							<button
 								onClick={() => handleDeleteMovie(movie.movieId)}
-								className='delete-button'>
-								Remove x
+								style={{
+									backgroundColor: 'red',
+									color: 'white',
+									border: 'none',
+									padding: '5px 10px',
+									cursor: 'pointer',
+								}}>
+								Remove
 							</button>
 						</li>
 					))}

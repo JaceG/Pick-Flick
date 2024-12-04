@@ -77,8 +77,9 @@ const SaveMovieButton: React.FC<SaveMovieButtonProps> = ({
 	return (
 		<button
 			className='button save-movie-button'
-			onClick={handleSaveMovie}
-			disabled={!isLoggedIn}>
+			onClick={
+				isLoggedIn ? handleSaveMovie : () => navigate('/auth/login')
+			}>
 			{isLoggedIn ? 'Save Movie' : 'Login to Save Movie'}
 		</button>
 	);
