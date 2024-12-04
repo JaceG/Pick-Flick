@@ -1,5 +1,6 @@
 import * as React from 'react';
 import PlaceholderPoster from '../../../../assets/img/placeholder.jpg';
+import languageMap from '../../../constants/languageMap';
 
 // Props interface defining the structure of the movie object
 interface MovieDisplayProps {
@@ -19,31 +20,22 @@ interface MovieDisplayProps {
 	};
 }
 
-// Mapping of language codes to full names
-const languageMap: { [key: string]: string } = {
-	// ... (same as before)
-};
-
 // Functional component to display movie details
 const MovieDisplay: React.FC<MovieDisplayProps> = ({ movie }) => {
-	const [isDarkMode, setIsDarkMode] = React.useState<boolean>(false);
-
-	React.useEffect(() => {
-		const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-		setIsDarkMode(mediaQuery.matches);
-
-		const handleChange = (e: MediaQueryListEvent) => {
-			setIsDarkMode(e.matches);
-		};
-
-		mediaQuery.addEventListener('change', handleChange);
-
-		return () => {
-			mediaQuery.removeEventListener('change', handleChange);
-		};
-	}, []);
-
 	const languageFullName = languageMap[movie.language] || movie.language;
+
+	// Function to get the appropriate image based on the theme
+	const getStreamingImage = (imageSet: {
+		lightThemeImage: string;
+		darkThemeImage: string;
+	}) => {
+		const prefersDarkScheme = window.matchMedia(
+			'(prefers-color-scheme: dark)'
+		).matches;
+		return prefersDarkScheme
+			? imageSet.darkThemeImage
+			: imageSet.lightThemeImage;
+	};
 
 	return (
 		<div className='movie-container'>
@@ -115,14 +107,13 @@ const MovieDisplay: React.FC<MovieDisplayProps> = ({ movie }) => {
 										target='_blank'
 										rel='noopener noreferrer'>
 										<img
-											src={
-												isDarkMode
-													? option.service.imageSet
-															.darkThemeImage
-													: option.service.imageSet
-															.lightThemeImage
-											}
+											src={getStreamingImage(
+												option.service.imageSet
+											)}
 											width={200}
+											alt={`Streaming option ${
+												index + 1
+											}`}
 										/>
 									</a>
 								</li>
