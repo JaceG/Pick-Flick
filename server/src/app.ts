@@ -13,7 +13,6 @@ const app = express();
 
 // Middleware setup
 app.use(express.static('../client/dist'));
-
 app.use(
 	cors({
 		origin: [
