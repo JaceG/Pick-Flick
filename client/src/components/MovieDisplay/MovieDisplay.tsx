@@ -10,16 +10,21 @@ interface MovieDisplayProps {
 	movie: {
 		title: string;
 		genres: string[];
-		releaseYear: string;
-		synopsis: string;
-		poster: string;
-		runtime: number;
-		cast: string[];
-		directors: string[];
-		producers: string[];
+		releaseYear?: string;
+		synopsis?: string;
+		poster?: string;
+		runtime?: number;
+		cast?: string[];
+		directors?: string[];
+		producers?: string[];
 		language: string;
 		imdbId: string;
-		streaming: { [key: string]: any }[];
+		streaming?: {
+			link: string;
+			service: {
+				imageSet: { lightThemeImage: string; darkThemeImage: string };
+			};
+		}[];
 	};
 }
 
@@ -45,6 +50,19 @@ const MovieDisplay: React.FC<MovieDisplayProps> = ({ movie }) => {
 		};
 	}, []);
 
+	// Function to get the appropriate image based on the theme
+	const getStreamingImage = (imageSet: {
+		lightThemeImage: string;
+		darkThemeImage: string;
+	}) => {
+		const prefersDarkScheme = window.matchMedia(
+			'(prefers-color-scheme: dark)'
+		).matches;
+		return prefersDarkScheme
+			? imageSet.darkThemeImage
+			: imageSet.lightThemeImage;
+	};
+
 	// Function to save the movie
 	const handleSaveMovie = async () => {
 		const token = localStorage.getItem('token');
@@ -55,11 +73,19 @@ const MovieDisplay: React.FC<MovieDisplayProps> = ({ movie }) => {
 		}
 
 		try {
+			// Include all relevant fields when saving the movie
 			const movieData = {
 				movieId: movie.imdbId,
 				title: movie.title,
-				poster: movie.poster,
+				poster: movie.poster || '',
 				genres: movie.genres,
+				releaseYear: movie.releaseYear || null,
+				synopsis: movie.synopsis || null,
+				runtime: movie.runtime || null,
+				cast: movie.cast || [],
+				directors: movie.directors || [],
+				producers: movie.producers || [],
+				streaming: movie.streaming || [],
 			};
 
 			console.log('Sending movie data:', movieData);
@@ -139,7 +165,8 @@ const MovieDisplay: React.FC<MovieDisplayProps> = ({ movie }) => {
 						<strong>{movie.genres.join(', ')}</strong>
 					</p>
 					<p className='movie-release'>
-						<strong>Release Year:</strong> {movie.releaseYear}
+						<strong>Release Year:</strong>{' '}
+						{movie.releaseYear || 'Not Available'}
 					</p>
 				</div>
 				<div className='movie-language'>
@@ -157,25 +184,22 @@ const MovieDisplay: React.FC<MovieDisplayProps> = ({ movie }) => {
 				</div>
 				<div className='movie-synopsis'>
 					<p>
-						<strong>Synopsis:</strong> {movie.synopsis}
+						<strong>Synopsis:</strong>{' '}
+						{movie.synopsis || 'Not Available'}
 					</p>
 				</div>
 				<div className='movie-credits'>
 					<p>
-						<strong>Cast:</strong> {movie.cast.join(', ')}
+						<strong>Cast:</strong>{' '}
+						{movie.cast?.join(', ') || 'Not Available'}
 					</p>
 					<p>
 						<strong>Director(s):</strong>{' '}
-						{movie.directors.join(', ')}
+						{movie.directors?.join(', ') || 'Not Available'}
 					</p>
 					<p>
 						<strong>Producer(s):</strong>{' '}
-						{movie.producers.join(', ')}
-					</p>
-				</div>
-				<div className='movie-imdb'>
-					<p>
-						<strong>IMDb ID:</strong> {movie.imdbId}
+						{movie.producers?.join(', ') || 'Not Available'}
 					</p>
 				</div>
 				<div className='movie-streaming'>
@@ -191,14 +215,14 @@ const MovieDisplay: React.FC<MovieDisplayProps> = ({ movie }) => {
 										target='_blank'
 										rel='noopener noreferrer'>
 										<img
-											src={
+											src={getStreamingImage(
 												option.service.imageSet
-													.lightThemeImage
-											}
+											)}
 											className='streaming-image'
 											alt={`Streaming option ${
 												index + 1
 											}`}
+											width={100}
 										/>
 									</a>
 								</li>

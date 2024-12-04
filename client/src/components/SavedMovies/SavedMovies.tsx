@@ -2,14 +2,13 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useLocation } from 'react-router-dom';
 
-// Dynamically define API base URL or fallback to window origin
 const API_BASE_URL =
 	import.meta.env.VITE_API_BASE_URL || window.location.origin;
 
 interface Movie {
 	movieId: string;
 	title: string;
-	poster: string;
+	poster?: string;
 	genres: string[];
 	releaseYear?: string;
 	synopsis?: string;
@@ -17,7 +16,12 @@ interface Movie {
 	cast?: string[];
 	directors?: string[];
 	producers?: string[];
-	streaming?: { link: string; image: string }[];
+	streaming?: {
+		link: string;
+		service: {
+			imageSet: { lightThemeImage: string; darkThemeImage: string };
+		};
+	}[];
 }
 
 const SavedMovies: React.FC = () => {
@@ -26,7 +30,19 @@ const SavedMovies: React.FC = () => {
 	const [error, setError] = useState<string | null>(null);
 	const location = useLocation();
 
-	// Fetch saved movies when the component mounts or location changes
+	// Function to get the appropriate streaming image based on theme
+	const getStreamingImage = (imageSet: {
+		lightThemeImage: string;
+		darkThemeImage: string;
+	}) => {
+		const prefersDarkScheme = window.matchMedia(
+			'(prefers-color-scheme: dark)'
+		).matches;
+		return prefersDarkScheme
+			? imageSet.darkThemeImage
+			: imageSet.lightThemeImage;
+	};
+
 	useEffect(() => {
 		const fetchSavedMovies = async () => {
 			const token = localStorage.getItem('token');
@@ -46,15 +62,11 @@ const SavedMovies: React.FC = () => {
 						},
 					}
 				);
-				console.log('Fetched Movies:', response.data);
 				setMovies(response.data);
 			} catch (error: any) {
 				console.error('Error fetching saved movies:', error);
 
-				// Log detailed error information
 				if (axios.isAxiosError(error) && error.response) {
-					console.error('Response data:', error.response.data);
-					console.error('Response status:', error.response.status);
 					setError(
 						error.response.data.message ||
 							'Failed to fetch saved movies.'
@@ -85,7 +97,6 @@ const SavedMovies: React.FC = () => {
 				},
 			});
 
-			// Update movie list after deletion
 			setMovies((prevMovies) =>
 				prevMovies.filter((movie) => movie.movieId !== movieId)
 			);
@@ -93,8 +104,6 @@ const SavedMovies: React.FC = () => {
 			console.error('Error deleting movie:', error);
 
 			if (axios.isAxiosError(error) && error.response) {
-				console.error('Response data:', error.response.data);
-				console.error('Response status:', error.response.status);
 				setError(
 					error.response.data.message || 'Failed to delete movie.'
 				);
@@ -169,32 +178,45 @@ const SavedMovies: React.FC = () => {
 								<strong>Producers:</strong>{' '}
 								{movie.producers?.join(', ') || 'N/A'}
 							</p>
-							<p>
-								<strong>Streaming Options:</strong>
-							</p>
-							{movie.streaming && movie.streaming.length > 0 ? (
-								<ul>
-									{movie.streaming.map((option, index) => (
-										<li key={index}>
-											<a
-												href={option.link}
-												target='_blank'
-												rel='noopener noreferrer'>
-												<img
-													src={option.image}
-													alt='Streaming Option'
-													style={{
-														width: '100px',
-														height: 'auto',
-													}}
-												/>
-											</a>
-										</li>
-									))}
-								</ul>
-							) : (
-								<p>No streaming options available.</p>
-							)}
+							<div className='movie-streaming'>
+								<p>
+									<strong>Streaming Options:</strong>
+								</p>
+								{movie.streaming &&
+								movie.streaming.length > 0 ? (
+									<ul>
+										{movie.streaming.map(
+											(option, index) => (
+												<li key={index}>
+													<a
+														href={option.link}
+														target='_blank'
+														rel='noopener noreferrer'>
+														<img
+															src={getStreamingImage(
+																option.service
+																	.imageSet
+															)}
+															alt={`Streaming option ${
+																index + 1
+															}`}
+															style={{
+																width: '100px',
+																height: 'auto',
+																objectFit:
+																	'contain',
+															}}
+														/>
+													</a>
+												</li>
+											)
+										)}
+									</ul>
+								) : (
+									<p>No streaming options available.</p>
+								)}
+							</div>
+
 							<button
 								onClick={() => handleDeleteMovie(movie.movieId)}
 								style={{

@@ -10,25 +10,30 @@ if (!TMDB_API_KEY) {
 }
 
 // Function to save a movie to the database
+// Updated saveMovie function
 export const saveMovie = async (req: Request, res: Response) => {
 	try {
-		const { movieId, title, poster, genres } = req.body;
+		const {
+			movieId,
+			title,
+			poster,
+			genres,
+			releaseYear,
+			synopsis,
+			runtime,
+			cast,
+			directors,
+			producers,
+			streaming,
+		} = req.body;
+
 		const userId = req.user?.id; // Ensure the user ID is extracted properly
 
-		// Check if the user ID is present
-		if (!userId) {
-			return res
-				.status(401)
-				.json({ message: 'Unauthorized: No user ID found.' });
-		}
-
 		// Validate required fields
-		if (!movieId || !title) {
-			return res
-				.status(400)
-				.json({
-					message: 'Missing required fields: movieId or title.',
-				});
+		if (!userId || !movieId || !title) {
+			return res.status(400).json({
+				message: 'Missing required fields: userId, movieId, or title.',
+			});
 		}
 
 		// Check if the movie is already saved
@@ -39,13 +44,20 @@ export const saveMovie = async (req: Request, res: Response) => {
 			return res.status(400).json({ message: 'Movie is already saved.' });
 		}
 
-		// Save the movie
+		// Save the movie with all fields, including streaming options
 		const newMovie = await SavedMovie.create({
 			userId,
 			movieId,
 			title,
 			poster,
 			genres,
+			releaseYear,
+			synopsis,
+			runtime,
+			cast,
+			directors,
+			producers,
+			streaming, // Save streaming options
 		});
 
 		res.status(201).json({
@@ -53,7 +65,7 @@ export const saveMovie = async (req: Request, res: Response) => {
 			movie: newMovie,
 		});
 	} catch (error) {
-		console.error('Error in saveMovie route:', error); // Log the actual error
+		console.error('Error in saveMovie route:', error);
 		res.status(500).json({ message: 'An unexpected error occurred.' });
 	}
 };

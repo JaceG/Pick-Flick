@@ -17,8 +17,24 @@ router.get('/saved', authMiddleware, async (req: Request, res: Response) => {
 	}
 
 	try {
-		// Fetch saved movies for the authenticated user
-		const savedMovies = await SavedMovie.findAll({ where: { userId } });
+		// Fetch all saved movies, including streaming data
+		const savedMovies = await SavedMovie.findAll({
+			where: { userId },
+			attributes: [
+				'movieId',
+				'title',
+				'poster',
+				'genres',
+				'releaseYear',
+				'synopsis',
+				'runtime',
+				'cast',
+				'directors',
+				'producers',
+				'streaming',
+			],
+		});
+
 		res.json(savedMovies);
 	} catch (error) {
 		console.error('Error fetching saved movies:', error);
@@ -29,7 +45,19 @@ router.get('/saved', authMiddleware, async (req: Request, res: Response) => {
 // Endpoint to save a movie for the authenticated user
 router.post('/save', authMiddleware, async (req: Request, res: Response) => {
 	const userId = req.user?.id;
-	const { movieId, title, poster, genres } = req.body;
+	const {
+		movieId,
+		title,
+		poster,
+		genres,
+		releaseYear,
+		synopsis,
+		runtime,
+		cast,
+		directors,
+		producers,
+		streaming,
+	} = req.body;
 
 	if (!userId) {
 		return res.status(401).json({ message: 'Unauthorized' });
@@ -51,6 +79,13 @@ router.post('/save', authMiddleware, async (req: Request, res: Response) => {
 			title,
 			poster,
 			genres,
+			releaseYear,
+			synopsis,
+			runtime,
+			cast,
+			directors,
+			producers,
+			streaming,
 		});
 
 		res.status(201).json({
