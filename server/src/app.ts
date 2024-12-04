@@ -20,22 +20,24 @@ const app = express();
 // Middleware setup
 app.use(express.json());
 
-// Serve static files from the React build folder
-app.use(express.static(path.resolve(__dirname, '../client/dist')));
-
-// Configure CORS
-app.use(
-	cors({
-		origin: '*', // Allow all origins (frontend and backend share the same domain)
-		methods: ['GET', 'POST', 'DELETE'],
-	})
-);
-
 // Log incoming requests for debugging
 app.use((req, res, next) => {
 	console.log(`[${req.method}] ${req.url}`);
 	next();
 });
+
+// Serve static files from the React build folder
+const staticPath = path.resolve(__dirname, '../client/dist');
+console.log('Static files path:', staticPath);
+app.use(express.static(staticPath));
+
+// Configure CORS
+app.use(
+	cors({
+		origin: ['https://pick-flick.onrender.com', 'http://localhost:3000'],
+		methods: ['GET', 'POST', 'DELETE'],
+	})
+);
 
 // Health check endpoint
 app.get('/health', (req, res) => {
@@ -51,13 +53,15 @@ initUserModel(sequelize);
 
 // Sync database (use migrations in production if possible)
 sequelize
-	.sync() // Avoid `alter: true` in production
+	.sync()
 	.then(() => console.log('Database synced successfully.'))
 	.catch((err) => console.error('Error syncing database:', err));
 
 // Fallback route for React
+const fallbackPath = path.resolve(staticPath, 'index.html');
+console.log('Fallback path:', fallbackPath);
 app.get('*', (req, res) => {
-	res.sendFile(path.resolve(__dirname, '../client/dist', 'index.html'));
+	res.sendFile(fallbackPath);
 });
 
 // Global error handler
