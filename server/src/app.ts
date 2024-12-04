@@ -18,7 +18,7 @@ app.use(
 		origin: [
 			'http://localhost:3000',
 			'http://localhost:3001',
-			'https://pick-flick-app.netlify.app',
+			'https://pick-flick.onrender.com/',
 		],
 		methods: ['GET', 'POST', 'DELETE'], // Add DELETE method
 	})

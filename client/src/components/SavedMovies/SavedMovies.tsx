@@ -2,6 +2,10 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useLocation } from 'react-router-dom';
 
+// Define the API base URL dynamically or fallback to localhost
+const API_BASE_URL =
+	import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001';
+
 interface Movie {
 	movieId: string;
 	title: string;
@@ -35,7 +39,7 @@ const SavedMovies: React.FC = () => {
 
 			try {
 				const response = await axios.get(
-					'http://localhost:3001/api/movies/saved',
+					`${API_BASE_URL}/api/movies/saved`,
 					{
 						headers: {
 							Authorization: `Bearer ${token}`,
@@ -67,14 +71,11 @@ const SavedMovies: React.FC = () => {
 		}
 
 		try {
-			await axios.delete(
-				`http://localhost:3001/api/movies/saved/${movieId}`,
-				{
-					headers: {
-						Authorization: `Bearer ${token}`,
-					},
-				}
-			);
+			await axios.delete(`${API_BASE_URL}/api/movies/saved/${movieId}`, {
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			});
 
 			setMovies((prevMovies) =>
 				prevMovies.filter((movie) => movie.movieId !== movieId)

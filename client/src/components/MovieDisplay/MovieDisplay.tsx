@@ -5,6 +5,10 @@ import languageMap from '../../../constants/languageMap';
 import { useNavigate } from 'react-router-dom';
 import './MovieDisplay.css';
 
+// Define the API base URL dynamically or fallback to localhost
+const API_BASE_URL =
+	import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001';
+
 // Props interface defining the structure of the movie object
 interface MovieDisplayProps {
 	movie: {
@@ -61,15 +65,11 @@ const MovieDisplay: React.FC<MovieDisplayProps> = ({ movie }) => {
 				genres: movie.genres,
 			};
 
-			await axios.post(
-				'http://localhost:3001/api/movies/save',
-				movieData,
-				{
-					headers: {
-						Authorization: `Bearer ${token}`,
-					},
-				}
-			);
+			await axios.post(`${API_BASE_URL}/api/movies/save`, movieData, {
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			});
 
 			// Redirect to Saved Movies page on success
 			navigate('/saved-movies');
