@@ -1,25 +1,27 @@
-// src/utils/getBaseUrl.ts
-
-/**
- * Determines the base URL for the backend API.
- * It first checks if the local server is running by pinging the /health endpoint.
- * If the local server is available, it uses the local base URL.
- * Otherwise, it falls back to the production URL.
- */
+let cachedBaseUrl: string | null = null; // Cache the result to avoid repeated checks
 
 export const getBaseUrl = async (): Promise<string> => {
+	if (cachedBaseUrl) {
+		return cachedBaseUrl; // Return cached result if available
+	}
+
 	try {
-		const response = await fetch('http://localhost:3001/health');
+		const response = await fetch('http://localhost:3001/health', {
+			method: 'GET',
+			mode: 'cors', // Ensure CORS mode is set for browser environments
+		});
 
 		if (response.ok) {
 			console.log('Local server is available');
-			return 'http://localhost:3001'; // Use the local server if available
+			cachedBaseUrl = 'http://localhost:3001'; // Cache the result
+			return cachedBaseUrl;
 		}
 	} catch (err) {
 		console.warn('Local server not available, falling back to production.');
-		console.error(err); // Log the error for debugging
+		console.error('Error:', err); // Log the error for debugging
 	}
 
 	console.log('Falling back to production server.');
-	return 'https://pick-flick.onrender.com';
+	cachedBaseUrl = 'https://pick-flick.onrender.com'; // Cache the fallback
+	return cachedBaseUrl;
 };

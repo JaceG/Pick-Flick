@@ -1,13 +1,66 @@
 import { Request, Response } from 'express';
 import axios from 'axios';
-import { fetchMovies } from '../models/fetchMovies.js';
+import { fetchMovies } from '../models/FetchMovies.js';
 import { genreMap, nameToIdMap } from '../utils/genreMaps.js';
 import { TMDB_API_KEY, MOTN_API_KEY } from '../config/config.js';
+import SavedMovie from '../models/SavedMovies.js'; // Import SavedMovie model
 
 if (!TMDB_API_KEY) {
 	throw new Error('TMDB_API_KEY is not defined in the environment variables');
 }
 
+// Function to save a movie to the database
+export const saveMovie = async (req: Request, res: Response) => {
+	const { movieId, title, poster, genres } = req.body; // Destructure request body
+	const userId = req.user?.id; // Extract user ID from request (authentication middleware should set this)
+
+	if (!userId) {
+		return res
+			.status(401)
+			.json({ success: false, message: 'Unauthorized' });
+	}
+
+	if (!movieId) {
+		return res
+			.status(400)
+			.json({ success: false, message: 'Movie ID is missing' });
+	}
+
+	try {
+		// Check if the movie already exists for the user
+		const existingMovie = await SavedMovie.findOne({
+			where: { userId, movieId },
+		});
+		if (existingMovie) {
+			return res
+				.status(400)
+				.json({ success: false, message: 'Movie already saved.' });
+		}
+
+		// Create a new SavedMovie document and save it
+		const newMovie = await SavedMovie.create({
+			userId,
+			movieId,
+			title,
+			poster,
+			genres,
+		});
+
+		res.status(201).json({
+			success: true,
+			message: 'Movie saved successfully.',
+			movie: newMovie,
+		});
+	} catch (error) {
+		console.error('Error saving movie:', error);
+		res.status(500).json({
+			success: false,
+			message: 'Failed to save movie.',
+		});
+	}
+};
+
+// Existing function for fetching random movies
 export const getRandomMovie = async (req: Request, res: Response) => {
 	const {
 		genre,

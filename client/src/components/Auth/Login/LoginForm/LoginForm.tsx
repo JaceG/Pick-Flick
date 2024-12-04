@@ -34,13 +34,25 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
 				}
 			);
 
-			if (response.status === 200) {
-				console.log('Login successful!');
-				onLogin();
-				navigate('/'); // Redirect to the root page
+			console.log('API Response:', response.data); // Debugging the response
+
+			// Extract token from the response
+			const token = response.data.data.token; // Match the backend structure
+			console.log('Extracted Token:', token);
+
+			if (!token) {
+				throw new Error('No token provided in the response');
 			}
+
+			// Save token to localStorage
+			localStorage.setItem('token', token);
+			console.log('Token saved to LocalStorage:', token);
+
+			// Trigger login callback and navigate to home page
+			onLogin();
+			navigate('/');
 		} catch (err: any) {
-			// Handle errors from the server or network issues
+			console.error('Login Error:', err); // Debugging
 			setError(
 				err.response?.data?.message || 'An error occurred during login'
 			);

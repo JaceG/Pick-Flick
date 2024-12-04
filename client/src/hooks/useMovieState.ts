@@ -47,6 +47,7 @@ export const useMovieState = () => {
 		setError(null);
 		try {
 			const baseUrl = await getBaseUrl();
+
 			const response = await axios.get(`${baseUrl}/api/movies/random`, {
 				params: {
 					genre: selectedGenres.join(','),
@@ -66,7 +67,8 @@ export const useMovieState = () => {
 				imdbId: fetchedMovie.imdbId || 'N/A',
 				streaming: fetchedMovie.streaming || [],
 			});
-		} catch {
+		} catch (err) {
+			console.error('Error fetching movie:', err);
 			setError('Failed to fetch a random movie. Please try again.');
 		} finally {
 			setLoading(false);
