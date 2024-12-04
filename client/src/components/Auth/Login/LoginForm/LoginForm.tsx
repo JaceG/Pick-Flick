@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import './LoginForm.css';
 import InputField from '../../../InputField/InputField';
 
@@ -11,6 +12,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
 	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');
 	const [error, setError] = useState<string | null>(null);
+	const navigate = useNavigate(); // Initialize the useNavigate hook
 
 	// Set the API base URL dynamically based on the environment
 	const API_BASE_URL =
@@ -35,6 +37,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
 			if (response.status === 200) {
 				console.log('Login successful!');
 				onLogin();
+				navigate('/'); // Redirect to the root page
 			}
 		} catch (err: any) {
 			// Handle errors from the server or network issues
