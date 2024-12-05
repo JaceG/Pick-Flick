@@ -49,6 +49,11 @@
   margin-bottom: 20px; /* Add margin below the button */
 }
 
+nav {
+  display: flex;
+  flex-direction: row;
+}
+
 /* Responsive styles for smaller screens */
 @media (max-width: 600px) {
   .app {
