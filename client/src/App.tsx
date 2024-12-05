@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
 	Routes,
 	Route,
 	Link,
 	useNavigate,
 	useLocation,
-} from 'react-router-dom'; // Import necessary components
+} from 'react-router-dom';
 import './App.css';
 import GenreButton from './components/GenreButton/GenreButton';
 import SelectedGenres from './components/SelectedGenres/SelectedGenres';
@@ -18,8 +18,8 @@ import ErrorMessage from './components/ErrorMessage/ErrorMessage';
 import AuthPage from './components/Auth/AuthPage/AuthPage';
 import { useMovieState } from './hooks/useMovieState';
 import { genreOptions } from '../constants/genreOptions';
-import AutoLogoutHandler from './utils/AutoLogoutHandler'; // Import AutoLogoutHandler
-import SavedMovies from './components/SavedMovies/SavedMovies'; // Import SavedMovies component
+import AutoLogoutHandler from './utils/AutoLogoutHandler';
+import SavedMovies from './components/SavedMovies/SavedMovies';
 
 const App: React.FC = () => {
 	const {
@@ -40,8 +40,15 @@ const App: React.FC = () => {
 		handleFetchMovie,
 	} = useMovieState();
 
-	const navigate = useNavigate(); // Initialize useNavigate
-	const location = useLocation(); // Initialize useLocation
+	const navigate = useNavigate();
+	const location = useLocation();
+
+	// Automatically set theme based on time of day
+	useEffect(() => {
+		const hour = new Date().getHours();
+		const theme = hour >= 7 && hour <= 19 ? 'light' : 'dark';
+		document.documentElement.className = theme;
+	}, []);
 
 	// Function to transform the movie data's streaming property to the expected structure
 	const transformMovieStreaming = (streaming: any[] = []) =>
