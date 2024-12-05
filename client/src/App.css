@@ -12,6 +12,7 @@
   align-items: center; /* Center content vertically */
   height: 100vh; /* Full viewport height */
   margin: 0; /* Remove default margin */
+
 }
 
 /* General styles for the app container */
@@ -29,11 +30,18 @@
   box-sizing: border-box; /* Ensure padding is included in the width/height */
   overflow: auto; /* Allow scrolling if content overflows */
   width: 100%; 
+  background-image: url('./assets/Theater1.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .content {
   max-width: 600px;
-
+  background-color: #1c1c1c;
+  padding: 32px;
+  border-radius: 16px;
+  color: #d9d9d9;
 }
 
 .find-movie-button {
@@ -52,6 +60,16 @@
 nav {
   display: flex;
   flex-direction: row;
+}
+
+nav > :not(:first-child) {
+  margin-left: 16px;
+
+}
+
+.nav-button {
+  color: white;
+  text-decoration: none;
 }
 
 /* Responsive styles for smaller screens */

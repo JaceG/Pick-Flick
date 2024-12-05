@@ -59,3 +59,7 @@ body.dark-mode .selected-genres-header {
 .remove-genre-button:hover {
   color: red; /* Change text color to red on hover */
 }
+
+p {
+  color: #969696;
+}
