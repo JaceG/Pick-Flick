@@ -1,5 +1,6 @@
 import express, { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 import { User } from '../models/User.js';
 
 const router = express.Router();
@@ -9,14 +10,20 @@ router.post('/register', async (req: Request, res: Response) => {
 	const { username, email, password } = req.body;
 
 	if (!username || !email || !password) {
-		return res.status(400).json({ message: 'All fields are required' });
+		return res.status(400).json({
+			success: false,
+			message: 'All fields are required',
+		});
 	}
 
 	try {
 		// Check if the user already exists
 		const existingUser = await User.findOne({ where: { email } });
 		if (existingUser) {
-			return res.status(409).json({ message: 'User already exists' });
+			return res.status(409).json({
+				success: false,
+				message: 'User already exists',
+			});
 		}
 
 		// Hash the password
@@ -29,10 +36,10 @@ router.post('/register', async (req: Request, res: Response) => {
 			password: hashedPassword,
 		});
 
-		// Return success response
-		res.status(201).json({
+		return res.status(201).json({
+			success: true,
 			message: 'User registered successfully',
-			user: {
+			data: {
 				id: newUser.id,
 				username: newUser.username,
 				email: newUser.email,
@@ -40,7 +47,10 @@ router.post('/register', async (req: Request, res: Response) => {
 		});
 	} catch (error) {
 		console.error('Registration Error:', error);
-		res.status(500).json({ message: 'Internal server error' });
+		return res.status(500).json({
+			success: false,
+			message: 'Internal server error',
+		});
 	}
 });
 
@@ -48,38 +58,89 @@ router.post('/register', async (req: Request, res: Response) => {
 router.post('/login', async (req: Request, res: Response) => {
 	const { username, password } = req.body;
 
+	console.log('Login request body:', req.body); // Debugging
+
 	if (!username || !password) {
-		return res
-			.status(400)
-			.json({ message: 'Username and password are required' });
+		return res.status(400).json({
+			success: false,
+			message: 'Username and password are required',
+		});
 	}
 
 	try {
 		// Check if the user exists
 		const user = await User.findOne({ where: { username } });
+		console.log('User found:', user); // Debugging
+
 		if (!user) {
-			return res.status(404).json({ message: 'User not found' });
+			return res.status(404).json({
+				success: false,
+				message: 'User not found',
+			});
 		}
 
 		// Verify the password
 		const isPasswordValid = await bcrypt.compare(password, user.password);
+		console.log('Password valid:', isPasswordValid); // Debugging
+
 		if (!isPasswordValid) {
-			return res.status(401).json({ message: 'Invalid password' });
+			return res.status(401).json({
+				success: false,
+				message: 'Invalid password',
+			});
 		}
 
-		// Return success response
-		res.status(200).json({
+		// Generate a JWT token with 1-hour expiration
+		if (!process.env.JWT_SECRET) {
+			console.error(
+				'JWT_SECRET is not defined in the environment variables'
+			);
+			return res.status(500).json({
+				success: false,
+				message: 'Internal server error: JWT_SECRET is missing',
+			});
+		}
+
+		const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
+			expiresIn: '1h',
+		});
+		console.log('Generated Token:', token); // Debugging
+
+		// Send the token and user info in the response
+		return res.status(200).json({
+			success: true,
 			message: 'Login successful',
-			user: {
-				id: user.id,
-				username: user.username,
-				email: user.email,
+			data: {
+				token,
+				user: {
+					id: user.id,
+					username: user.username,
+					email: user.email,
+				},
 			},
 		});
 	} catch (error) {
-		console.error('Login Error:', error);
-		res.status(500).json({ message: 'Internal server error' });
+		// Narrow the error type to access its properties
+		if (error instanceof Error) {
+			console.error('Login Error:', error.message); // Log the error message
+		} else {
+			console.error('Unknown Login Error:', error); // Log the unknown error
+		}
+
+		return res.status(500).json({
+			success: false,
+			message: 'Internal server error',
+		});
 	}
+});
+
+// Logout route (optional)
+router.post('/logout', (req: Request, res: Response) => {
+	// Since JWT is stateless, the logout is handled on the frontend
+	return res.status(200).json({
+		success: true,
+		message: 'Logged out successfully',
+	});
 });
 
 export default router;
