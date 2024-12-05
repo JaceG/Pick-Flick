@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "npm run client:build && npm run server",
+    "start": "npm run build && npm run server",
     "start:dev": "concurrently \"npm run server:dev\" \"npm run client:dev\"",
     "server": "cd server && npm start",
     "server:dev": "cd server && nodemon src/server.ts",
@@ -28,6 +28,7 @@
   },
   "dependencies": {
     "bcrypt": "^5.1.1",
-    "dotenv": "^16.4.5"
+    "dotenv": "^16.4.5",
+    "jsonwebtoken": "^9.0.2"
   }
 }

@@ -3,11 +3,74 @@ import axios from 'axios';
 import { fetchMovies } from '../models/fetchMovies.js';
 import { genreMap, nameToIdMap } from '../utils/genreMaps.js';
 import { TMDB_API_KEY, MOTN_API_KEY } from '../config/config.js';
+import SavedMovie from '../models/SavedMovies.js'; // Import SavedMovie model
 
 if (!TMDB_API_KEY) {
 	throw new Error('TMDB_API_KEY is not defined in the environment variables');
 }
 
+// Function to save a movie to the database
+// Updated saveMovie function
+export const saveMovie = async (req: Request, res: Response) => {
+	try {
+		const {
+			movieId,
+			title,
+			poster,
+			genres,
+			releaseYear,
+			synopsis,
+			runtime,
+			cast,
+			directors,
+			producers,
+			streaming,
+		} = req.body;
+
+		const userId = req.user?.id; // Ensure the user ID is extracted properly
+
+		// Validate required fields
+		if (!userId || !movieId || !title) {
+			return res.status(400).json({
+				message: 'Missing required fields: userId, movieId, or title.',
+			});
+		}
+
+		// Check if the movie is already saved
+		const existingMovie = await SavedMovie.findOne({
+			where: { userId, movieId },
+		});
+		if (existingMovie) {
+			return res.status(400).json({ message: 'Movie is already saved.' });
+		}
+
+		// Save the movie with all fields, including streaming options
+		const newMovie = await SavedMovie.create({
+			userId,
+			movieId,
+			title,
+			poster,
+			genres,
+			releaseYear,
+			synopsis,
+			runtime,
+			cast,
+			directors,
+			producers,
+			streaming, // Save streaming options
+		});
+
+		res.status(201).json({
+			message: 'Movie saved successfully.',
+			movie: newMovie,
+		});
+	} catch (error) {
+		console.error('Error in saveMovie route:', error);
+		res.status(500).json({ message: 'An unexpected error occurred.' });
+	}
+};
+
+// Existing function for fetching random movies
 export const getRandomMovie = async (req: Request, res: Response) => {
 	const {
 		genre,

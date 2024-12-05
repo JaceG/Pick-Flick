@@ -1,0 +1,38 @@
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+li {
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+img {
+  width: 150px;
+  height: auto;
+}
+
+.movie-streaming img {
+  width: 100px;
+  height: auto;
+  object-fit: contain;
+}
+
+button.mark-as-watched {
+  background-color: green;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  margin-right: 5px;
+}
+
+button.remove {
+  background-color: red;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+}
