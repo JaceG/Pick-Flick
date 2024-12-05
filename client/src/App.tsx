@@ -36,8 +36,9 @@ const App: React.FC = () => {
 		<Router>
 			<div className='app'>
 				{/* Header */}
+				<div className='content'>
 				<header className='app-header'>
-					<h1>Random Movie Generator</h1>
+					
 					<nav>
 						{!loggedIn ? (
 							<>
@@ -61,8 +62,10 @@ const App: React.FC = () => {
 							</div>
 						)}
 					</nav>
+					<h1>Pick-Flick</h1>
 				</header>
-
+					 
+				
 				{/* Routes */}
 				<Routes>
 					<Route
@@ -153,6 +156,7 @@ const App: React.FC = () => {
 						element={<AuthPage onLogin={() => setLoggedIn(true)} />}
 					/>
 				</Routes>
+				</div>
 			</div>
 		</Router>
 	);

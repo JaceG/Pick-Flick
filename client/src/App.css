@@ -1,5 +1,11 @@
+ * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  }
+
+
 /* Root element styles */
-body,
 #root {
   display: flex; /* Use flexbox layout */
   justify-content: center; /* Center content horizontally */
@@ -14,14 +20,20 @@ body,
   text-align: center; /* Center text */
   padding: 20px; /* Add padding */
   height: 100%; /* Full height */
-  width: 100%; /* Default width */
-  max-width: 600px; /* Limit maximum width */
+  margin: auto; /* Default width */
+   /* Limit maximum width */
   display: flex; /* Use flexbox layout */
   flex-direction: column; /* Arrange children in a column */
   justify-content: flex-start; /* Align items to the top */
   align-items: center; /* Center content horizontally */
   box-sizing: border-box; /* Ensure padding is included in the width/height */
   overflow: auto; /* Allow scrolling if content overflows */
+  width: 100%; 
+}
+
+.content {
+  max-width: 600px;
+
 }
 
 .find-movie-button {
