@@ -20,7 +20,6 @@ const AuthPage: React.FC<AuthPageProps> = ({ onLogin }) => {
 
 	return (
 		<div className='auth-page'>
-			<h2>{isRegistering ? 'Register' : 'Login'}</h2>
 			{isRegistering ? (
 				<RegistrationForm onRegisterSuccess={handleRedirectToLogin} />
 			) : (

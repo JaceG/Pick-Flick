@@ -182,6 +182,28 @@ const App: React.FC = () => {
 		}));
 
 	return (
+		<Router>
+			<div className='app'>
+				{/* Header */}
+				<div className='content'>
+				<header className='app-header'>
+					
+					<nav>
+						{!loggedIn ? (
+							<>
+								<Link to='/auth/login' className='nav-button'>
+									Login
+								</Link>
+								<Link
+									to='/auth/register'
+									className='nav-button'>
+									Register
+								</Link>
+							</>
+						) : (
+							<div className='logged-in-icon'>
+								<span>👤 Logged In</span>
+
 		<div className='app'>
 			{/* AutoLogoutHandler */}
 			<AutoLogoutHandler loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
@@ -296,6 +318,7 @@ const App: React.FC = () => {
 							{loading ? (
 								<Spinner />
 							) : (
+
 								<button
 									className='find-movie-button'
 									type='button'
@@ -305,6 +328,108 @@ const App: React.FC = () => {
 									}}>
 									Find Me a Movie
 								</button>
+
+							</div>
+						)}
+					</nav>
+					<h1>Pick-Flick</h1>
+				</header>
+					 
+				
+				{/* Routes */}
+				<Routes>
+					<Route
+						path='/'
+						element={
+							<>
+								{/* Genre Selection */}
+								<div className='genres-container'>
+									{genreOptions.map((option) => (
+										<GenreButton
+											key={option.id}
+											option={option}
+											handleGenreClick={(genreId) =>
+												setSelectedGenres((prev) =>
+													prev.includes(genreId)
+														? prev.filter(
+																(id) =>
+																	id !==
+																	genreId
+														  )
+														: [...prev, genreId]
+												)
+											}
+											isSelected={selectedGenres.includes(
+												option.id
+											)}
+										/>
+									))}
+								</div>
+								<SelectedGenres
+									selectedGenres={selectedGenres}
+									genreOptions={genreOptions}
+									setSelectedGenres={setSelectedGenres}
+								/>
+								{/* Year Range Slider */}
+								<YearRangeSlider
+									yearRange={yearRange}
+									setYearRange={setYearRange}
+									handleRangeChange={handleRangeChange}
+								/>
+								{/* Runtime Range Slider */}
+								<RuntimeRangeSlider
+									runtimeRange={runtimeRange}
+									setRuntimeRange={setRuntimeRange}
+									handleRangeChange={handleRangeChange}
+								/>
+								{/* Language Selector */}
+								<LanguageSelector
+									selectedLanguage={selectedLanguage}
+									setSelectedLanguage={setSelectedLanguage}
+									languageOptions={[
+										{ code: 'any', name: 'Any' },
+										{ code: 'en', name: 'English' },
+										{ code: 'es', name: 'Spanish' },
+										{ code: 'zh', name: 'Chinese' },
+										{ code: 'fr', name: 'French' },
+										{ code: 'de', name: 'German' },
+										{ code: 'hi', name: 'Hindi' },
+										{ code: 'ar', name: 'Arabic' },
+										{ code: 'ru', name: 'Russian' },
+										{ code: 'pt', name: 'Portuguese' },
+										{ code: 'ja', name: 'Japanese' },
+									]}
+								/>
+								{/* Fetch Movie Button */}
+								{loading ? (
+									<Spinner />
+								) : (
+									<button
+										className='find-movie-button'
+										type='button'
+										onClick={(e) => {
+											e.preventDefault();
+											handleFetchMovie();
+										}}>
+										Find Me a Movie
+									</button>
+								)}
+								{/* Error Message */}
+								{error && <ErrorMessage message={error} />}
+								{/* Movie Display */}
+								{movie && <MovieDisplay movie={movie} />}
+							</>
+						}
+					/>
+					<Route
+						path='/auth/:type'
+						element={<AuthPage onLogin={() => setLoggedIn(true)} />}
+					/>
+				</Routes>
+				</div>
+			</div>
+		</Router>
+
 							)}
 							{/* Error Message */}
 							{error && <ErrorMessage message={error} />}
@@ -349,6 +474,7 @@ const App: React.FC = () => {
 				/>
 			</Routes>
 		</div>
+
 	);
 };
 
