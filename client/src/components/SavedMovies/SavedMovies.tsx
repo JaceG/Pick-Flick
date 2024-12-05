@@ -1,9 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { useLocation } from 'react-router-dom';
-
-const API_BASE_URL =
-	import.meta.env.VITE_API_BASE_URL || window.location.origin;
+import React from 'react';
+import './SavedMovies.css';
 
 interface Movie {
 	movieId: string;
@@ -27,13 +23,18 @@ interface Movie {
 	}[];
 }
 
-const SavedMovies: React.FC = () => {
-	const [movies, setMovies] = useState<Movie[]>([]);
-	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState<string | null>(null);
-	const location = useLocation();
+interface SavedMoviesProps {
+	movies: Movie[];
+	onMarkAsWatched: (movie: Movie) => void;
+	onDeleteMovie: (movieId: string) => void;
+}
 
-	// Function to get the appropriate streaming image based on theme
+const SavedMovies: React.FC<SavedMoviesProps> = ({
+	movies,
+	onMarkAsWatched,
+	onDeleteMovie,
+}) => {
+	// Helper function to get the appropriate streaming image based on theme
 	const getStreamingImage = (imageSet: {
 		lightThemeImage: string;
 		darkThemeImage: string;
@@ -46,87 +47,10 @@ const SavedMovies: React.FC = () => {
 			: imageSet.lightThemeImage;
 	};
 
-	useEffect(() => {
-		const fetchSavedMovies = async () => {
-			const token = localStorage.getItem('token');
-
-			if (!token) {
-				setError('No token found. Please log in.');
-				setLoading(false);
-				return;
-			}
-
-			try {
-				const response = await axios.get(
-					`${API_BASE_URL}/api/movies/saved`,
-					{
-						headers: {
-							Authorization: `Bearer ${token}`,
-						},
-					}
-				);
-				setMovies(response.data);
-			} catch (error: any) {
-				console.error('Error fetching saved movies:', error);
-
-				if (axios.isAxiosError(error) && error.response) {
-					setError(
-						error.response.data.message ||
-							'Failed to fetch saved movies.'
-					);
-				} else {
-					setError('An unexpected error occurred.');
-				}
-			} finally {
-				setLoading(false);
-			}
-		};
-
-		fetchSavedMovies();
-	}, [location]);
-
-	const handleDeleteMovie = async (movieId: string) => {
-		const token = localStorage.getItem('token');
-
-		if (!token) {
-			setError('No token found. Please log in.');
-			return;
-		}
-
-		try {
-			await axios.delete(`${API_BASE_URL}/api/movies/saved/${movieId}`, {
-				headers: {
-					Authorization: `Bearer ${token}`,
-				},
-			});
-
-			setMovies((prevMovies) =>
-				prevMovies.filter((movie) => movie.movieId !== movieId)
-			);
-		} catch (error: any) {
-			console.error('Error deleting movie:', error);
-
-			if (axios.isAxiosError(error) && error.response) {
-				setError(
-					error.response.data.message || 'Failed to delete movie.'
-				);
-			} else {
-				setError('An unexpected error occurred.');
-			}
-		}
+	const handleMarkAsWatched = (movie: Movie) => {
+		onMarkAsWatched(movie);
+		onDeleteMovie(movie.movieId);
 	};
-
-	if (loading) {
-		return <div>Loading...</div>;
-	}
-
-	if (error) {
-		return (
-			<div>
-				<p>{error}</p>
-			</div>
-		);
-	}
 
 	return (
 		<div>
@@ -134,20 +58,14 @@ const SavedMovies: React.FC = () => {
 			{movies.length === 0 ? (
 				<p>No saved movies found.</p>
 			) : (
-				<ul style={{ listStyle: 'none', padding: 0 }}>
+				<ul>
 					{movies.map((movie) => (
-						<li
-							key={movie.movieId}
-							style={{
-								border: '1px solid #ccc',
-								padding: '10px',
-								marginBottom: '10px',
-							}}>
+						<li key={movie.movieId} className='movie-item'>
 							<h2>{movie.title}</h2>
 							<img
 								src={movie.poster}
 								alt={`Poster of ${movie.title}`}
-								style={{ width: '150px', height: 'auto' }}
+								className='movie-poster'
 							/>
 							<p>
 								<strong>Genres:</strong>{' '}
@@ -156,30 +74,6 @@ const SavedMovies: React.FC = () => {
 							<p>
 								<strong>Release Year:</strong>{' '}
 								{movie.releaseYear || 'N/A'}
-							</p>
-							<p>
-								<strong>Synopsis:</strong>{' '}
-								{movie.synopsis || 'N/A'}
-							</p>
-							<p>
-								<strong>Runtime:</strong>{' '}
-								{movie.runtime
-									? `${Math.floor(movie.runtime / 60)}h ${
-											movie.runtime % 60
-									  }m`
-									: 'Not Available'}
-							</p>
-							<p>
-								<strong>Cast:</strong>{' '}
-								{movie.cast?.join(', ') || 'N/A'}
-							</p>
-							<p>
-								<strong>Directors:</strong>{' '}
-								{movie.directors?.join(', ') || 'N/A'}
-							</p>
-							<p>
-								<strong>Producers:</strong>{' '}
-								{movie.producers?.join(', ') || 'N/A'}
 							</p>
 							<div className='movie-streaming'>
 								<p>
@@ -203,12 +97,6 @@ const SavedMovies: React.FC = () => {
 															alt={`Streaming option ${
 																index + 1
 															}`}
-															style={{
-																width: '100px',
-																height: 'auto',
-																objectFit:
-																	'contain',
-															}}
 														/>
 													</a>
 												</li>
@@ -219,18 +107,18 @@ const SavedMovies: React.FC = () => {
 									<p>No streaming options available.</p>
 								)}
 							</div>
-
-							<button
-								onClick={() => handleDeleteMovie(movie.movieId)}
-								style={{
-									backgroundColor: 'red',
-									color: 'white',
-									border: 'none',
-									padding: '5px 10px',
-									cursor: 'pointer',
-								}}>
-								Remove
-							</button>
+							<div className='movie-actions'>
+								<button
+									onClick={() => handleMarkAsWatched(movie)}
+									className='mark-as-watched'>
+									Mark as Watched
+								</button>
+								<button
+									onClick={() => onDeleteMovie(movie.movieId)}
+									className='remove'>
+									Remove
+								</button>
+							</div>
 						</li>
 					))}
 				</ul>
