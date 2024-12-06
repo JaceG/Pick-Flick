@@ -5,6 +5,7 @@ interface WatchedMovie {
 	title: string;
 	poster?: string;
 	year: string;
+	movieId?: string;
 }
 
 interface WatchedMoviesProps {
@@ -32,7 +33,7 @@ const WatchedMovies: React.FC<WatchedMoviesProps> = ({
 								</h3>
 								<button
 									onClick={() =>
-										removeWatchedMovie(movie.id)
+										removeWatchedMovie(movie.movieId ?? '')
 									}>
 									Remove
 								</button>
