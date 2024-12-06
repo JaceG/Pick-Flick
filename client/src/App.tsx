@@ -187,167 +187,174 @@ const App: React.FC = () => {
 			<AutoLogoutHandler loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
 
 			{/* Header */}
-			<header className='app-header'>
-				<h1>Random Movie Generator</h1>
-				<nav>
-					{location.pathname !== '/' && (
-						<button
-							onClick={() => navigate('/')}
-							className='back-button'>
-							Back to Home
-						</button>
-					)}
-					{!loggedIn ? (
-						<>
-							<Link to='/auth/login' className='nav-button'>
-								Login
-							</Link>
-							<Link to='/auth/register' className='nav-button'>
-								Register
-							</Link>
-						</>
-					) : (
-						<div className='logged-in-icon'>
-							<span>👤 Logged In</span>
+			<div className='content'>
+				<header className='app-header'>
+					<h1>Pick-Flick</h1>
+					<nav>
+						{location.pathname !== '/' && (
 							<button
-								onClick={() => {
-									setLoggedIn(false);
-									localStorage.removeItem('token');
-									navigate('/auth/login');
-								}}
-								className='logout-button'>
-								Logout
+								onClick={() => navigate('/')}
+								className='back-button'>
+								Back to Home
 							</button>
-							<Link to='/saved-movies' className='nav-button'>
-								Saved Movies
-							</Link>
-							<Link to='/watched-movies' className='nav-button'>
-								Watched Movies
-							</Link>
-						</div>
-					)}
-				</nav>
-			</header>
-
-			{/* Routes */}
-			<Routes>
-				<Route
-					path='/'
-					element={
-						<>
-							{/* Genre Selection */}
-							<div className='genres-container'>
-								{genreOptions.map((option) => (
-									<GenreButton
-										key={option.id}
-										option={option}
-										handleGenreClick={(genreId) =>
-											setSelectedGenres((prev) =>
-												prev.includes(genreId)
-													? prev.filter(
-															(id) =>
-																id !== genreId
-													  )
-													: [...prev, genreId]
-											)
-										}
-										isSelected={selectedGenres.includes(
-											option.id
-										)}
-									/>
-								))}
-							</div>
-							<SelectedGenres
-								selectedGenres={selectedGenres}
-								genreOptions={genreOptions}
-								setSelectedGenres={setSelectedGenres}
-							/>
-							{/* Year Range Slider */}
-							<YearRangeSlider
-								yearRange={yearRange}
-								setYearRange={setYearRange}
-								handleRangeChange={handleRangeChange}
-							/>
-							{/* Runtime Range Slider */}
-							<RuntimeRangeSlider
-								runtimeRange={runtimeRange}
-								setRuntimeRange={setRuntimeRange}
-								handleRangeChange={handleRangeChange}
-							/>
-							{/* Language Selector */}
-							<LanguageSelector
-								selectedLanguage={selectedLanguage}
-								setSelectedLanguage={setSelectedLanguage}
-								languageOptions={[
-									{ code: 'any', name: 'Any' },
-									{ code: 'en', name: 'English' },
-									{ code: 'es', name: 'Spanish' },
-									{ code: 'zh', name: 'Chinese' },
-									{ code: 'fr', name: 'French' },
-									{ code: 'de', name: 'German' },
-									{ code: 'hi', name: 'Hindi' },
-									{ code: 'ar', name: 'Arabic' },
-									{ code: 'ru', name: 'Russian' },
-									{ code: 'pt', name: 'Portuguese' },
-									{ code: 'ja', name: 'Japanese' },
-								]}
-							/>
-							{/* Fetch Movie Button */}
-							{loading ? (
-								<Spinner />
-							) : (
+						)}
+						{!loggedIn ? (
+							<>
+								<Link to='/auth/login' className='nav-button'>
+									Login
+								</Link>
+								<Link
+									to='/auth/register'
+									className='nav-button'>
+									Register
+								</Link>
+							</>
+						) : (
+							<div className='logged-in-icon'>
+								<span>👤 Logged In</span>
 								<button
-									className='find-movie-button'
-									type='button'
-									onClick={(e) => {
-										e.preventDefault();
-										handleFetchMovie();
-									}}>
-									Find Me a Movie
-								</button>
-							)}
-							{/* Error Message */}
-							{error && <ErrorMessage message={error} />}
-							{/* Movie Display */}
-							{movie && (
-								<MovieDisplay
-									movie={{
-										...movie,
-										streaming: transformMovieStreaming(
-											movie.streaming
-										),
+									onClick={() => {
+										setLoggedIn(false);
+										localStorage.removeItem('token');
+										navigate('/auth/login');
 									}}
+									className='logout-button'>
+									Logout
+								</button>
+								<Link to='/saved-movies' className='nav-button'>
+									Saved Movies
+								</Link>
+								<Link
+									to='/watched-movies'
+									className='nav-button'>
+									Watched Movies
+								</Link>
+							</div>
+						)}
+					</nav>
+				</header>
+
+				{/* Routes */}
+				<Routes>
+					<Route
+						path='/'
+						element={
+							<>
+								{/* Genre Selection */}
+								<div className='genres-container'>
+									{genreOptions.map((option) => (
+										<GenreButton
+											key={option.id}
+											option={option}
+											handleGenreClick={(genreId) =>
+												setSelectedGenres((prev) =>
+													prev.includes(genreId)
+														? prev.filter(
+																(id) =>
+																	id !==
+																	genreId
+														  )
+														: [...prev, genreId]
+												)
+											}
+											isSelected={selectedGenres.includes(
+												option.id
+											)}
+										/>
+									))}
+								</div>
+								<SelectedGenres
+									selectedGenres={selectedGenres}
+									genreOptions={genreOptions}
+									setSelectedGenres={setSelectedGenres}
 								/>
-							)}
-						</>
-					}
-				/>
-				<Route
-					path='/auth/:type'
-					element={<AuthPage onLogin={() => setLoggedIn(true)} />}
-				/>
-				<Route
-					path='/saved-movies'
-					element={
-						<SavedMovies
-							onMarkAsWatched={(movie: Movie) =>
-								addToWatchedMovies(movie)
-							}
-							movies={savedMovies}
-							onDeleteMovie={deleteSavedMovie}
-						/>
-					}
-				/>
-				<Route
-					path='/watched-movies'
-					element={
-						<WatchedMovies
-							watchedMovies={watchedMovies}
-							removeWatchedMovie={removeWatchedMovie}
-						/>
-					}
-				/>
-			</Routes>
+								{/* Year Range Slider */}
+								<YearRangeSlider
+									yearRange={yearRange}
+									setYearRange={setYearRange}
+									handleRangeChange={handleRangeChange}
+								/>
+								{/* Runtime Range Slider */}
+								<RuntimeRangeSlider
+									runtimeRange={runtimeRange}
+									setRuntimeRange={setRuntimeRange}
+									handleRangeChange={handleRangeChange}
+								/>
+								{/* Language Selector */}
+								<LanguageSelector
+									selectedLanguage={selectedLanguage}
+									setSelectedLanguage={setSelectedLanguage}
+									languageOptions={[
+										{ code: 'any', name: 'Any' },
+										{ code: 'en', name: 'English' },
+										{ code: 'es', name: 'Spanish' },
+										{ code: 'zh', name: 'Chinese' },
+										{ code: 'fr', name: 'French' },
+										{ code: 'de', name: 'German' },
+										{ code: 'hi', name: 'Hindi' },
+										{ code: 'ar', name: 'Arabic' },
+										{ code: 'ru', name: 'Russian' },
+										{ code: 'pt', name: 'Portuguese' },
+										{ code: 'ja', name: 'Japanese' },
+									]}
+								/>
+								{/* Fetch Movie Button */}
+								{loading ? (
+									<Spinner />
+								) : (
+									<button
+										className='find-movie-button'
+										type='button'
+										onClick={(e) => {
+											e.preventDefault();
+											handleFetchMovie();
+										}}>
+										Find Me a Movie
+									</button>
+								)}
+								{/* Error Message */}
+								{error && <ErrorMessage message={error} />}
+								{/* Movie Display */}
+								{movie && (
+									<MovieDisplay
+										movie={{
+											...movie,
+											streaming: transformMovieStreaming(
+												movie.streaming
+											),
+										}}
+									/>
+								)}
+							</>
+						}
+					/>
+					<Route
+						path='/auth/:type'
+						element={<AuthPage onLogin={() => setLoggedIn(true)} />}
+					/>
+					<Route
+						path='/saved-movies'
+						element={
+							<SavedMovies
+								onMarkAsWatched={(movie: Movie) =>
+									addToWatchedMovies(movie)
+								}
+								movies={savedMovies}
+								onDeleteMovie={deleteSavedMovie}
+							/>
+						}
+					/>
+					<Route
+						path='/watched-movies'
+						element={
+							<WatchedMovies
+								watchedMovies={watchedMovies}
+								removeWatchedMovie={removeWatchedMovie}
+							/>
+						}
+					/>
+				</Routes>
+			</div>
 		</div>
 	);
 };
