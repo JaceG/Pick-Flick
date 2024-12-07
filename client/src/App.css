@@ -75,8 +75,13 @@ nav > :not(:first-child) {
 }
 
 .nav-button {
-  color: white;
+  color: black;
   text-decoration: none;
+  margin: 10px;
+}
+
+.logged-in-icon {
+  magin: 10px;
 }
 
 /* Responsive styles for smaller screens */
