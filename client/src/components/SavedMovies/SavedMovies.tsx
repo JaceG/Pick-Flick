@@ -49,7 +49,6 @@ const SavedMovies: React.FC<SavedMoviesProps> = ({
 
 	const handleMarkAsWatched = (movie: Movie) => {
 		onMarkAsWatched(movie);
-		onDeleteMovie(movie.movieId);
 	};
 
 	return (

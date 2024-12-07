@@ -69,8 +69,6 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
 
 	return (
 		<form className='registration-form' onSubmit={handleSubmit}>
-			<h2>Register</h2>
-
 			{error && <ErrorMessage message={error} />}
 			{successMessage && (
 				<p className='success-message'>{successMessage}</p>

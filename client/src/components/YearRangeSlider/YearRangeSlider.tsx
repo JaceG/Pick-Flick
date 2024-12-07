@@ -19,7 +19,7 @@ const YearRangeSlider: React.FC<YearRangeSliderProps> = ({
 }) => {
 	return (
 		<div className='year-range-container'>
-			<label>
+			<label className='start-year-label'>
 				Start Year:
 				<input
 					type='range'
@@ -30,9 +30,10 @@ const YearRangeSlider: React.FC<YearRangeSliderProps> = ({
 						handleRangeChange(e, yearRange, setYearRange, 0)
 					}
 					aria-label='Start year'
+					className='start-year-slider'
 				/>
 			</label>
-			<label>
+			<label className='end-year-label'>
 				End Year:
 				<input
 					type='range'
@@ -43,6 +44,7 @@ const YearRangeSlider: React.FC<YearRangeSliderProps> = ({
 						handleRangeChange(e, yearRange, setYearRange, 1)
 					}
 					aria-label='End year'
+					className='end-year-slider'
 				/>
 			</label>
 			<div>

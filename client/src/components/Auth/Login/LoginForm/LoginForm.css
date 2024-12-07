@@ -1,42 +1,93 @@
+:root {
+  --background-color: #ffffff;
+  --text-color: #000000;
+  --input-background-color: #ffffff;
+  --input-border-color: #ccc;
+  --button-background-color: #007bff;
+  --button-hover-background-color: #0056b3;
+  --error-color: red;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background-color: #121212;
+    --text-color: #ffffff;
+    --input-background-color: #333333;
+    --input-border-color: #555555;
+    --button-background-color: #1a73e8;
+    --button-hover-background-color: #135ab6;
+    --error-color: #ff6b6b;
+  }
+}
+
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
 .login-form {
-    text-align: left;
-    max-width: 400px;
-    margin: 0 auto;
-  }
-  
-  .form-group {
-    margin-bottom: 15px;
-  }
-  
-  .form-group label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-  }
-  
-  .form-group input {
-    width: 100%;
+  text-align: left;
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 15px;
+  box-sizing: border-box;
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid var(--input-border-color);
+  border-radius: 5px;
+  background-color: var(--input-background-color);
+  color: var(--text-color);
+}
+
+.error-message {
+  color: var(--error-color);
+  margin-bottom: 15px;
+}
+
+.submit-button {
+  width: 100%;
+  background-color: var(--button-background-color);
+  color: var(--text-color);
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.submit-button:hover {
+  background-color: var(--button-hover-background-color);
+}
+
+/* Media Queries for Mobile Responsiveness */
+@media (max-width: 600px) {
+  .login-form {
     padding: 10px;
-    font-size: 14px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
   }
-  
-  .error-message {
-    color: red;
-    margin-bottom: 15px;
+
+  .form-group input {
+    padding: 8px;
+    font-size: 13px;
   }
-  
+
   .submit-button {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    cursor: pointer;
-    border-radius: 5px;
+    padding: 8px;
+    font-size: 13px;
   }
-  
-  .submit-button:hover {
-    background-color: #0056b3;
-  }
-  
+}

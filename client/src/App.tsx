@@ -49,12 +49,27 @@ interface Movie {
 	}[];
 }
 
-// WatchedMovie type interface (simplified)
+// WatchedMovie type interface (updated to match the one used in WatchedMovies component)
 interface WatchedMovie {
-	id: string;
+	movieId: string;
 	title: string;
-	poster: string;
-	year: string;
+	poster?: string;
+	genres: string[];
+	releaseYear?: string;
+	synopsis?: string;
+	runtime?: number;
+	cast?: string[];
+	directors?: string[];
+	producers?: string[];
+	streaming?: {
+		link: string;
+		service: {
+			imageSet: {
+				lightThemeImage: string;
+				darkThemeImage: string;
+			};
+		};
+	}[];
 }
 
 const App: React.FC = () => {
@@ -87,6 +102,14 @@ const App: React.FC = () => {
 		const theme = hour >= 7 && hour <= 19 ? 'light' : 'dark';
 		document.documentElement.className = theme;
 	}, []);
+
+	// Set loggedIn state based on token in localStorage
+	useEffect(() => {
+		const token = localStorage.getItem('token');
+		if (token) {
+			setLoggedIn(true);
+		}
+	}, [setLoggedIn]);
 
 	// Fetch saved movies from the API
 	useEffect(() => {
@@ -121,27 +144,112 @@ const App: React.FC = () => {
 		fetchSavedMovies();
 	}, [location]);
 
+	// Fetch watched movies from the API
+	useEffect(() => {
+		const fetchWatchedMovies = async () => {
+			const token = localStorage.getItem('token');
+
+			if (!token) {
+				console.error('No token found. Please log in.');
+				return;
+			}
+
+			try {
+				const response = await axios.get(
+					`${API_BASE_URL}/api/movies/watched`,
+					{
+						headers: { Authorization: `Bearer ${token}` },
+					}
+				);
+				console.log('Watched movies:', response.data);
+				setWatchedMovies(
+					response.data?.map((data: any) => ({
+						movieId: data.movieId,
+						title: data.title,
+						poster: data.poster,
+						genres: data.genres,
+						releaseYear: data.releaseYear,
+						synopsis: data.synopsis,
+						runtime: data.runtime,
+						cast: data.cast,
+						directors: data.directors,
+						producers: data.producers,
+						streaming: data.streaming,
+					}))
+				);
+			} catch (err: any) {
+				if (axios.isAxiosError(err) && err.response) {
+					console.error(
+						err.response.data.message ||
+							'Failed to fetch watched movies.'
+					);
+				} else {
+					console.error('An unexpected error occurred.');
+				}
+			}
+		};
+
+		fetchWatchedMovies();
+	}, [location]);
+
+	const saveWatchedMovies = async (id: string, status: number = 1) => {
+		const token = localStorage.getItem('token');
+		try {
+			const response = await axios.put(
+				`${API_BASE_URL}/api/movies/watched`,
+				{
+					movieId: id,
+					status: status,
+				},
+				{
+					headers: {
+						Authorization: `Bearer ${token}`,
+					},
+				}
+			);
+
+			console.log('Registration response:', response);
+		} catch (err: any) {
+			console.error('Error during registration:', err);
+			alert(
+				err.response?.data?.message ||
+					'An error occurred during registration.'
+			);
+		}
+	};
+
 	// Add movie to watched list and remove from saved list
 	const addToWatchedMovies = (movie: Movie) => {
 		const watchedMovie: WatchedMovie = {
-			id: movie.movieId,
+			movieId: movie.movieId,
 			title: movie.title,
 			poster: movie.poster || '',
-			year: movie.releaseYear || 'N/A',
+			genres: movie.genres,
+			releaseYear: movie.releaseYear || 'N/A',
+			synopsis: movie.synopsis,
+			runtime: movie.runtime,
+			cast: movie.cast,
+			directors: movie.directors,
+			producers: movie.producers,
+			streaming: movie.streaming,
 		};
 		setWatchedMovies((prev) => [...prev, watchedMovie]);
 		setSavedMovies((prev) =>
 			prev.filter((m) => m.movieId !== movie.movieId)
 		);
+		saveWatchedMovies(movie?.movieId ?? '');
 	};
 
 	// Remove movie from watched list
 	const removeWatchedMovie = (id: string) => {
-		setWatchedMovies((prev) => prev.filter((movie) => movie.id !== id));
+		deleteSavedMovie(id, true);
 	};
 
 	// Delete a movie from the saved list
-	const deleteSavedMovie = async (movieId: string) => {
+	const deleteSavedMovie = async (
+		movieId: string,
+		watched: boolean = false
+	) => {
 		const token = localStorage.getItem('token');
 		if (!token) {
 			console.error('No token found. Please log in.');
@@ -153,6 +261,12 @@ const App: React.FC = () => {
 				headers: { Authorization: `Bearer ${token}` },
 			});
 
+			if (watched) {
+				setWatchedMovies((prev) =>
+					prev.filter((movie) => (movie?.movieId ?? '') !== movieId)
+				);
+				return;
+			}
 			setSavedMovies((prevMovies) =>
 				prevMovies.filter((movie) => movie.movieId !== movieId)
 			);

@@ -1,3 +1,25 @@
+:root {
+  /* Light mode variables */
+  --background-color: #ffffff;
+  --text-color: #000000;
+  --border-color: #ccc;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Dark mode variables */
+    --background-color: #121212;
+    --text-color: #ffffff;
+    --border-color: #444;
+  }
+}
+
+/* Apply the variables */
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
 /* Container for movie details */
 .movie-container {
   display: flex;
@@ -13,7 +35,7 @@
   width: 100%;
   max-width: 300px;
   border-radius: 10px;
-  margin-bottom: 20px;
+  margin-bottom: 30px; /* Increased margin-bottom */
 }
 
 /* Movie details container */
@@ -21,13 +43,15 @@
   width: 100%;
   max-width: 600px;
   text-align: center; /* Center text */
+  margin-bottom: 30px; /* Increased margin-bottom */
 }
 
 /* Button container */
 .button-container {
   display: flex;
   justify-content: center;
-  margin: 20px 0;
+  margin: 30px 0; /* Increased margin */
+  flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
 }
 
 /* Individual button styles */
@@ -41,7 +65,7 @@
   cursor: pointer;
   transition: background-color 0.3s, color 0.3s;
   text-align: center;
-  margin: 0 5px;
+  margin: 5px; /* Adjusted margin for better spacing */
 }
 
 /* Hover effect for buttons */
@@ -63,7 +87,7 @@
 /* Movie title styles */
 .movie-title {
   font-size: 32px; /* Increased font size */
-  margin-bottom: 10px;
+  margin-bottom: 20px; /* Increased margin-bottom */
 }
 
 /* Movie meta information */
@@ -71,56 +95,95 @@
   display: flex;
   flex-direction: column;
   align-items: center; /* Center items */
-  margin-bottom: 10px;
-  font-size: 20px; /* Increased font size */
+  margin-bottom: 20px; /* Increased margin-bottom */
 }
 
 /* Movie genres */
 .movie-genres {
-  margin-bottom: 5px;
+  margin-bottom: 10px; /* Increased margin-bottom */
 }
 
 /* Movie release year */
 .movie-release {
-  margin-bottom: 5px;
+  margin-bottom: 10px; /* Increased margin-bottom */
 }
 
 /* Movie language */
 .movie-language {
-  margin-bottom: 5px;
+  margin-bottom: 10px; /* Increased margin-bottom */
 }
 
 /* Movie runtime */
 .movie-runtime {
-  margin-bottom: 10px;
-  font-size: 20px; /* Increased font size */
+  margin-bottom: 20px; /* Increased margin-bottom */
 }
 
 /* Movie synopsis */
 .movie-synopsis {
-  margin-bottom: 10px;
+  margin-bottom: 20px; /* Increased margin-bottom */
   font-size: 20px; /* Increased font size */
 }
 
 /* Movie credits */
 .movie-credits {
-  margin-bottom: 10px;
+  margin-bottom: 20px; /* Increased margin-bottom */
   font-size: 20px; /* Increased font size */
+  text-align: left;
 }
 
 /* Movie IMDb ID */
 .movie-imdb {
-  margin-bottom: 10px;
+  margin-bottom: 20px; /* Increased margin-bottom */
   font-size: 20px; /* Increased font size */
 }
 
 /* Movie streaming options */
 .movie-streaming {
-  margin-bottom: 10px;
+  margin-bottom: 20px; /* Increased margin-bottom */
   font-size: 20px; /* Increased font size */
 }
 
 /* Streaming image styles */
 .streaming-image {
   width: 200px;
+  margin-bottom: 20px; /* Added margin-bottom */
+}
+
+/* Media queries for responsiveness */
+@media (max-width: 768px) {
+  .movie-title {
+    font-size: 28px;
+  }
+
+  .movie-meta, .movie-runtime, .movie-synopsis, .movie-credits, .movie-imdb, .movie-streaming {
+    font-size: 18px;
+  }
+
+  .button {
+    font-size: 16px;
+    padding: 10px 15px;
+  }
+
+  .streaming-image {
+    width: 150px;
+  }
+}
+
+@media (max-width: 480px) {
+  .movie-title {
+    font-size: 24px;
+  }
+
+  .movie-meta, .movie-runtime, .movie-synopsis, .movie-credits, .movie-imdb, .movie-streaming {
+    font-size: 16px;
+  }
+
+  .button {
+    font-size: 14px;
+    padding: 8px 12px;
+  }
+
+  .streaming-image {
+    width: 100px;
+  }
 }

@@ -26,4 +26,5 @@ export interface WatchedMovie {
 	title: string;
 	poster: string;
 	year: string;
+	movieId?: string;
 }
