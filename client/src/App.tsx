@@ -49,13 +49,27 @@ interface Movie {
 	}[];
 }
 
-// WatchedMovie type interface (simplified)
+// WatchedMovie type interface (updated to match the one used in WatchedMovies component)
 interface WatchedMovie {
-	id: string;
+	movieId: string;
 	title: string;
-	poster: string;
-	year: string;
-	movieId?: string;
+	poster?: string;
+	genres: string[];
+	releaseYear?: string;
+	synopsis?: string;
+	runtime?: number;
+	cast?: string[];
+	directors?: string[];
+	producers?: string[];
+	streaming?: {
+		link: string;
+		service: {
+			imageSet: {
+				lightThemeImage: string;
+				darkThemeImage: string;
+			};
+		};
+	}[];
 }
 
 const App: React.FC = () => {
@@ -88,6 +102,14 @@ const App: React.FC = () => {
 		const theme = hour >= 7 && hour <= 19 ? 'light' : 'dark';
 		document.documentElement.className = theme;
 	}, []);
+
+	// Set loggedIn state based on token in localStorage
+	useEffect(() => {
+		const token = localStorage.getItem('token');
+		if (token) {
+			setLoggedIn(true);
+		}
+	}, [setLoggedIn]);
 
 	// Fetch saved movies from the API
 	useEffect(() => {
@@ -141,16 +163,25 @@ const App: React.FC = () => {
 				);
 				console.log('Watched movies:', response.data);
 				setWatchedMovies(
-					response.data?.map((data: Movie) => ({
-						...data,
-						year: data.releaseYear,
+					response.data?.map((data: any) => ({
+						movieId: data.movieId,
+						title: data.title,
+						poster: data.poster,
+						genres: data.genres,
+						releaseYear: data.releaseYear,
+						synopsis: data.synopsis,
+						runtime: data.runtime,
+						cast: data.cast,
+						directors: data.directors,
+						producers: data.producers,
+						streaming: data.streaming,
 					}))
 				);
 			} catch (err: any) {
 				if (axios.isAxiosError(err) && err.response) {
 					console.error(
 						err.response.data.message ||
-							'Failed to fetch saved movies.'
+							'Failed to fetch watched movies.'
 					);
 				} else {
 					console.error('An unexpected error occurred.');
@@ -186,13 +217,21 @@ const App: React.FC = () => {
 			);
 		}
 	};
+
 	// Add movie to watched list and remove from saved list
 	const addToWatchedMovies = (movie: Movie) => {
 		const watchedMovie: WatchedMovie = {
-			id: movie.movieId,
+			movieId: movie.movieId,
 			title: movie.title,
 			poster: movie.poster || '',
-			year: movie.releaseYear || 'N/A',
+			genres: movie.genres,
+			releaseYear: movie.releaseYear || 'N/A',
+			synopsis: movie.synopsis,
+			runtime: movie.runtime,
+			cast: movie.cast,
+			directors: movie.directors,
+			producers: movie.producers,
+			streaming: movie.streaming,
 		};
 		setWatchedMovies((prev) => [...prev, watchedMovie]);
 		setSavedMovies((prev) =>
