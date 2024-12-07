@@ -1,13 +1,20 @@
 /* Year Range Container */
 .year-range-container {
-  margin: 20px 0; /* Add vertical margin */
+  margin: 40px 0; /* Increase vertical margin */
   text-align: center; /* Center align */
 }
 
 .year-range-container label {
   font-size: 16px; /* Set font size */
   font-weight: bold; /* Bold label text */
-  margin: 0 10px; /* Add horizontal margin */
+  margin: 0 20px; /* Increase horizontal margin */
+}
+
+/* Specific styles for start and end year labels */
+.start-year-label,
+.end-year-label {
+  display: block; /* Ensure labels are block elements */
+  margin-bottom: 20px; /* Add bottom margin to separate labels */
 }
 
 /* Slider container */
@@ -15,11 +22,35 @@
   display: flex; /* Use flexbox layout */
   justify-content: center; /* Center content horizontally */
   align-items: center; /* Center content vertically */
-  gap: 10px; /* Space between elements */
-  margin-top: 10px; /* Add top margin */
+  gap: 20px; /* Increase space between elements */
+  margin-top: 20px; /* Increase top margin */
 }
 
 /* Slider styles */
 .slider {
   width: 200px; /* Set width */
+}
+
+/* Specific styles for start and end year sliders */
+.start-year-slider,
+.end-year-slider {
+  display: block; /* Ensure sliders are block elements */
+  margin: 10px auto; /* Center sliders and add vertical margin */
+}
+
+/* Responsive styles for smaller screens */
+@media (max-width: 600px) {
+  .year-range-container {
+    padding: 20px; /* Add padding for smaller screens */
+  }
+
+  .start-year-label,
+  .end-year-label {
+    margin-bottom: 30px; /* Increase bottom margin for labels */
+  }
+
+  .start-year-slider,
+  .end-year-slider {
+    margin-bottom: 30px; /* Increase bottom margin for sliders */
+  }
 }
