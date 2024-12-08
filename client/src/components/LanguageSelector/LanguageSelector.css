@@ -2,6 +2,8 @@
 .language-selector-container {
   margin: 20px 0; /* Add vertical margin */
   text-align: center; /* Center align */
+  display: flex;
+  justify-content: center;
 }
 
 .language-selector-container label {

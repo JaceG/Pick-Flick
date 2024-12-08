@@ -80,6 +80,8 @@ const App: React.FC = () => {
 	const [watchedMovies, setWatchedMovies] = useState<WatchedMovie[]>([]);
 	const navigate = useNavigate();
 	const location = useLocation();
+  const isLoginPage = location.pathname.includes('/auth');
+  const isRegisterPage = location.pathname.includes('/auth/register');
 
 	// Automatically set theme based on time of day
 	useEffect(() => {
@@ -189,8 +191,8 @@ const App: React.FC = () => {
 			{/* Header */}
 			<div className='content'>
 				<header className='app-header'>
-					<h1>Pick-Flick</h1>
-					<nav>
+					<h1>Pick-Flick.com</h1>
+					<nav className='nav'>
 						{location.pathname !== '/' && (
 							<button
 								onClick={() => navigate('/')}
@@ -198,39 +200,37 @@ const App: React.FC = () => {
 								Back to Home
 							</button>
 						)}
-						{!loggedIn ? (
-							<>
-								<Link to='/auth/login' className='nav-button'>
-									Login
-								</Link>
-								<Link
-									to='/auth/register'
-									className='nav-button'>
-									Register
-								</Link>
-							</>
-						) : (
-							<div className='logged-in-icon'>
-								<span>👤 Logged In</span>
-								<button
-									onClick={() => {
-										setLoggedIn(false);
-										localStorage.removeItem('token');
-										navigate('/auth/login');
-									}}
-									className='logout-button'>
-									Logout
-								</button>
-								<Link to='/saved-movies' className='nav-button'>
-									Saved Movies
-								</Link>
-								<Link
-									to='/watched-movies'
-									className='nav-button'>
-									Watched Movies
-								</Link>
-							</div>
-						)}
+	{!loggedIn && !isLoginPage && !isRegisterPage && (
+    <>
+      <Link to="/auth/login" className="nav-button">
+      <a className='login-nav'>Login</a>
+      </Link>
+      <Link to="/auth/register" className="nav-button">
+        <a className='register-nav'>Register</a>
+      </Link>
+    </>
+  )}
+
+  {loggedIn && (
+    <div className="logged-in-icon">
+      <span>👤 Logged In</span>
+      <button
+        onClick={() => {
+          setLoggedIn(false);
+          localStorage.removeItem('token');
+          navigate('/auth/login');
+        }}
+        className="logout-button">
+        Logout
+      </button>
+      <Link to="/saved-movies" className="nav-button">
+        Saved Movies
+      </Link>
+      <Link to="/watched-movies" className="nav-button">
+        Watched Movies
+      </Link>
+    </div>
+  )}
 					</nav>
 				</header>
 

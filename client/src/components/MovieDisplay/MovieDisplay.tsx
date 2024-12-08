@@ -211,7 +211,7 @@ const MovieDisplay: React.FC<MovieDisplayProps> = ({ movie }) => {
 						<strong>Streaming Options:</strong>
 					</p>
 					{movie.streaming && movie.streaming.length > 0 ? (
-						<ul>
+						<ul className="stream-opt-container">
 							{movie.streaming.map((option, index) => (
 								<li key={index}>
 									<a

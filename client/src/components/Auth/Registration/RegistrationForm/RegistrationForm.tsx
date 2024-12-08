@@ -69,7 +69,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
 
 	return (
 		<form className='registration-form' onSubmit={handleSubmit}>
-			<h2>Register</h2>
+			<h2> 🍿 Register</h2>
 
 			{error && <ErrorMessage message={error} />}
 			{successMessage && (
@@ -82,6 +82,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
 				value={username}
 				type='text'
 				onChange={(e) => setUsername(e.target.value)}
+				placeholder='Enter a username'
 			/>
 			<InputField
 				id='email'
@@ -89,6 +90,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
 				value={email}
 				type='email'
 				onChange={(e) => setEmail(e.target.value)}
+				placeholder='Enter your email'
 			/>
 			<InputField
 				id='password'
@@ -96,6 +98,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
 				value={password}
 				type='password'
 				onChange={(e) => setPassword(e.target.value)}
+				placeholder='Enter a password'
 			/>
 			<InputField
 				id='confirmPassword'
@@ -103,6 +106,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
 				value={confirmPassword}
 				type='password'
 				onChange={(e) => setConfirmPassword(e.target.value)}
+				placeholder='Re-enter your password'
 			/>
 
 			<button type='submit' className='register-button'>

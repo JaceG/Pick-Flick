@@ -15,7 +15,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
 	return (
 		<div className='language-selector-container'>
 			<label htmlFor='language-selector'>
-				Preferred Language:
+				Preferred Language: <span></span>
 				<select
 					id='language-selector'
 					value={selectedLanguage}

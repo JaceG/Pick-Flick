@@ -61,7 +61,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
 
 	return (
 		<div className='login-form-container'>
-			<h2>Login</h2>
+			<h2>🍿 Login</h2>
 			<form className='login-form' onSubmit={handleLogin}>
 				{error && <p className='error-message'>{error}</p>}
 				<div className='form-group'>

@@ -4,7 +4,10 @@
   box-sizing: border-box;
   }
 
-
+h1 {
+  font-family: cursive;
+  box-shadow: 0 0 10px 0 red;
+}
 /* Root element styles */
 #root {
   display: flex; /* Use flexbox layout */
@@ -58,10 +61,20 @@
 }
 
 nav {
-  display: flex;
-  flex-direction: row;
+  text-decoration: underline;
+  padding-top: 20px;
+  display:block;
+ 
+  /* flex-direction: column-reverse; */
 }
 
+.login-nav {
+
+}
+.register-nav {
+
+  flex-direction: column;
+}
 nav > :not(:first-child) {
   margin-left: 16px;
 
@@ -71,6 +84,7 @@ nav > :not(:first-child) {
   color: white;
   text-decoration: none;
 }
+
 
 /* Responsive styles for smaller screens */
 @media (max-width: 600px) {

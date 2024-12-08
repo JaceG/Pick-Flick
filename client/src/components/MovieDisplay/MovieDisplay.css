@@ -117,10 +117,20 @@
 /* Movie streaming options */
 .movie-streaming {
   margin-bottom: 10px;
-  font-size: 20px; /* Increased font size */
+  font-size: 20px; 
+ /* Increased font size */
+}
+
+.movie-streaming p {
+  margin-bottom: 5px;
+  padding-bottom: 10px;
 }
 
 /* Streaming image styles */
 .streaming-image {
   width: 200px;
+}
+
+.stream-opt-container li {
+  border: none;
 }

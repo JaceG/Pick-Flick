@@ -1,6 +1,6 @@
 .auth-page {
     text-align: center;
-    padding: 20px;
+    padding: 10px;
   }
   
   .toggle-link {
@@ -16,3 +16,17 @@
     color: #0056b3;
   }
   
+  .register-button{
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    height: 4vh;
+    width: -webkit-fill-available;
+
+  }
+
+  .register-button:hover{
+      background-color: green;    
+  }
