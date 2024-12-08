@@ -33,7 +33,7 @@ body {
 /* Movie poster styles */
 .movie-poster {
   width: 100%;
-  max-width: 300px;
+  max-width: 500px;
   border-radius: 10px;
   margin-bottom: 30px; /* Increased margin-bottom */
 }

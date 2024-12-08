@@ -1,11 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {
-	Routes,
-	Route,
-	Link,
-	useNavigate,
-	useLocation,
-} from 'react-router-dom';
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import './App.css';
 import GenreButton from './components/GenreButton/GenreButton';
 import SelectedGenres from './components/SelectedGenres/SelectedGenres';
@@ -308,20 +302,22 @@ const App: React.FC = () => {
 						{location.pathname !== '/' && (
 							<button
 								onClick={() => navigate('/')}
-								className='back-button'>
+								className='nav-button'>
 								Back to Home
 							</button>
 						)}
 						{!loggedIn ? (
 							<>
-								<Link to='/auth/login' className='nav-button'>
+								<button
+									onClick={() => navigate('/auth/login')}
+									className='nav-button'>
 									Login
-								</Link>
-								<Link
-									to='/auth/register'
+								</button>
+								<button
+									onClick={() => navigate('/auth/register')}
 									className='nav-button'>
 									Register
-								</Link>
+								</button>
 							</>
 						) : (
 							<div className='logged-in-icon'>
@@ -332,17 +328,19 @@ const App: React.FC = () => {
 										localStorage.removeItem('token');
 										navigate('/auth/login');
 									}}
-									className='logout-button'>
+									className='nav-button'>
 									Logout
 								</button>
-								<Link to='/saved-movies' className='nav-button'>
+								<button
+									onClick={() => navigate('/saved-movies')}
+									className='nav-button'>
 									Saved Movies
-								</Link>
-								<Link
-									to='/watched-movies'
+								</button>
+								<button
+									onClick={() => navigate('/watched-movies')}
 									className='nav-button'>
 									Watched Movies
-								</Link>
+								</button>
 							</div>
 						)}
 					</nav>
