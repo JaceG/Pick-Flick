@@ -16,7 +16,7 @@ This app is a Random Movie Generator that allows users to discover movies tailor
 
 ## Usage
 
-To use this application, simply goto [https://pick-flick-app.netlify.app/](https://pick-flick-app.netlify.app/)
+To use this application, simply goto [https://pick-flick.onrender.com/](https://pick-flick.onrender.com//)
 
 ## Contributing
 
