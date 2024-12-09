@@ -31,3 +31,11 @@ For any questions, please contact us on GitHub at [JaceG](https://github.com/Jac
 Credits: This project was created as part of a coding bootcamp group project. - Sources and References: Portions of the code and guidance were provided with assistance from ChatGPT, Tutors, and Instructors.
 
 ## Preview
+
+![Main Page](/assets/img/homepage.png)
+
+![Login Page](/assets/img/loginpage.png)
+
+![Register Page](/assets/img/regpage.png)
+
+![Find Me A Movie](/assets/img/FindMovie.png)
