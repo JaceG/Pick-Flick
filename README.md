@@ -16,7 +16,7 @@ This app is a Random Movie Generator that allows users to discover movies tailor
 
 ## Usage
 
-To use this application, simply goto [https://pick-flick-app.netlify.app/](https://pick-flick-app.netlify.app/)
+To use this application, simply goto [https://pick-flick.onrender.com/](https://pick-flick.onrender.com//)
 
 ## Contributing
 
@@ -31,3 +31,11 @@ For any questions, please contact us on GitHub at [JaceG](https://github.com/Jac
 Credits: This project was created as part of a coding bootcamp group project. - Sources and References: Portions of the code and guidance were provided with assistance from ChatGPT, Tutors, and Instructors.
 
 ## Preview
+
+![Main Page](/assets/img/homepage.png)
+
+![Login Page](/assets/img/loginpage.png)
+
+![Register Page](/assets/img/regpage.png)
+
+![Find Me A Movie](/assets/img/FindMovie.png)
