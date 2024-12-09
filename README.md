@@ -1,4 +1,4 @@
-# React Portfolio
+# Pick Flick
 
 ![License](https://img.shields.io/badge/License-MIT-blue.svg)
 
@@ -31,4 +31,3 @@ For any questions, please contact us on GitHub at [JaceG](https://github.com/Jac
 Credits: This project was created as part of a coding bootcamp group project. - Sources and References: Portions of the code and guidance were provided with assistance from ChatGPT, Tutors, and Instructors.
 
 ## Preview
-
