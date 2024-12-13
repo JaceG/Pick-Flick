@@ -19,7 +19,7 @@ const RuntimeRangeSlider: React.FC<RuntimeRangeSliderProps> = ({
 }) => {
 	return (
 		<div className='runtime-range-container'>
-			<label>
+			<label className='min-runtime-label'>
 				Min Runtime (minutes):
 				<input
 					type='range'
@@ -30,9 +30,10 @@ const RuntimeRangeSlider: React.FC<RuntimeRangeSliderProps> = ({
 					onChange={(e) =>
 						handleRangeChange(e, runtimeRange, setRuntimeRange, 0)
 					}
+					className='min-runtime-slider'
 				/>
 			</label>
-			<label>
+			<label className='max-runtime-label'>
 				Max Runtime (minutes):
 				<input
 					type='range'
@@ -43,6 +44,7 @@ const RuntimeRangeSlider: React.FC<RuntimeRangeSliderProps> = ({
 					onChange={(e) =>
 						handleRangeChange(e, runtimeRange, setRuntimeRange, 1)
 					}
+					className='max-runtime-slider'
 				/>
 			</label>
 			<div>

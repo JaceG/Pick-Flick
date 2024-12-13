@@ -20,7 +20,9 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
 
 	const API_BASE_URL =
 		process.env.NODE_ENV === 'production'
-			? 'https://pick-flick.onrender.com'
+			? window.location.hostname === 'www.pickflick.app'
+				? 'https://www.pickflick.app'
+				: 'https://pick-flick.onrender.com'
 			: 'http://localhost:3001';
 
 	const handleSubmit = async (e: React.FormEvent) => {
@@ -69,8 +71,6 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
 
 	return (
 		<form className='registration-form' onSubmit={handleSubmit}>
-			<h2>Register</h2>
-
 			{error && <ErrorMessage message={error} />}
 			{successMessage && (
 				<p className='success-message'>{successMessage}</p>

@@ -19,7 +19,7 @@ router.get('/saved', authMiddleware, async (req: Request, res: Response) => {
 	try {
 		// Fetch all saved movies, including streaming data
 		const savedMovies = await SavedMovie.findAll({
-			where: { userId },
+			where: { userId, status: 0 }, // 0 means all saved movies
 			attributes: [
 				'movieId',
 				'title',
@@ -129,5 +129,69 @@ router.delete(
 		}
 	}
 );
+
+// Endpoint to save a watched movie for the authenticated user
+router.put('/watched', authMiddleware, async (req: Request, res: Response) => {
+	const userId = req.user?.id;
+	const { movieId, status } = req.body;
+
+	if (!userId) {
+		return res.status(401).json({ message: 'Unauthorized' });
+	}
+
+	try {
+		// Check if the movie already exists for the user
+		const existingMovie = await SavedMovie.findOne({
+			where: { userId, movieId },
+		});
+		if (!existingMovie) {
+			return res.status(404).json({ message: 'Movie not found' });
+		}
+
+		existingMovie.status = status; // Set the status to 1 for watched
+		await existingMovie.save();
+		res.status(200).json({
+			message: 'Movie marked as watched successfully.',
+			movie: existingMovie,
+		});
+	} catch (error) {
+		console.error('Error saving movie:', error);
+		res.status(500).json({ message: 'Failed to save movie.' });
+	}
+});
+
+// Endpoint to get saved movies for the authenticated user
+router.get('/watched', authMiddleware, async (req: Request, res: Response) => {
+	const userId = req.user?.id;
+
+	if (!userId) {
+		return res.status(401).json({ message: 'Unauthorized' });
+	}
+
+	try {
+		// Fetch all saved movies, including streaming data
+		const savedMovies = await SavedMovie.findAll({
+			where: { userId, status: 1 }, // 1 means all watched movies
+			attributes: [
+				'movieId',
+				'title',
+				'poster',
+				'genres',
+				'releaseYear',
+				'synopsis',
+				'runtime',
+				'cast',
+				'directors',
+				'producers',
+				'streaming',
+			],
+		});
+
+		res.json(savedMovies);
+	} catch (error) {
+		console.error('Error fetching saved movies:', error);
+		res.status(500).json({ message: 'Failed to fetch saved movies.' });
+	}
+});
 
 export default router;

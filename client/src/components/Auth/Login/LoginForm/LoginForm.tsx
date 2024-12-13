@@ -17,7 +17,9 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
 	// Set the API base URL dynamically based on the environment
 	const API_BASE_URL =
 		process.env.NODE_ENV === 'production'
-			? 'https://pick-flick.onrender.com'
+			? window.location.hostname === 'www.pickflick.app'
+				? 'https://www.pickflick.app'
+				: 'https://pick-flick.onrender.com'
 			: 'http://localhost:3001';
 
 	const handleLogin = async (e: React.FormEvent) => {
@@ -61,7 +63,6 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
 
 	return (
 		<div className='login-form-container'>
-			<h2>Login</h2>
 			<form className='login-form' onSubmit={handleLogin}>
 				{error && <p className='error-message'>{error}</p>}
 				<div className='form-group'>

@@ -165,13 +165,17 @@ const MovieDisplay: React.FC<MovieDisplayProps> = ({ movie }) => {
 				</div>
 				<h2 className='movie-title'>{movie.title}</h2>
 				<div className='movie-meta'>
-					<p className='movie-genres'>
-						<strong>{movie.genres.join(', ')}</strong>
-					</p>
-					<p className='movie-release'>
-						<strong>Release Year:</strong>{' '}
-						{movie.releaseYear || 'Not Available'}
-					</p>
+					<div className='movie-genres'>
+						<p>
+							<strong>{movie.genres.join(', ')}</strong>
+						</p>
+					</div>
+					<div className='movie-release'>
+						<p>
+							<strong>Release Year:</strong>{' '}
+							{movie.releaseYear || 'Not Available'}
+						</p>
+					</div>
 				</div>
 				<div className='movie-language'>
 					<p>
@@ -179,12 +183,14 @@ const MovieDisplay: React.FC<MovieDisplayProps> = ({ movie }) => {
 					</p>
 				</div>
 				<div className='movie-runtime'>
-					<strong>Runtime:</strong>{' '}
-					{movie.runtime
-						? `${Math.floor(movie.runtime / 60)}h ${
-								movie.runtime % 60
-						  }m`
-						: 'Not Available'}
+					<p>
+						<strong>Runtime:</strong>{' '}
+						{movie.runtime
+							? `${Math.floor(movie.runtime / 60)}h ${
+									movie.runtime % 60
+							  }m`
+							: 'Not Available'}
+					</p>
 				</div>
 				<div className='movie-synopsis'>
 					<p>
@@ -193,18 +199,24 @@ const MovieDisplay: React.FC<MovieDisplayProps> = ({ movie }) => {
 					</p>
 				</div>
 				<div className='movie-credits'>
-					<p>
-						<strong>Cast:</strong>{' '}
-						{movie.cast?.join(', ') || 'Not Available'}
-					</p>
-					<p>
-						<strong>Director(s):</strong>{' '}
-						{movie.directors?.join(', ') || 'Not Available'}
-					</p>
-					<p>
-						<strong>Producer(s):</strong>{' '}
-						{movie.producers?.join(', ') || 'Not Available'}
-					</p>
+					<div>
+						<p>
+							<strong>Cast:</strong>{' '}
+							{movie.cast?.join(', ') || 'Not Available'}
+						</p>
+					</div>
+					<div>
+						<p>
+							<strong>Director(s):</strong>{' '}
+							{movie.directors?.join(', ') || 'Not Available'}
+						</p>
+					</div>
+					<div>
+						<p>
+							<strong>Producer(s):</strong>{' '}
+							{movie.producers?.join(', ') || 'Not Available'}
+						</p>
+					</div>
 				</div>
 				<div className='movie-streaming'>
 					<p>

@@ -26,3 +26,18 @@
   outline: none; /* Remove default outline */
   border-color: #2563eb; /* Highlight border on focus */
 }
+
+/* Mobile styles */
+@media (max-width: 600px) {
+  .language-selector-container {
+    margin-bottom: 40px; /* Add extra bottom margin for mobile */
+  }
+
+  .language-selector-container select {
+    margin-bottom: 20px; /* Add bottom margin to the dropdown */
+  }
+
+  .button-below-dropdown {
+    margin-top: 20px; /* Add top margin to the button */
+  }
+}

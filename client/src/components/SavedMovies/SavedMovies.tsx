@@ -46,6 +46,7 @@ const SavedMovies: React.FC = () => {
 			: imageSet.lightThemeImage;
 	};
 
+<<<<<<< Updated upstream
 	useEffect(() => {
 		const fetchSavedMovies = async () => {
 			const token = localStorage.getItem('token');
@@ -114,6 +115,10 @@ const SavedMovies: React.FC = () => {
 				setError('An unexpected error occurred.');
 			}
 		}
+=======
+	const handleMarkAsWatched = (movie: Movie) => {
+		onMarkAsWatched(movie);
+>>>>>>> Stashed changes
 	};
 
 	if (loading) {

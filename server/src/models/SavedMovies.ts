@@ -16,6 +16,7 @@ interface SavedMovieAttributes {
 	directors?: string[];
 	producers?: string[];
 	streaming?: { [key: string]: any }[]; // Streaming options as an array of objects
+	status?: number;
 	createdAt?: Date;
 	updatedAt?: Date;
 }
@@ -55,6 +56,7 @@ class SavedMovie
 	public directors!: string[];
 	public producers!: string[];
 	public streaming!: { [key: string]: any }[];
+	public status!: number;
 
 	// Timestamps
 	public readonly createdAt!: Date;
@@ -108,6 +110,10 @@ SavedMovie.init(
 		},
 		streaming: {
 			type: DataTypes.JSONB, // Use JSONB for storing complex objects
+		},
+		status: {
+			type: DataTypes.INTEGER, // Use JSONB for storing complex objects
+			defaultValue: 0,
 		},
 	},
 	{

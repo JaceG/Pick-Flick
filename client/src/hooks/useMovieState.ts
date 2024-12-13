@@ -23,7 +23,7 @@ export const useMovieState = () => {
 	const [loggedIn, setLoggedIn] = useState(false);
 
 	const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
-	const [yearRange, setYearRange] = useState<[number, number]>([2000, 2020]);
+	const [yearRange, setYearRange] = useState<[number, number]>([1988, 2024]);
 	const [runtimeRange, setRuntimeRange] = useState<[number, number]>([
 		0, 360,
 	]);
