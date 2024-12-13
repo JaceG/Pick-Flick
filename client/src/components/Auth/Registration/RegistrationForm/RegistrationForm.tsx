@@ -1,16 +1,19 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import './LoginForm.css';
+import './RegistrationForm.css';
 import InputField from '../../../InputField/InputField';
 
-interface LoginFormProps {
-	onLogin: () => void;
+interface RegistrationFormProps {
+	onRegisterSuccess: () => void;
 }
 
-const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
+const RegistrationForm: React.FC<RegistrationFormProps> = ({
+	onRegisterSuccess,
+}) => {
 	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');
+	const [email, setEmail] = useState('');
 	const [error, setError] = useState<string | null>(null);
 	const navigate = useNavigate();
 
@@ -21,17 +24,18 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
 
 	const SECONDARY_API_BASE_URL = 'https://pick-flick.onrender.com';
 
-	const handleLogin = async (e: React.FormEvent) => {
+	const handleRegister = async (e: React.FormEvent) => {
 		e.preventDefault();
 		setError(null);
 
 		try {
 			// Try the primary API base URL first
 			const response = await axios.post(
-				`${API_BASE_URL}/api/users/login`,
+				`${API_BASE_URL}/api/users/register`,
 				{
 					username,
 					password,
+					email,
 				}
 			);
 
@@ -43,21 +47,22 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
 
 			localStorage.setItem('token', token);
 
-			onLogin();
-			navigate('/');
+			onRegisterSuccess();
+			navigate('/auth/login');
 		} catch (err: any) {
 			console.error(
-				'Primary API login failed, trying secondary API',
+				'Primary API registration failed, trying secondary API',
 				err
 			);
 
 			// If the primary API fails, try the secondary API base URL
 			try {
 				const response = await axios.post(
-					`${SECONDARY_API_BASE_URL}/api/users/login`,
+					`${SECONDARY_API_BASE_URL}/api/users/register`,
 					{
 						username,
 						password,
+						email,
 					}
 				);
 
@@ -69,22 +74,25 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
 
 				localStorage.setItem('token', token);
 
-				onLogin();
-				navigate('/');
+				onRegisterSuccess();
+				navigate('/auth/login');
 			} catch (secondaryErr: any) {
-				console.error('Secondary API login failed', secondaryErr);
+				console.error(
+					'Secondary API registration failed',
+					secondaryErr
+				);
 				setError(
 					secondaryErr.response?.data?.message ||
-						'An error occurred during login'
+						'An error occurred during registration'
 				);
 			}
 		}
 	};
 
 	return (
-		<div className='login-form-container'>
-			<h2>Login</h2>
-			<form className='login-form' onSubmit={handleLogin}>
+		<div className='registration-form-container'>
+			<h2>Register</h2>
+			<form className='registration-form' onSubmit={handleRegister}>
 				{error && <p className='error-message'>{error}</p>}
 				<div className='form-group'>
 					<InputField
@@ -98,6 +106,16 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
 				</div>
 				<div className='form-group'>
 					<InputField
+						id='email'
+						type='email'
+						value={email}
+						label='Email'
+						placeholder='Enter your email'
+						onChange={(e) => setEmail(e.target.value)}
+					/>
+				</div>
+				<div className='form-group'>
+					<InputField
 						id='password'
 						type='password'
 						value={password}
@@ -107,11 +125,11 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
 					/>
 				</div>
 				<button type='submit' className='submit-button'>
-					Login
+					Register
 				</button>
 			</form>
 		</div>
 	);
 };
 
-export default LoginForm;
+export default RegistrationForm;
