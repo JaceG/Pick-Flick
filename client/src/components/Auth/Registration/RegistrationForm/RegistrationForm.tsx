@@ -19,9 +19,9 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
 	const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
 	const API_BASE_URL =
-		process.env.NODE_ENV === 'production'
-			? 'https://pick-flick.onrender.com'
-			: 'http://localhost:3001';
+		import.meta.env.VITE_API_BASE_URL ||
+		'https://www.pickflick.app' ||
+		'https://pick-flick.onrender.com';
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
