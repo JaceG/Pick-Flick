@@ -26,9 +26,15 @@ export const getBaseUrl = async (): Promise<string> => {
 
 	// Fallback to production server
 	cachedBaseUrl =
-		import.meta.env.VITE_API_BASE_URL || 'https://pick-flick.onrender.com';
+		import.meta.env.VITE_API_BASE_URL ||
+		'https://pick-flick.onrender.com' ||
+		'https://www.pickflick.app/';
 	console.log('Falling back to production server:', cachedBaseUrl);
 
 	// Ensure the return type is always a string
-	return cachedBaseUrl || 'https://pick-flick.onrender.com';
+	return (
+		cachedBaseUrl ||
+		'https://pick-flick.onrender.com' ||
+		'https://www.pickflick.app/'
+	);
 };

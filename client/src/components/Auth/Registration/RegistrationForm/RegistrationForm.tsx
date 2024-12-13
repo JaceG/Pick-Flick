@@ -1,115 +1,117 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import './RegistrationForm.css';
-import ErrorMessage from '../../../ErrorMessage/ErrorMessage';
+import { useNavigate } from 'react-router-dom';
+import './LoginForm.css';
 import InputField from '../../../InputField/InputField';
 
-interface RegistrationFormProps {
-	onRegisterSuccess: () => void;
+interface LoginFormProps {
+	onLogin: () => void;
 }
 
-const RegistrationForm: React.FC<RegistrationFormProps> = ({
-	onRegisterSuccess,
-}) => {
+const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
 	const [username, setUsername] = useState('');
-	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
-	const [confirmPassword, setConfirmPassword] = useState('');
 	const [error, setError] = useState<string | null>(null);
-	const [successMessage, setSuccessMessage] = useState<string | null>(null);
+	const navigate = useNavigate();
 
 	const API_BASE_URL =
 		process.env.NODE_ENV === 'production'
-			? 'https://pick-flick.onrender.com'
+			? 'https://www.pickflick.app'
 			: 'http://localhost:3001';
 
-	const handleSubmit = async (e: React.FormEvent) => {
+	const SECONDARY_API_BASE_URL = 'https://pick-flick.onrender.com';
+
+	const handleLogin = async (e: React.FormEvent) => {
 		e.preventDefault();
 		setError(null);
-		setSuccessMessage(null);
-
-		if (!username || !email || !password || !confirmPassword) {
-			setError('All fields are required');
-			return;
-		}
-
-		if (password !== confirmPassword) {
-			setError('Passwords do not match');
-			return;
-		}
 
 		try {
-			console.log('Sending registration request:', { username, email });
-
+			// Try the primary API base URL first
 			const response = await axios.post(
-				`${API_BASE_URL}/api/users/register`,
+				`${API_BASE_URL}/api/users/login`,
 				{
 					username,
-					email,
 					password,
 				}
 			);
 
-			console.log('Registration response:', response);
+			const token = response.data.data.token;
 
-			if (response.status === 201) {
-				setSuccessMessage('Registration successful!');
-				onRegisterSuccess();
-			} else {
-				setError('Registration failed. Please try again.');
+			if (!token) {
+				throw new Error('No token provided in the response');
 			}
+
+			localStorage.setItem('token', token);
+
+			onLogin();
+			navigate('/');
 		} catch (err: any) {
-			console.error('Error during registration:', err);
-			setError(
-				err.response?.data?.message ||
-					'An error occurred during registration.'
+			console.error(
+				'Primary API login failed, trying secondary API',
+				err
 			);
+
+			// If the primary API fails, try the secondary API base URL
+			try {
+				const response = await axios.post(
+					`${SECONDARY_API_BASE_URL}/api/users/login`,
+					{
+						username,
+						password,
+					}
+				);
+
+				const token = response.data.data.token;
+
+				if (!token) {
+					throw new Error('No token provided in the response');
+				}
+
+				localStorage.setItem('token', token);
+
+				onLogin();
+				navigate('/');
+			} catch (secondaryErr: any) {
+				console.error('Secondary API login failed', secondaryErr);
+				setError(
+					secondaryErr.response?.data?.message ||
+						'An error occurred during login'
+				);
+			}
 		}
 	};
 
 	return (
-		<form className='registration-form' onSubmit={handleSubmit}>
-			<h2>Register</h2>
-
-			{error && <ErrorMessage message={error} />}
-			{successMessage && (
-				<p className='success-message'>{successMessage}</p>
-			)}
-
-			<InputField
-				id='username'
-				label='Username'
-				value={username}
-				type='text'
-				onChange={(e) => setUsername(e.target.value)}
-			/>
-			<InputField
-				id='email'
-				label='Email'
-				value={email}
-				type='email'
-				onChange={(e) => setEmail(e.target.value)}
-			/>
-			<InputField
-				id='password'
-				label='Password'
-				value={password}
-				type='password'
-				onChange={(e) => setPassword(e.target.value)}
-			/>
-			<InputField
-				id='confirmPassword'
-				label='Confirm Password'
-				value={confirmPassword}
-				type='password'
-				onChange={(e) => setConfirmPassword(e.target.value)}
-			/>
-
-			<button type='submit' className='register-button'>
-				Register
-			</button>
-		</form>
+		<div className='login-form-container'>
+			<h2>Login</h2>
+			<form className='login-form' onSubmit={handleLogin}>
+				{error && <p className='error-message'>{error}</p>}
+				<div className='form-group'>
+					<InputField
+						id='username'
+						type='text'
+						value={username}
+						label='Username'
+						placeholder='Enter your username'
+						onChange={(e) => setUsername(e.target.value)}
+					/>
+				</div>
+				<div className='form-group'>
+					<InputField
+						id='password'
+						type='password'
+						value={password}
+						label='Password'
+						placeholder='Enter your password'
+						onChange={(e) => setPassword(e.target.value)}
+					/>
+				</div>
+				<button type='submit' className='submit-button'>
+					Login
+				</button>
+			</form>
+		</div>
 	);
 };
 
-export default RegistrationForm;
+export default LoginForm;

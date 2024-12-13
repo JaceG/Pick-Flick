@@ -12,20 +12,21 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
 	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');
 	const [error, setError] = useState<string | null>(null);
-	const navigate = useNavigate(); // Initialize the useNavigate hook
+	const navigate = useNavigate();
 
-	// Set the API base URL dynamically based on the environment
 	const API_BASE_URL =
 		process.env.NODE_ENV === 'production'
-			? 'https://pick-flick.onrender.com'
+			? 'https://www.pickflick.app'
 			: 'http://localhost:3001';
+
+	const SECONDARY_API_BASE_URL = 'https://pick-flick.onrender.com';
 
 	const handleLogin = async (e: React.FormEvent) => {
 		e.preventDefault();
 		setError(null);
 
 		try {
-			// Send login request to the backend
+			// Try the primary API base URL first
 			const response = await axios.post(
 				`${API_BASE_URL}/api/users/login`,
 				{
@@ -34,28 +35,49 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
 				}
 			);
 
-			console.log('API Response:', response.data); // Debugging the response
-
-			// Extract token from the response
-			const token = response.data.data.token; // Match the backend structure
-			console.log('Extracted Token:', token);
+			const token = response.data.data.token;
 
 			if (!token) {
 				throw new Error('No token provided in the response');
 			}
 
-			// Save token to localStorage
 			localStorage.setItem('token', token);
-			console.log('Token saved to LocalStorage:', token);
 
-			// Trigger login callback and navigate to home page
 			onLogin();
 			navigate('/');
 		} catch (err: any) {
-			console.error('Login Error:', err); // Debugging
-			setError(
-				err.response?.data?.message || 'An error occurred during login'
+			console.error(
+				'Primary API login failed, trying secondary API',
+				err
 			);
+
+			// If the primary API fails, try the secondary API base URL
+			try {
+				const response = await axios.post(
+					`${SECONDARY_API_BASE_URL}/api/users/login`,
+					{
+						username,
+						password,
+					}
+				);
+
+				const token = response.data.data.token;
+
+				if (!token) {
+					throw new Error('No token provided in the response');
+				}
+
+				localStorage.setItem('token', token);
+
+				onLogin();
+				navigate('/');
+			} catch (secondaryErr: any) {
+				console.error('Secondary API login failed', secondaryErr);
+				setError(
+					secondaryErr.response?.data?.message ||
+						'An error occurred during login'
+				);
+			}
 		}
 	};
 

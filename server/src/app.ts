@@ -41,7 +41,11 @@ if (fs.existsSync(staticPath)) {
 // Configure CORS
 app.use(
 	cors({
-		origin: ['https://pick-flick.onrender.com', 'http://localhost:3000'],
+		origin: [
+			'https://pick-flick.onrender.com',
+			'https://www.pickflick.app/',
+			'http://localhost:3000',
+		],
 		methods: ['GET', 'POST', 'DELETE'],
 	})
 );
