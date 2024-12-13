@@ -16,6 +16,7 @@ interface SavedMovieAttributes {
 	directors?: string[];
 	producers?: string[];
 	streaming?: { [key: string]: any }[]; // Streaming options as an array of objects
+	status?: string; // Add the status attribute
 	createdAt?: Date;
 	updatedAt?: Date;
 }
@@ -33,6 +34,7 @@ interface SavedMovieCreationAttributes
 		| 'directors'
 		| 'producers'
 		| 'streaming'
+		| 'status' // Make status optional for creation
 		| 'createdAt'
 		| 'updatedAt'
 	> {}
@@ -55,6 +57,7 @@ class SavedMovie
 	public directors!: string[];
 	public producers!: string[];
 	public streaming!: { [key: string]: any }[];
+	public status!: string; // Add the status attribute
 
 	// Timestamps
 	public readonly createdAt!: Date;
@@ -108,6 +111,10 @@ SavedMovie.init(
 		},
 		streaming: {
 			type: DataTypes.JSONB, // Use JSONB for storing complex objects
+		},
+		status: {
+			type: DataTypes.STRING, // Define the status column
+			allowNull: true, // Allow null if necessary
 		},
 	},
 	{

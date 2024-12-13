@@ -9,6 +9,8 @@ import usersRouter from './routes/users.js';
 import { sequelize } from './config/database.js';
 import { initUserModel } from './models/User.js';
 
+console.log('DATABASE_URL:', process.env.DATABASE_URL);
+
 // Load environment variables
 dotenv.config();
 
@@ -28,7 +30,7 @@ app.use((req, res, next) => {
 });
 
 // Serve static files from the React build folder
-const staticPath = path.resolve(__dirname, '../../client/dist'); // Updated to fix the incorrect path
+const staticPath = path.resolve(__dirname, '../../client/dist');
 console.log('Static files path:', staticPath);
 
 // Ensure the directory exists
