@@ -18,7 +18,9 @@ import WatchedMovies from './components/WatchedMovies/WatchedMovies';
 import axios from 'axios';
 
 const API_BASE_URL =
-	import.meta.env.VITE_API_BASE_URL || window.location.origin;
+	import.meta.env.VITE_API_BASE_URL ||
+	'https://www.pickflick.app' ||
+	'https://pick-flick.onrender.com';
 
 // Movie type interface
 interface Movie {

@@ -95,7 +95,8 @@ const MovieDisplay: React.FC<MovieDisplayProps> = ({ movie }) => {
 			console.log('Sending movie data:', movieData);
 
 			const backendUrl =
-				import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001';
+				import.meta.env.VITE_API_BASE_URL ||
+				'https://www.pickflick.app';
 
 			console.log('Backend URL:', backendUrl);
 
