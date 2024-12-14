@@ -1,39 +1,38 @@
 import { Sequelize } from 'sequelize';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 export const sequelize = new Sequelize(
 	process.env.DATABASE_URL ||
 		'postgres://postgres:1313@localhost:5432/pick_flick',
 	{
-		logging: console.log, // Enable logging for debugging (optional)
-		dialect: 'postgres', // Specify the dialect
+		logging: console.log, // Enable logging for debugging
+		dialect: 'postgres',
 		dialectOptions:
 			process.env.NODE_ENV === 'production'
 				? {
 						ssl: {
 							require: true,
-							rejectUnauthorized: false, // Disable for self-signed certificates
+							rejectUnauthorized: false,
 						},
 				  }
 				: {},
 	}
 );
 
-// Test database connection
-sequelize
-	.authenticate()
-	.then(() => {
+export const initDatabase = async () => {
+	try {
+		await sequelize.authenticate();
 		console.log('Database connection has been established successfully.');
-	})
-	.catch((error) => {
-		console.error('Unable to connect to the database:', error);
-	});
 
-// (Optional) Synchronize models with database
-sequelize
-	.sync({ alter: true }) // Adjust schema without data loss
-	.then(() => {
+		await sequelize.sync({ alter: true });
 		console.log('Database synced successfully.');
-	})
-	.catch((error) => {
-		console.error('Error syncing database:', error);
-	});
+	} catch (error) {
+		console.error(
+			'Unable to connect to the database or sync models:',
+			error
+		);
+		throw error;
+	}
+};

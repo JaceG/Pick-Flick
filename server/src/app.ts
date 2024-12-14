@@ -28,7 +28,7 @@ app.use((req, res, next) => {
 });
 
 // Serve static files from the React build folder
-const staticPath = path.resolve(__dirname, '../../client/dist'); // Updated to fix the incorrect path
+const staticPath = path.resolve(__dirname, '../../client/dist');
 console.log('Static files path:', staticPath);
 
 // Ensure the directory exists
@@ -44,7 +44,7 @@ app.use(
 		origin: [
 			'https://pick-flick.onrender.com',
 			'http://localhost:3000',
-			'www.pickflick.app', // Added new domain
+			'www.pickflick.app',
 		],
 		methods: ['GET', 'POST', 'DELETE'],
 	})
@@ -56,17 +56,11 @@ app.get('/health', (req, res) => {
 });
 
 // Mount API routes
-app.use('/api/movies', movieRoutes); // Movie-related routes
-app.use('/api/users', usersRouter); // User-related routes
+app.use('/api/movies', movieRoutes);
+app.use('/api/users', usersRouter);
 
 // Initialize models
 initUserModel(sequelize);
-
-// Sync database (use migrations in production if possible)
-sequelize
-	.sync()
-	.then(() => console.log('Database synced successfully.'))
-	.catch((err) => console.error('Error syncing database:', err));
 
 // Fallback route for React
 const fallbackPath = path.resolve(staticPath, 'index.html');
