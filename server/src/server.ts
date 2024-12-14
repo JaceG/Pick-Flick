@@ -1,31 +1,33 @@
 import app from './app.js';
-import { sequelize } from './config/database.js';
-import SavedMovie from './models/SavedMovies.js'; // Import the SavedMovie model
+import { sequelize, initDatabase } from './config/database.js';
+import SavedMovie from './models/SavedMovies.js';
+import { initUserModel } from './models/User.js';
 
 const PORT = process.env.PORT || 3001;
 
-// Log the model to ensure it's loaded correctly
-console.log(SavedMovie === sequelize.models.SavedMovie); // Reference the model directly
+const startServer = async () => {
+	try {
+		await initDatabase();
 
-// Sync the database and start the server
-sequelize
-	.sync({ alter: true }) // Automatically alter tables to match the models
-	.then(() => {
-		console.log('Database synchronized successfully.');
+		// Initialize models
+		initUserModel(sequelize);
+
+		// Log the model to ensure it's loaded correctly
+		console.log(SavedMovie === sequelize.models.SavedMovie);
 
 		// Start the server
 		app.listen(PORT, () => {
 			console.log(`Server running on http://localhost:${PORT}`);
 		});
-	})
-	.catch((error) => {
-		console.error('Error synchronizing the database:', error);
-
-		// Exit the process if the database connection fails
+	} catch (error) {
+		console.error('Failed to start server:', error);
 		process.exit(1);
-	});
+	}
+};
 
-// Handle uncaught exceptions and rejections for better error handling
+startServer();
+
+// Handle uncaught exceptions and rejections
 process.on('uncaughtException', (error) => {
 	console.error('Uncaught Exception:', error);
 	process.exit(1);
