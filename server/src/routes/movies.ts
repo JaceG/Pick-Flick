@@ -1,15 +1,20 @@
 import express, { Request, Response } from 'express';
 import SavedMovie from '../models/SavedMovies.js';
 import authMiddleware from '../middleware/auth.js';
-import { getRandomMovie } from '../controllers/movieController.js'; // Import the random movie controller
+import {
+	getRandomMovie,
+	getRandomMovieByStreaming,
+} from '../controllers/movieController.js';
 
 const router = express.Router();
 
-// Endpoint to fetch a random movie
-router.get('/random', getRandomMovie); // Add the random movie route
+// Public endpoints
+router.get('/random', getRandomMovie);
+router.get('/random-streaming', getRandomMovieByStreaming);
 
-// Endpoint to get saved movies for the authenticated user
+// Protected endpoints
 router.get('/saved', authMiddleware, async (req: Request, res: Response) => {
+	res.header('Content-Type', 'application/json');
 	const userId = req.user?.id;
 
 	if (!userId) {
@@ -17,9 +22,8 @@ router.get('/saved', authMiddleware, async (req: Request, res: Response) => {
 	}
 
 	try {
-		// Fetch all saved movies, including streaming data
 		const savedMovies = await SavedMovie.findAll({
-			where: { userId, status: 0 }, // 0 means all saved movies
+			where: { userId, status: 0 },
 			attributes: [
 				'movieId',
 				'title',
@@ -42,8 +46,8 @@ router.get('/saved', authMiddleware, async (req: Request, res: Response) => {
 	}
 });
 
-// Endpoint to save a movie for the authenticated user
 router.post('/save', authMiddleware, async (req: Request, res: Response) => {
+	res.header('Content-Type', 'application/json');
 	const userId = req.user?.id;
 	const {
 		movieId,
@@ -64,15 +68,14 @@ router.post('/save', authMiddleware, async (req: Request, res: Response) => {
 	}
 
 	try {
-		// Check if the movie already exists for the user
 		const existingMovie = await SavedMovie.findOne({
 			where: { userId, movieId },
 		});
+
 		if (existingMovie) {
 			return res.status(400).json({ message: 'Movie already saved.' });
 		}
 
-		// Save the movie to the database
 		const newMovie = await SavedMovie.create({
 			userId,
 			movieId,
@@ -86,6 +89,7 @@ router.post('/save', authMiddleware, async (req: Request, res: Response) => {
 			directors,
 			producers,
 			streaming,
+			status: 0,
 		});
 
 		res.status(201).json({
@@ -98,11 +102,11 @@ router.post('/save', authMiddleware, async (req: Request, res: Response) => {
 	}
 });
 
-// Endpoint to delete a saved movie for the authenticated user
 router.delete(
 	'/saved/:movieId',
 	authMiddleware,
 	async (req: Request, res: Response) => {
+		res.header('Content-Type', 'application/json');
 		const userId = req.user?.id;
 		const { movieId } = req.params;
 
@@ -111,7 +115,6 @@ router.delete(
 		}
 
 		try {
-			// Find the saved movie for this user and delete it
 			const deleted = await SavedMovie.destroy({
 				where: { userId, movieId },
 			});
@@ -130,8 +133,12 @@ router.delete(
 	}
 );
 
-// Endpoint to save a watched movie for the authenticated user
 router.put('/watched', authMiddleware, async (req: Request, res: Response) => {
+	res.header('Content-Type', 'application/json');
+	console.log('Received PUT request to /api/movies/watched');
+	console.log('Request headers:', req.headers);
+	console.log('Request body:', req.body);
+
 	const userId = req.user?.id;
 	const { movieId, status } = req.body;
 
@@ -140,28 +147,39 @@ router.put('/watched', authMiddleware, async (req: Request, res: Response) => {
 	}
 
 	try {
-		// Check if the movie already exists for the user
 		const existingMovie = await SavedMovie.findOne({
 			where: { userId, movieId },
 		});
+
 		if (!existingMovie) {
 			return res.status(404).json({ message: 'Movie not found' });
 		}
 
-		existingMovie.status = status; // Set the status to 1 for watched
+		existingMovie.status = status;
 		await existingMovie.save();
+
 		res.status(200).json({
 			message: 'Movie marked as watched successfully.',
 			movie: existingMovie,
 		});
 	} catch (error) {
-		console.error('Error saving movie:', error);
-		res.status(500).json({ message: 'Failed to save movie.' });
+		console.error('Error updating movie status:', error);
+		if (error instanceof Error) {
+			res.status(500).json({
+				message: 'Failed to update movie status.',
+				error: error.message,
+			});
+		} else {
+			res.status(500).json({
+				message: 'Failed to update movie status.',
+				error: 'Unknown error occurred',
+			});
+		}
 	}
 });
 
-// Endpoint to get saved movies for the authenticated user
 router.get('/watched', authMiddleware, async (req: Request, res: Response) => {
+	res.header('Content-Type', 'application/json');
 	const userId = req.user?.id;
 
 	if (!userId) {
@@ -169,9 +187,8 @@ router.get('/watched', authMiddleware, async (req: Request, res: Response) => {
 	}
 
 	try {
-		// Fetch all saved movies, including streaming data
-		const savedMovies = await SavedMovie.findAll({
-			where: { userId, status: 1 }, // 1 means all watched movies
+		const watchedMovies = await SavedMovie.findAll({
+			where: { userId, status: 1 },
 			attributes: [
 				'movieId',
 				'title',
@@ -187,10 +204,10 @@ router.get('/watched', authMiddleware, async (req: Request, res: Response) => {
 			],
 		});
 
-		res.json(savedMovies);
+		res.json(watchedMovies);
 	} catch (error) {
-		console.error('Error fetching saved movies:', error);
-		res.status(500).json({ message: 'Failed to fetch saved movies.' });
+		console.error('Error fetching watched movies:', error);
+		res.status(500).json({ message: 'Failed to fetch watched movies.' });
 	}
 });
 

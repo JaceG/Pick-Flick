@@ -1,7 +1,13 @@
 import { Sequelize } from 'sequelize';
 import dotenv from 'dotenv';
+import { Umzug, SequelizeStorage } from 'umzug';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 dotenv.config();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export const sequelize = new Sequelize(
 	process.env.DATABASE_URL ||
@@ -21,16 +27,37 @@ export const sequelize = new Sequelize(
 	}
 );
 
+const umzug = new Umzug({
+	migrations: { glob: path.join(__dirname, '../migrations/*.js') },
+	context: sequelize.getQueryInterface(),
+	storage: new SequelizeStorage({ sequelize }),
+	logger: console,
+});
+
 export const initDatabase = async () => {
 	try {
 		await sequelize.authenticate();
 		console.log('Database connection has been established successfully.');
 
-		await sequelize.sync({ alter: true });
-		console.log('Database synced successfully.');
+		// Run migrations
+		const pendingMigrations = await umzug.pending();
+		if (pendingMigrations.length > 0) {
+			console.log(
+				'Pending migrations:',
+				pendingMigrations.map((m) => m.name)
+			);
+			await umzug.up();
+			console.log('Migrations have been executed successfully.');
+		} else {
+			console.log('No pending migrations.');
+		}
+
+		// Don't sync models for now
+		// await sequelize.sync({ alter: true });
+		console.log('Database initialization completed.');
 	} catch (error) {
 		console.error(
-			'Unable to connect to the database or sync models:',
+			'Unable to connect to the database or run migrations:',
 			error
 		);
 		throw error;

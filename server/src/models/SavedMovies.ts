@@ -16,7 +16,7 @@ interface SavedMovieAttributes {
 	directors?: string[];
 	producers?: string[];
 	streaming?: { [key: string]: any }[]; // Streaming options as an array of objects
-	status?: number;
+	status: number;
 	createdAt?: Date;
 	updatedAt?: Date;
 }
@@ -87,7 +87,7 @@ SavedMovie.init(
 			type: DataTypes.STRING,
 		},
 		genres: {
-			type: DataTypes.ARRAY(DataTypes.STRING), // Array of strings for genres
+			type: DataTypes.ARRAY(DataTypes.STRING),
 			allowNull: false,
 		},
 		releaseYear: {
@@ -109,18 +109,19 @@ SavedMovie.init(
 			type: DataTypes.ARRAY(DataTypes.STRING),
 		},
 		streaming: {
-			type: DataTypes.JSONB, // Use JSONB for storing complex objects
+			type: DataTypes.JSONB,
 		},
 		status: {
-			type: DataTypes.INTEGER, // Use JSONB for storing complex objects
+			type: DataTypes.INTEGER,
+			allowNull: false,
 			defaultValue: 0,
 		},
 	},
 	{
-		sequelize, // Pass the Sequelize instance
-		modelName: 'SavedMovie', // Model name
-		tableName: 'saved_movies', // Table name in the database
-		timestamps: true, // Enable createdAt and updatedAt
+		sequelize,
+		modelName: 'SavedMovie',
+		tableName: 'saved_movies',
+		timestamps: true,
 	}
 );
 

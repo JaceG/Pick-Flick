@@ -82,8 +82,10 @@ export const useMovieState = () => {
 
 	return {
 		movie,
+		setMovie, // Add this line
 		loading,
 		error,
+		setError, // Add this line
 		loggedIn,
 		selectedGenres,
 		yearRange,

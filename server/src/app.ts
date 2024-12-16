@@ -27,6 +27,37 @@ app.use((req, res, next) => {
 	next();
 });
 
+// CORS configuration - MUST come before other middleware
+const corsOptions = {
+	origin: function (origin, callback) {
+		// Allow requests with no origin (like mobile apps or curl requests)
+		if (!origin) return callback(null, true);
+
+		const allowedOrigins = [
+			'https://pick-flick.onrender.com',
+			'http://localhost:3000',
+			'http://localhost:3001',
+			'https://www.pickflick.app',
+		];
+
+		if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+			callback(null, true);
+		} else {
+			callback(new Error('Not allowed by CORS'));
+		}
+	},
+	methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+	allowedHeaders: ['Content-Type', 'Authorization'],
+	credentials: true,
+	optionsSuccessStatus: 204,
+	preflightContinue: false,
+};
+
+app.use(cors(corsOptions));
+
+// Add specific preflight handling for problematic routes
+app.options('*', cors(corsOptions));
+
 // Serve static files from the React build folder
 const staticPath = path.resolve(__dirname, '../../client/dist');
 console.log('Static files path:', staticPath);
@@ -37,18 +68,6 @@ if (fs.existsSync(staticPath)) {
 } else {
 	console.error('Static files path does not exist:', staticPath);
 }
-
-// Configure CORS
-app.use(
-	cors({
-		origin: [
-			'https://pick-flick.onrender.com',
-			'http://localhost:3000',
-			'www.pickflick.app',
-		],
-		methods: ['GET', 'POST', 'DELETE'],
-	})
-);
 
 // Health check endpoint
 app.get('/health', (req, res) => {

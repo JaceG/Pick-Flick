@@ -6,6 +6,7 @@ import SelectedGenres from './components/SelectedGenres/SelectedGenres';
 import YearRangeSlider from './components/YearRangeSlider/YearRangeSlider';
 import RuntimeRangeSlider from './components/RuntimeRangeSlider/RuntimeRangeSlider';
 import LanguageSelector from './components/LanguageSelector/LanguageSelector';
+import StreamingServiceSelector from './components/StreamingServiceSelector/StreamingServiceSelector';
 import MovieDisplay from './components/MovieDisplay/MovieDisplay';
 import Spinner from './components/Spinner/Spinner';
 import ErrorMessage from './components/ErrorMessage/ErrorMessage';
@@ -18,9 +19,7 @@ import WatchedMovies from './components/WatchedMovies/WatchedMovies';
 import axios from 'axios';
 
 const API_BASE_URL =
-	import.meta.env.VITE_API_BASE_URL ||
-	'https://www.pickflick.app' ||
-	'https://pick-flick.onrender.com';
+	import.meta.env.VITE_API_BASE_URL || 'https://pick-flick.onrender.com';
 
 // Movie type interface
 interface Movie {
@@ -85,10 +84,15 @@ const App: React.FC = () => {
 		setSelectedLanguage,
 		handleRangeChange,
 		handleFetchMovie,
+		setMovie,
+		setError,
 	} = useMovieState();
 
 	const [savedMovies, setSavedMovies] = useState<Movie[]>([]);
 	const [watchedMovies, setWatchedMovies] = useState<WatchedMovie[]>([]);
+	const [selectedStreamingServices, setSelectedStreamingServices] = useState<
+		string[]
+	>([]);
 	const navigate = useNavigate();
 	const location = useLocation();
 
@@ -110,10 +114,12 @@ const App: React.FC = () => {
 	// Fetch saved movies from the API
 	useEffect(() => {
 		const fetchSavedMovies = async () => {
-			const token = localStorage.getItem('token');
+			if (!loggedIn) {
+				return; // Don't fetch if not logged in
+			}
 
+			const token = localStorage.getItem('token');
 			if (!token) {
-				console.error('No token found. Please log in.');
 				return;
 			}
 
@@ -138,7 +144,7 @@ const App: React.FC = () => {
 		};
 
 		fetchSavedMovies();
-	}, [location]);
+	}, [location, loggedIn]);
 
 	// Fetch watched movies from the API
 	useEffect(() => {
@@ -146,7 +152,9 @@ const App: React.FC = () => {
 			const token = localStorage.getItem('token');
 
 			if (!token) {
-				console.error('No token found. Please log in.');
+				console.log(
+					'User not logged in, skipping watched movies fetch'
+				);
 				return;
 			}
 
@@ -157,7 +165,6 @@ const App: React.FC = () => {
 						headers: { Authorization: `Bearer ${token}` },
 					}
 				);
-				console.log('Watched movies:', response.data);
 				setWatchedMovies(
 					response.data?.map((data: any) => ({
 						movieId: data.movieId,
@@ -174,19 +181,21 @@ const App: React.FC = () => {
 					}))
 				);
 			} catch (err: any) {
-				if (axios.isAxiosError(err) && err.response) {
-					console.error(
-						err.response.data.message ||
-							'Failed to fetch watched movies.'
-					);
+				if (axios.isAxiosError(err) && err.response?.status === 401) {
+					console.log('Session expired, redirecting to login');
+					setLoggedIn(false);
+					localStorage.removeItem('token');
+					navigate('/auth/login');
 				} else {
-					console.error('An unexpected error occurred.');
+					console.error('Error fetching watched movies:', err);
 				}
 			}
 		};
 
-		fetchWatchedMovies();
-	}, [location]);
+		if (loggedIn) {
+			fetchWatchedMovies();
+		}
+	}, [loggedIn, location, navigate, setLoggedIn]);
 
 	const saveWatchedMovies = async (id: string, status: number = 1) => {
 		const token = localStorage.getItem('token');
@@ -290,6 +299,61 @@ const App: React.FC = () => {
 				},
 			},
 		}));
+
+	const handleStreamingServiceSelect = (services: string[]) => {
+		setSelectedStreamingServices(services);
+	};
+
+	const handleFetchMovieByStreaming = async () => {
+		if (selectedStreamingServices.length === 0) {
+			setError('Please select at least one streaming service');
+			return;
+		}
+
+		try {
+			console.log(
+				'Selected streaming services:',
+				selectedStreamingServices
+			); // Debug log
+			const response = await axios.get(
+				`${API_BASE_URL}/api/movies/random-streaming`,
+				{
+					params: {
+						streamingService: selectedStreamingServices.join(','),
+						genre: selectedGenres.join(','),
+						startYear: yearRange[0],
+						endYear: yearRange[1],
+						language:
+							selectedLanguage === 'any'
+								? undefined
+								: selectedLanguage,
+					},
+				}
+			);
+
+			console.log('API Response:', response.data); // Debug log
+
+			if (response.data && response.data.title) {
+				setMovie(response.data);
+				setError(null);
+			} else {
+				setError(
+					'No movies found matching your criteria. Try adjusting your filters.'
+				);
+				setMovie(null);
+			}
+		} catch (error) {
+			console.error('Error fetching movie by streaming service:', error);
+			if (axios.isAxiosError(error) && error.response?.status === 404) {
+				setError(
+					'No movies found matching your criteria. Try adjusting your filters.'
+				);
+			} else {
+				setError('Failed to fetch a movie. Please try again.');
+			}
+			setMovie(null);
+		}
+	};
 
 	return (
 		<div className='app'>
@@ -412,19 +476,36 @@ const App: React.FC = () => {
 										{ code: 'ja', name: 'Japanese' },
 									]}
 								/>
+								{/* Streaming Service Selector */}
+								<StreamingServiceSelector
+									onServiceSelect={
+										handleStreamingServiceSelect
+									}
+								/>
 								{/* Fetch Movie Button */}
 								{loading ? (
 									<Spinner />
 								) : (
-									<button
-										className='find-movie-button'
-										type='button'
-										onClick={(e) => {
-											e.preventDefault();
-											handleFetchMovie();
-										}}>
-										Find Me a Movie
-									</button>
+									<>
+										<button
+											className='find-movie-button'
+											type='button'
+											onClick={(e) => {
+												e.preventDefault();
+												handleFetchMovie();
+											}}>
+											Find Any Movie
+										</button>
+										<button
+											className='find-movie-button'
+											type='button'
+											onClick={(e) => {
+												e.preventDefault();
+												handleFetchMovieByStreaming();
+											}}>
+											Find Streaming Movie
+										</button>
+									</>
 								)}
 								{/* Error Message */}
 								{error && <ErrorMessage message={error} />}
