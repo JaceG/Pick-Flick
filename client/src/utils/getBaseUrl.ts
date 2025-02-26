@@ -26,7 +26,6 @@ export const getBaseUrl = async (): Promise<string> => {
 	} catch (err) {
 		console.error('Local server not available:', err);
 	}
-
 	// Fallback to production
 	cachedBaseUrl = 'https://pick-flick.onrender.com';
 	console.log('Falling back to production server:', cachedBaseUrl);

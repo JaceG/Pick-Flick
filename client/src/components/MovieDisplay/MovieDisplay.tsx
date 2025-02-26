@@ -32,7 +32,6 @@ interface MovieDisplayProps {
 }
 
 const MovieDisplay: React.FC<MovieDisplayProps> = ({ movie }) => {
-	const languageFullName = languageMap[movie.language] || movie.language;
 	const navigate = useNavigate();
 	const [isLoggedIn, setIsLoggedIn] = React.useState<boolean>(false);
 
@@ -41,7 +40,7 @@ const MovieDisplay: React.FC<MovieDisplayProps> = ({ movie }) => {
 		const token = localStorage.getItem('token');
 		setIsLoggedIn(!!token);
 
-		// Update state when localStorage changes (e.g., during logout/login actions)
+		// Update state when localStorage changes
 		const handleStorageChange = () => {
 			const token = localStorage.getItem('token');
 			setIsLoggedIn(!!token);
@@ -52,6 +51,14 @@ const MovieDisplay: React.FC<MovieDisplayProps> = ({ movie }) => {
 			window.removeEventListener('storage', handleStorageChange);
 		};
 	}, []);
+
+	if (!movie) {
+		return null;
+	}
+
+	const languageFullName = movie.language
+		? languageMap[movie.language] || movie.language
+		: '';
 
 	// Function to get the appropriate image based on the theme
 	const getStreamingImage = (imageSet?: {
@@ -95,7 +102,8 @@ const MovieDisplay: React.FC<MovieDisplayProps> = ({ movie }) => {
 			console.log('Sending movie data:', movieData);
 
 			const backendUrl =
-				import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001';
+				import.meta.env.VITE_API_BASE_URL ||
+				'https://www.pickflick.app';
 
 			console.log('Backend URL:', backendUrl);
 

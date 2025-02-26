@@ -16,9 +16,7 @@ import AutoLogoutHandler from './utils/AutoLogoutHandler';
 import SavedMovies from './components/SavedMovies/SavedMovies';
 import WatchedMovies from './components/WatchedMovies/WatchedMovies';
 import axios from 'axios';
-
-const API_BASE_URL =
-	import.meta.env.VITE_API_BASE_URL || window.location.origin;
+import { getBaseUrl } from './utils/getBaseUrl';
 
 // Movie type interface
 interface Movie {
@@ -119,15 +117,15 @@ const App: React.FC = () => {
 	useEffect(() => {
 		const fetchSavedMovies = async () => {
 			const token = localStorage.getItem('token');
-
 			if (!token) {
-				console.error('No token found. Please log in.');
+				console.log('No token found, skipping saved movies fetch');
 				return;
 			}
 
 			try {
+				const baseUrl = await getBaseUrl();
 				const response = await axios.get(
-					`${API_BASE_URL}/api/movies/saved`,
+					`${baseUrl}/api/movies/saved`,
 					{
 						headers: { Authorization: `Bearer ${token}` },
 					}
@@ -140,27 +138,23 @@ const App: React.FC = () => {
 							'Failed to fetch saved movies.'
 					);
 				} else {
-					console.error('An unexpected error occurred.');
+					console.error('Error fetching saved movies:', err);
 				}
 			}
 		};
 
-		fetchSavedMovies();
-	}, [location]);
-
-	// Fetch watched movies from the API
-	useEffect(() => {
+		// Fetch watched movies
 		const fetchWatchedMovies = async () => {
 			const token = localStorage.getItem('token');
-
 			if (!token) {
-				console.error('No token found. Please log in.');
+				console.log('No token found, skipping watched movies fetch');
 				return;
 			}
 
 			try {
+				const baseUrl = await getBaseUrl();
 				const response = await axios.get(
-					`${API_BASE_URL}/api/movies/watched`,
+					`${baseUrl}/api/movies/watched`,
 					{
 						headers: { Authorization: `Bearer ${token}` },
 					}
@@ -188,19 +182,21 @@ const App: React.FC = () => {
 							'Failed to fetch watched movies.'
 					);
 				} else {
-					console.error('An unexpected error occurred.');
+					console.error('Error fetching watched movies:', err);
 				}
 			}
 		};
 
+		fetchSavedMovies();
 		fetchWatchedMovies();
 	}, [location]);
 
 	const saveWatchedMovies = async (id: string, status: number = 1) => {
 		const token = localStorage.getItem('token');
 		try {
+			const baseUrl = await getBaseUrl();
 			const response = await axios.put(
-				`${API_BASE_URL}/api/movies/watched`,
+				`${baseUrl}/api/movies/watched`,
 				{
 					movieId: id,
 					status: status,
@@ -262,7 +258,8 @@ const App: React.FC = () => {
 		}
 
 		try {
-			await axios.delete(`${API_BASE_URL}/api/movies/saved/${movieId}`, {
+			const baseUrl = await getBaseUrl();
+			await axios.delete(`${baseUrl}/api/movies/saved/${movieId}`, {
 				headers: { Authorization: `Bearer ${token}` },
 			});
 

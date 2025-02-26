@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import axios from 'axios';
 import { fetchMovies } from '../models/fetchMovies.js';
-import { genreMap, nameToIdMap } from '../utils/genreMaps.js';
+import { genreMap } from '../utils/genreMaps.js';
 import { TMDB_API_KEY, MOTN_API_KEY } from '../config/config.js';
 import SavedMovie from '../models/SavedMovies.js'; // Import SavedMovie model
 

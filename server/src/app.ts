@@ -29,7 +29,7 @@ app.use((req, res, next) => {
 });
 
 // Serve static files from the React build folder
-const staticPath = path.resolve(__dirname, '../../client/dist'); // Updated to fix the incorrect path
+const staticPath = path.resolve(__dirname, '../../client/dist');
 console.log('Static files path:', staticPath);
 
 // Ensure the directory exists
@@ -59,8 +59,8 @@ app.get('/health', (req, res) => {
 });
 
 // Mount API routes
-app.use('/api/movies', movieRoutes); // Movie-related routes
-app.use('/api/users', usersRouter); // User-related routes
+app.use('/api/movies', movieRoutes);
+app.use('/api/users', usersRouter);
 
 // Initialize models
 initUserModel(sequelize);
