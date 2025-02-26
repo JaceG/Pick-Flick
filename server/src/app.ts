@@ -63,12 +63,6 @@ app.use('/api/users', usersRouter); // User-related routes
 // Initialize models
 initUserModel(sequelize);
 
-// Sync database (use migrations in production if possible)
-sequelize
-	.sync()
-	.then(() => console.log('Database synced successfully.'))
-	.catch((err) => console.error('Error syncing database:', err));
-
 // Fallback route for React
 const fallbackPath = path.resolve(staticPath, 'index.html');
 console.log('Fallback path:', fallbackPath);
