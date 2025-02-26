@@ -2,14 +2,15 @@ import app from './app.js';
 import { sequelize } from './config/database.js';
 import http from 'http';
 
-const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 10000;
+// Ensure PORT is always a number and defaults to 10000
+const PORT = Number(process.env.PORT) || 10000;
 
 // Remove database initialization from database.ts (lines 22-39)
 // and consolidate here
 async function startServer() {
 	try {
 		console.log('Starting server initialization...');
-		console.log('Port:', PORT);
+		console.log('Attempting to bind to port:', PORT);
 		console.log('Environment:', process.env.NODE_ENV);
 
 		// Create HTTP server
@@ -23,23 +24,21 @@ async function startServer() {
 		await sequelize.sync();
 		console.log('Database synchronized.');
 
-		// Start server with explicit error handling
-		server.listen(PORT, '0.0.0.0');
+		// Bind to all network interfaces (0.0.0.0)
+		await new Promise((resolve, reject) => {
+			server.listen(PORT, '0.0.0.0', () => {
+				const addr = server.address();
+				console.log('=================================');
+				console.log(`Server is bound to port ${PORT}`);
+				console.log('Server address:', addr);
+				console.log('=================================');
+				resolve(true);
+			});
 
-		server.on('listening', () => {
-			const addr = server.address();
-			console.log('=================================');
-			console.log(`Server running on port ${PORT}`);
-			console.log('Server address:', addr);
-			console.log('=================================');
-		});
-
-		server.on('error', (error: NodeJS.ErrnoException) => {
-			if (error.syscall !== 'listen') {
-				throw error;
-			}
-			console.error('Server failed to start:', error);
-			process.exit(1);
+			server.on('error', (error: NodeJS.ErrnoException) => {
+				console.error('Server startup error:', error);
+				reject(error);
+			});
 		});
 	} catch (error) {
 		console.error('Server initialization failed:', error);
@@ -47,7 +46,11 @@ async function startServer() {
 	}
 }
 
-startServer();
+// Start server with error handling
+startServer().catch((error) => {
+	console.error('Fatal server error:', error);
+	process.exit(1);
+});
 
 // Error handlers
 process.on('uncaughtException', (error) => {
