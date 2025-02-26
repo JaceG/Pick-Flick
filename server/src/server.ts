@@ -4,25 +4,27 @@ import SavedMovie from './models/SavedMovies.js'; // Import the SavedMovie model
 
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 10000;
 
-// Log the model to ensure it's loaded correctly
-console.log(SavedMovie === sequelize.models.SavedMovie); // Reference the model directly
+// Add startup phases logging
+console.log('Starting server initialization...');
 
-// Sync the database and start the server
+// Test database connection
 sequelize
-	.sync()
+	.authenticate()
 	.then(() => {
-		console.log('Database synchronized successfully.');
-
-		// Start the server
+		console.log('Database connection established.');
+		return sequelize.sync();
+	})
+	.then(() => {
+		console.log('Database synchronized.');
 		app.listen(PORT, '0.0.0.0', () => {
-			console.log(`Server running on http://0.0.0.0:${PORT}`);
-			console.log('Environment:', process.env.NODE_ENV || 'development');
+			console.log('=================================');
+			console.log(`Server running on port ${PORT}`);
+			console.log(`Environment: ${process.env.NODE_ENV}`);
+			console.log('=================================');
 		});
 	})
 	.catch((error) => {
-		console.error('Error synchronizing the database:', error);
-
-		// Exit the process if the database connection fails
+		console.error('Server initialization failed:', error);
 		process.exit(1);
 	});
 
