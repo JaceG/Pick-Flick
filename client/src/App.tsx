@@ -16,11 +16,7 @@ import AutoLogoutHandler from './utils/AutoLogoutHandler';
 import SavedMovies from './components/SavedMovies/SavedMovies';
 import WatchedMovies from './components/WatchedMovies/WatchedMovies';
 import axios from 'axios';
-
-const API_BASE_URL =
-	import.meta.env.VITE_API_BASE_URL ||
-	'https://www.pickflick.app' ||
-	'https://pick-flick.onrender.com';
+import { getBaseUrl } from './utils/getBaseUrl';
 
 // Movie type interface
 interface Movie {
@@ -68,6 +64,16 @@ interface WatchedMovie {
 	}[];
 }
 
+interface StreamingOption {
+	link?: string;
+	service?: {
+		imageSet?: {
+			lightThemeImage?: string;
+			darkThemeImage?: string;
+		};
+	};
+}
+
 const App: React.FC = () => {
 	const {
 		movie,
@@ -111,88 +117,67 @@ const App: React.FC = () => {
 	useEffect(() => {
 		const fetchSavedMovies = async () => {
 			const token = localStorage.getItem('token');
-
 			if (!token) {
-				console.error('No token found. Please log in.');
+				console.log('No token found, skipping saved movies fetch');
 				return;
 			}
 
 			try {
+				const baseUrl = await getBaseUrl();
 				const response = await axios.get(
-					`${API_BASE_URL}/api/movies/saved`,
+					`${baseUrl}/api/movies/saved`,
 					{
 						headers: { Authorization: `Bearer ${token}` },
 					}
 				);
 				setSavedMovies(response.data);
-			} catch (err: any) {
-				if (axios.isAxiosError(err) && err.response) {
-					console.error(
-						err.response.data.message ||
-							'Failed to fetch saved movies.'
-					);
+			} catch (err) {
+				if (axios.isAxiosError(err) && err.response?.status === 401) {
+					console.log('Token expired or invalid, clearing...');
+					localStorage.removeItem('token');
 				} else {
-					console.error('An unexpected error occurred.');
+					console.error('Error fetching saved movies:', err);
+				}
+			}
+		};
+
+		// Fetch watched movies
+		const fetchWatchedMovies = async () => {
+			const token = localStorage.getItem('token');
+			if (!token) {
+				console.log('No token found, skipping watched movies fetch');
+				return;
+			}
+
+			try {
+				const baseUrl = await getBaseUrl();
+				const response = await axios.get(
+					`${baseUrl}/api/movies/watched`,
+					{
+						headers: { Authorization: `Bearer ${token}` },
+					}
+				);
+				setWatchedMovies(response.data);
+			} catch (err) {
+				if (axios.isAxiosError(err) && err.response?.status === 401) {
+					console.log('Token expired or invalid, clearing...');
+					localStorage.removeItem('token');
+				} else {
+					console.error('Error fetching watched movies:', err);
 				}
 			}
 		};
 
 		fetchSavedMovies();
-	}, [location]);
-
-	// Fetch watched movies from the API
-	useEffect(() => {
-		const fetchWatchedMovies = async () => {
-			const token = localStorage.getItem('token');
-
-			if (!token) {
-				console.error('No token found. Please log in.');
-				return;
-			}
-
-			try {
-				const response = await axios.get(
-					`${API_BASE_URL}/api/movies/watched`,
-					{
-						headers: { Authorization: `Bearer ${token}` },
-					}
-				);
-				console.log('Watched movies:', response.data);
-				setWatchedMovies(
-					response.data?.map((data: any) => ({
-						movieId: data.movieId,
-						title: data.title,
-						poster: data.poster,
-						genres: data.genres,
-						releaseYear: data.releaseYear,
-						synopsis: data.synopsis,
-						runtime: data.runtime,
-						cast: data.cast,
-						directors: data.directors,
-						producers: data.producers,
-						streaming: data.streaming,
-					}))
-				);
-			} catch (err: any) {
-				if (axios.isAxiosError(err) && err.response) {
-					console.error(
-						err.response.data.message ||
-							'Failed to fetch watched movies.'
-					);
-				} else {
-					console.error('An unexpected error occurred.');
-				}
-			}
-		};
-
 		fetchWatchedMovies();
 	}, [location]);
 
 	const saveWatchedMovies = async (id: string, status: number = 1) => {
 		const token = localStorage.getItem('token');
 		try {
+			const baseUrl = await getBaseUrl();
 			const response = await axios.put(
-				`${API_BASE_URL}/api/movies/watched`,
+				`${baseUrl}/api/movies/watched`,
 				{
 					movieId: id,
 					status: status,
@@ -205,12 +190,14 @@ const App: React.FC = () => {
 			);
 
 			console.log('Registration response:', response);
-		} catch (err: any) {
+		} catch (err) {
 			console.error('Error during registration:', err);
-			alert(
-				err.response?.data?.message ||
-					'An error occurred during registration.'
-			);
+			if (axios.isAxiosError(err)) {
+				alert(
+					err.response?.data?.message ||
+						'An error occurred during registration.'
+				);
+			}
 		}
 	};
 
@@ -253,7 +240,8 @@ const App: React.FC = () => {
 		}
 
 		try {
-			await axios.delete(`${API_BASE_URL}/api/movies/saved/${movieId}`, {
+			const baseUrl = await getBaseUrl();
+			await axios.delete(`${baseUrl}/api/movies/saved/${movieId}`, {
 				headers: { Authorization: `Bearer ${token}` },
 			});
 
@@ -266,7 +254,7 @@ const App: React.FC = () => {
 			setSavedMovies((prevMovies) =>
 				prevMovies.filter((movie) => movie.movieId !== movieId)
 			);
-		} catch (err: any) {
+		} catch (err) {
 			if (axios.isAxiosError(err) && err.response) {
 				console.error(
 					err.response.data.message || 'Failed to delete movie.'
@@ -278,7 +266,7 @@ const App: React.FC = () => {
 	};
 
 	// Transform streaming data (dummy implementation if missing)
-	const transformMovieStreaming = (streaming: any[] = []) =>
+	const transformMovieStreaming = (streaming: StreamingOption[] = []) =>
 		streaming.map((option) => ({
 			link: option.link || '',
 			service: {
