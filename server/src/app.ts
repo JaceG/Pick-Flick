@@ -69,12 +69,6 @@ sequelize
 	.then(() => console.log('Database synced successfully.'))
 	.catch((err) => console.error('Error syncing database:', err));
 
-// Start the server with Render's requirements
-app.listen(PORT, '0.0.0.0', () => {
-	console.log(`Server running on http://0.0.0.0:${PORT}`);
-	console.log('Environment:', process.env.NODE_ENV || 'development');
-});
-
 // Fallback route for React
 const fallbackPath = path.resolve(staticPath, 'index.html');
 console.log('Fallback path:', fallbackPath);
