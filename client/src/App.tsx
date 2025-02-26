@@ -66,6 +66,16 @@ interface WatchedMovie {
 	}[];
 }
 
+interface StreamingOption {
+	link?: string;
+	service?: {
+		imageSet?: {
+			lightThemeImage?: string;
+			darkThemeImage?: string;
+		};
+	};
+}
+
 const App: React.FC = () => {
 	const {
 		movie,
@@ -123,7 +133,7 @@ const App: React.FC = () => {
 					}
 				);
 				setSavedMovies(response.data);
-			} catch (err: any) {
+			} catch (err: unknown) {
 				if (axios.isAxiosError(err) && err.response) {
 					console.error(
 						err.response.data.message ||
@@ -157,7 +167,7 @@ const App: React.FC = () => {
 				);
 				console.log('Watched movies:', response.data);
 				setWatchedMovies(
-					response.data?.map((data: any) => ({
+					response.data?.map((data: WatchedMovie) => ({
 						movieId: data.movieId,
 						title: data.title,
 						poster: data.poster,
@@ -171,7 +181,7 @@ const App: React.FC = () => {
 						streaming: data.streaming,
 					}))
 				);
-			} catch (err: any) {
+			} catch (err: unknown) {
 				if (axios.isAxiosError(err) && err.response) {
 					console.error(
 						err.response.data.message ||
@@ -203,11 +213,12 @@ const App: React.FC = () => {
 			);
 
 			console.log('Registration response:', response);
-		} catch (err: any) {
+		} catch (err: unknown) {
 			console.error('Error during registration:', err);
 			alert(
-				err.response?.data?.message ||
-					'An error occurred during registration.'
+				err instanceof Error
+					? err.message
+					: 'An error occurred during registration.'
 			);
 		}
 	};
@@ -264,7 +275,7 @@ const App: React.FC = () => {
 			setSavedMovies((prevMovies) =>
 				prevMovies.filter((movie) => movie.movieId !== movieId)
 			);
-		} catch (err: any) {
+		} catch (err: unknown) {
 			if (axios.isAxiosError(err) && err.response) {
 				console.error(
 					err.response.data.message || 'Failed to delete movie.'
@@ -276,7 +287,7 @@ const App: React.FC = () => {
 	};
 
 	// Transform streaming data (dummy implementation if missing)
-	const transformMovieStreaming = (streaming: any[] = []) =>
+	const transformMovieStreaming = (streaming: StreamingOption[] = []) =>
 		streaming.map((option) => ({
 			link: option.link || '',
 			service: {

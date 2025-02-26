@@ -164,7 +164,7 @@ export const getRandomMovie = async (req: Request, res: Response) => {
 				// Use the region parameter or default to 'us'
 				const selectedRegion = (region as string) || 'us';
 				const streamingDetails = await axios.get(
-					`https://streaming-availability.p.rapidapi.com/shows/${movieDetails.data.imdb_id}`,
+					`https://streaming-availability.p.rapidapi.com/shows/${randomMovie.id}`,
 					{
 						headers: {
 							'x-rapidapi-key': MOTN_API_KEY,
