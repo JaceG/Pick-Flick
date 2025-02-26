@@ -17,6 +17,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
+const PORT: number = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 
 // Middleware setup
 app.use(express.json());
@@ -67,6 +68,11 @@ sequelize
 	.sync()
 	.then(() => console.log('Database synced successfully.'))
 	.catch((err) => console.error('Error syncing database:', err));
+
+// Start the server
+app.listen(PORT, '0.0.0.0', () => {
+	console.log(`Server is running on port ${PORT}`);
+});
 
 // Fallback route for React
 const fallbackPath = path.resolve(staticPath, 'index.html');
