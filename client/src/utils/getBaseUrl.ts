@@ -5,12 +5,15 @@ export const getBaseUrl = async (): Promise<string> => {
 		return cachedBaseUrl; // Return cached result if available
 	}
 
-	try {
-		const response = await fetch('http://localhost:3001/health', {
-			method: 'GET',
-			mode: 'cors', // Ensure CORS mode is set for browser environments
-		});
+	// In production, always use the production URL
+	if (process.env.NODE_ENV === 'production') {
+		cachedBaseUrl = 'https://pick-flick.onrender.com';
+		return cachedBaseUrl;
+	}
 
+	// In development, try local server
+	try {
+		const response = await fetch('http://localhost:3001/health');
 		if (response.ok) {
 			console.log('Local server is available.');
 			cachedBaseUrl = 'http://localhost:3001'; // Cache the result
@@ -21,20 +24,13 @@ export const getBaseUrl = async (): Promise<string> => {
 			);
 		}
 	} catch (err) {
-		console.error('Error checking local server availability:', err);
+		console.error('Local server not available:', err);
 	}
 
-	// Fallback to production server
-	cachedBaseUrl =
-		import.meta.env.VITE_API_BASE_URL ||
-		'https://pick-flick.onrender.com' ||
-		'https://www.pickflick.app';
+	// Fallback to production
+	cachedBaseUrl = 'https://pick-flick.onrender.com';
 	console.log('Falling back to production server:', cachedBaseUrl);
 
 	// Ensure the return type is always a string
-	return (
-		cachedBaseUrl ||
-		'https://pick-flick.onrender.com' ||
-		'https://www.pickflick.app'
-	);
+	return cachedBaseUrl;
 };

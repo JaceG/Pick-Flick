@@ -10,47 +10,34 @@ const PORT = Number(process.env.PORT) || 10000;
 async function startServer() {
 	try {
 		console.log('Starting server initialization...');
-		console.log('Attempting to bind to port:', PORT);
 		console.log('Environment:', process.env.NODE_ENV);
+		console.log('Port:', PORT);
 
-		// Create HTTP server
 		const server = http.createServer(app);
 
-		// Test database connection
-		await sequelize.authenticate();
-		console.log('Database connection established.');
-
-		// Sync database
-		await sequelize.sync();
-		console.log('Database synchronized.');
-
-		// Bind to all network interfaces (0.0.0.0)
-		await new Promise((resolve, reject) => {
+		await new Promise<void>((resolve, reject) => {
 			server.listen(PORT, '0.0.0.0', () => {
 				const addr = server.address();
 				console.log('=================================');
-				console.log(`Server is bound to port ${PORT}`);
+				console.log(`Server running at: http://0.0.0.0:${PORT}`);
 				console.log('Server address:', addr);
+				console.log('Environment:', process.env.NODE_ENV);
 				console.log('=================================');
-				resolve(true);
+				resolve();
 			});
 
-			server.on('error', (error: NodeJS.ErrnoException) => {
-				console.error('Server startup error:', error);
+			server.on('error', (error) => {
+				console.error('Server failed to start:', error);
 				reject(error);
 			});
 		});
 	} catch (error) {
-		console.error('Server initialization failed:', error);
+		console.error('Fatal server error:', error);
 		process.exit(1);
 	}
 }
 
-// Start server with error handling
-startServer().catch((error) => {
-	console.error('Fatal server error:', error);
-	process.exit(1);
-});
+startServer();
 
 // Error handlers
 process.on('uncaughtException', (error) => {

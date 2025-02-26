@@ -46,8 +46,10 @@ app.use(
 			'https://pick-flick.onrender.com',
 			'https://www.pickflick.app',
 			'http://localhost:3000',
+			'http://localhost:3001',
 		],
-		methods: ['GET', 'POST', 'DELETE'],
+		methods: ['GET', 'POST', 'PUT', 'DELETE'],
+		credentials: true,
 	})
 );
 
