@@ -15,7 +15,7 @@ export const useMovieState = () => {
 		producers: string[];
 		language: string;
 		imdbId: string;
-		streaming: { [key: string]: any }[];
+		streaming: { [key: string]: string | object }[];
 	} | null>(null);
 
 	const [loading, setLoading] = useState(false);
@@ -23,7 +23,7 @@ export const useMovieState = () => {
 	const [loggedIn, setLoggedIn] = useState(false);
 
 	const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
-	const [yearRange, setYearRange] = useState<[number, number]>([1988, 2024]);
+	const [yearRange, setYearRange] = useState<[number, number]>([1988, 2025]);
 	const [runtimeRange, setRuntimeRange] = useState<[number, number]>([
 		0, 360,
 	]);

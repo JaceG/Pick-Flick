@@ -24,7 +24,7 @@ const YearRangeSlider: React.FC<YearRangeSliderProps> = ({
 				<input
 					type='range'
 					min='1900'
-					max='2024'
+					max='2025'
 					value={yearRange[0]}
 					onChange={(e) =>
 						handleRangeChange(e, yearRange, setYearRange, 0)
@@ -38,7 +38,7 @@ const YearRangeSlider: React.FC<YearRangeSliderProps> = ({
 				<input
 					type='range'
 					min='1900'
-					max='2024'
+					max='2025'
 					value={yearRange[1]}
 					onChange={(e) =>
 						handleRangeChange(e, yearRange, setYearRange, 1)
