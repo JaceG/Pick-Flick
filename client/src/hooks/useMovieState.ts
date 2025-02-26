@@ -45,38 +45,47 @@ export const useMovieState = () => {
 	const handleFetchMovie = async () => {
 		setLoading(true);
 		setError(null);
-		try {
-			const baseUrl = await getBaseUrl();
-			console.log('Base URL:', baseUrl); // Debugging
+		let found = false;
+		for (let i = 0; i < 10; i++) {
+			try {
+				const baseUrl = await getBaseUrl();
+				console.log('Base URL:', baseUrl); // Debugging
 
-			const response = await axios.get(`${baseUrl}/api/movies/random`, {
-				params: {
-					genre: selectedGenres.join(','),
-					startYear: yearRange[0],
-					endYear: yearRange[1],
-					minRuntime: runtimeRange[0],
-					maxRuntime: runtimeRange[1],
-					language:
-						selectedLanguage === 'any'
-							? undefined
-							: selectedLanguage,
-				},
-			});
-			const fetchedMovie = response.data;
-			setMovie({
-				...fetchedMovie,
-				imdbId: fetchedMovie.imdbId || 'N/A',
-				streaming: fetchedMovie.streaming || [],
-			});
-		} catch (err) {
-			console.error('Error fetching movie:', err);
-			if (axios.isAxiosError(err)) {
-				console.error('Response data:', err.response?.data);
+				const response = await axios.get(
+					`${baseUrl}/api/movies/random`,
+					{
+						params: {
+							genre: selectedGenres.join(','),
+							startYear: yearRange[0],
+							endYear: yearRange[1],
+							minRuntime: runtimeRange[0],
+							maxRuntime: runtimeRange[1],
+							language:
+								selectedLanguage === 'any'
+									? undefined
+									: selectedLanguage,
+						},
+					}
+				);
+				const fetchedMovie = response.data;
+				found = true;
+				setMovie({
+					...fetchedMovie,
+					imdbId: fetchedMovie.imdbId || 'N/A',
+					streaming: fetchedMovie.streaming || [],
+				});
+				break;
+			} catch (err) {
+				console.error('Error fetching movie:', err);
+				if (axios.isAxiosError(err)) {
+					console.error('Response data:', err.response?.data);
+				}
 			}
+		}
+		setLoading(false);
+		if (!found) {
 			setError('Failed to fetch a random movie. Please try again.');
 			setMovie(null); // Reset movie on error
-		} finally {
-			setLoading(false);
 		}
 	};
 

@@ -2,7 +2,7 @@ import axios from 'axios';
 
 export const fetchMovies = async (
 	params: any,
-	maxRetries = 3
+	maxRetries = 10
 ): Promise<any[]> => {
 	for (let attempt = 0; attempt < maxRetries; attempt++) {
 		try {
@@ -11,7 +11,7 @@ export const fetchMovies = async (
 				`TMDB API request parameters (attempt ${attempt + 1}):`,
 				params
 			);
-
+			debugger;
 			// Make the API request
 			const response = await axios.get(
 				'https://api.themoviedb.org/3/discover/movie',
@@ -37,9 +37,9 @@ export const fetchMovies = async (
 				console.warn(
 					'No results found, and no additional pages to fetch.'
 				);
-				break; // Exit loop if no additional pages are available
 			}
 		} catch (error) {
+			debugger;
 			// Handle Axios-specific errors
 			if (axios.isAxiosError(error)) {
 				console.error(
