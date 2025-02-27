@@ -27,6 +27,7 @@
     "wait-on": "^7.2.0"
   },
   "dependencies": {
+    "@hotjar/browser": "^1.0.9",
     "@sequelize/core": "^7.0.0-alpha.43",
     "bcrypt": "^5.1.1",
     "dotenv": "^16.4.5",

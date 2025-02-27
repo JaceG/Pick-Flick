@@ -16,6 +16,7 @@ import AutoLogoutHandler from './utils/AutoLogoutHandler';
 import SavedMovies from './components/SavedMovies/SavedMovies';
 import WatchedMovies from './components/WatchedMovies/WatchedMovies';
 import axios from 'axios';
+import hotjar from '@hotjar/browser';
 
 const API_BASE_URL =
 	import.meta.env.VITE_API_BASE_URL || window.location.origin;
@@ -102,6 +103,10 @@ const App: React.FC = () => {
 
 	// Automatically set theme based on time of day
 	useEffect(() => {
+		// Initialize Hotjar
+		hotjar.init(5320763, 6);
+
+		// Set theme based on time of day
 		const hour = new Date().getHours();
 		const theme = hour >= 7 && hour <= 19 ? 'light' : 'dark';
 		document.documentElement.className = theme;
