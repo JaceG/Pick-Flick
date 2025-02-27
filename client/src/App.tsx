@@ -104,7 +104,7 @@ const App: React.FC = () => {
 	// Automatically set theme based on time of day
 	useEffect(() => {
 		// Initialize Hotjar
-		hotjar.init(5320763, 6);
+		hotjar.init(5320787, 6);
 
 		// Set theme based on time of day
 		const hour = new Date().getHours();
